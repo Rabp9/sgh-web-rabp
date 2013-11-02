@@ -29,19 +29,11 @@ public class MantenimientoActividadBean implements Serializable {
     private Actividad selectedActividad;
     private Actividad actividad;
     private ActividadJpaController ajc;
-    private String accion;
-    private boolean readOnly;
     
     public MantenimientoActividadBean() {
         ajc = new ActividadJpaController(null, null);
         listaActividades = ajc.findActividadEntities();
-        readOnly = false;
         actividad = new Actividad();
-    }
-
-    public void setRegistro(String accion, boolean readOnly) {
-        this.accion = accion;
-        this.readOnly = readOnly;
     }
     
     public void crear() {
@@ -83,22 +75,6 @@ public class MantenimientoActividadBean implements Serializable {
 
     public void setAjc(ActividadJpaController ajc) {
         this.ajc = ajc;
-    }
-
-    public String getAccion() {
-        return accion;
-    }
-
-    public void setAccion(String accion) {
-        this.accion = accion;
-    }
-
-    public Boolean getReadOnly() {
-        return readOnly;
-    }
-
-    public void setReadOnly(Boolean readOnly) {
-        this.readOnly = readOnly;
     }
 
     public Actividad getActividad() {

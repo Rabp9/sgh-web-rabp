@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="accion" required="true"/>
+        <cc:attribute name="actividad" required="false"/>
+        <cc:attribute name="readOnly" required="false"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:panelGrid columns="2">
+            <p:outputLabel value="Código" for="txtCodigo${cc.attrs.accion}"/>
+            <p:inputText id="txtCodigo${cc.attrs.accion}" value="${cc.attrs.actividad.codigo}" 
+                         maxlength="2" onblur="value=value.toUpperCase()" readonly="${cc.attrs.readOnly}">
+                <p:watermark value="Código de 2 letras" for="txtCodigo${cc.attrs.accion}"/>
+            </p:inputText>
+
+            <p:outputLabel value="Descripción" for="txtDescripcion${cc.attrs.accion}"/>
+            <p:inputText id="txtDescripcion${cc.attrs.accion}" value="${cc.attrs.actividad.descripcion}"
+                         maxlength="60" onblur="value=value.toUpperCase()" readonly="${cc.attrs.readOnly}">
+                <p:watermark value="Escriba una descripción" for="txtDescripcion${cc.attrs.accion}"/>
+            </p:inputText>
+        </p:panelGrid>
+    </cc:implementation>
+</html>

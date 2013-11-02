@@ -2,11 +2,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ezcomp="http://java.sun.com/jsf/composite/ezcomp">
 
-    <body> 
+    <body>
+
         <ui:composition template="./../templates/template.xhtml">
 
             <ui:define name="title">
@@ -18,23 +20,14 @@
             </ui:define>
 
             <ui:define name="dialogs">
-                <h:form id="frmRegistroActividad">
-                    <p:growl id="mensaje"/>
+                <p:growl id="mensaje"/>
+                <h:form id="frmNuevoActividad">
                     <p:dialog id="dlgNuevoActividad" header="Nueva Actividad" widgetVar="dialogoNuevoActividad" resizable="false"  
                         showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroActividad
+                            accion="Nuevo" actividad="${mantenimientoActividadBean.actividad}"
+                            readOnly="false"/>
                         <p:panelGrid columns="2">
-                            <p:outputLabel value="Código" for="txtCodigo"/>
-                            <p:inputText id="txtCodigo" value="${mantenimientoActividadBean.actividad.codigo}" 
-                                maxlength="2" onblur="value=value.toUpperCase()" readonly="${mantenimientoActividadBean.readOnly}">
-                                <p:watermark value="Código de 2 letras" for="txtCodigo"/>
-                            </p:inputText>
-
-                            <p:outputLabel value="Descripción" for="txtDescripcion"/>
-                            <p:inputText id="txtDescripcion" value="${mantenimientoActividadBean.actividad.descripcion}"
-                                         maxlength="60" onblur="value=value.toUpperCase()" readonly="${mantenimientoActividadBean.readOnly}">
-                                <p:watermark value="Escriba una descripción" for="txtDescripcion"/>
-                            </p:inputText>
-
                             <h:panelGroup/>
                             <h:panelGroup>
                                 <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoActividadBean.crear()}" 
@@ -43,31 +36,41 @@
                             </h:panelGroup>
                         </p:panelGrid>
                     </p:dialog>
-                    
-                    <p:dialog id="dlgRegistroActividad" header="Registro Actividad" widgetVar="dialogoRegistroActividad" resizable="false"  
+                </h:form>
+                
+                <h:form id="frmDetalleActividad">
+                    <p:dialog id="dlgDetalleActividad" header="Detalle Actividad" widgetVar="dialogoDetalleActividad" resizable="false"  
                         showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroActividad
+                            accion="Detalle" actividad="${mantenimientoActividadBean.selectedActividad}"
+                            readOnly="true"/>
                         <p:panelGrid columns="2">
-                            <p:outputLabel value="Código" for="txtRCodigo"/>
-                            <p:inputText id="txtRCodigo" value="${mantenimientoActividadBean.selectedActividad.codigo}" 
-                                maxlength="2" onblur="value=value.toUpperCase()" readonly="${mantenimientoActividadBean.readOnly}">
-                                <p:watermark value="Código de 2 letras" for="txtCodigo"/>
-                            </p:inputText>
-
-                            <p:outputLabel value="Descripción" for="txtRDescripcion"/>
-                            <p:inputText id="txtRDescripcion" value="${mantenimientoActividadBean.selectedActividad.descripcion}"
-                                         maxlength="60" onblur="value=value.toUpperCase()" readonly="${mantenimientoActividadBean.readOnly}">
-                                <p:watermark value="Escriba una descripción" for="txtDescripcion"/>
-                            </p:inputText>
-
                             <h:panelGroup/>
                             <h:panelGroup>
-                                <p:commandButton value="Cerrar" oncomplete="dialogoRegistroActividad.hide()"/>
+                                <p:commandButton value="Cerrar" oncomplete="dialogoDetalleActividad.hide()"/>
+                            </h:panelGroup>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmModificarActividad">
+                    <p:dialog id="dlgModificarActividad" header="Modificar Actividad" widgetVar="dialogoModificarActividad" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroActividad
+                            accion="Modificar" actividad="${mantenimientoActividadBean.selectedActividad}"
+                            readOnly="false"/>
+                        <p:panelGrid columns="2">
+                            <h:panelGroup/>
+                            <h:panelGroup>
+                                <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoActividadBean.editar()}" 
+                                    oncomplete="dialogoModificarActividad.hide()"/>
+                                <p:commandButton value="Borrar" type="reset"/>
                             </h:panelGroup>
                         </p:panelGrid>
                     </p:dialog>
                 </h:form>
             </ui:define>
-            
+
             <ui:define name="top">
                 top
             </ui:define>
@@ -100,28 +103,22 @@
                             </p:column>
                             
                             <f:facet name="footer">  
-                                <p:commandButton id="btnNuevo" value="Nuevo" icon="ui-icon-plus" update="_frmRegistroActividad"
+                                <p:commandButton id="btnNuevo" value="Nuevo" icon="ui-icon-plus" update="_frmNuevoActividad"
                                     oncomplete="dialogoNuevoActividad.show()"/>
-                                <p:commandButton id="btnDetalle" value="Detalle" icon="ui-icon-zoomin" update="_frmRegistroActividad"
-                                    actionListener="${mantenimientoActividadBean.setRegistro('Detalle', true)}" oncomplete="dialogoRegistroActividad.show()"/>
-                   <!-- <p:commandButton id="btnModificar" value="Modificar" icon="ui-icon-pencil" update="_frmRegistroActividad"
-                                    actionListener="${mantenimientoActividadBean.setRegistro('Modificar', false)}" oncomplete="dialogoRegistroActividad.show()"/>
-                                <p:commandButton id="btnEliminar" value="Eliminar" icon="ui-icon-minus" update="_frmRegistroActividad"
-                                    actionListener="${mantenimientoActividadBean.setRegistro('Eliminar', true)}" oncomplete="dialogoRegistroActividad.show()"/> 
-                    -->
+                                <p:commandButton id="btnDetalle" value="Detalle" icon="ui-icon-zoomin" update="_frmDetalleActividad"
+                                    oncomplete="dialogoDetalleActividad.show()"/>
                             </f:facet>  
                             
                         </p:dataTable>
                     </p:panel>
                 </h:form>
-                
             </ui:define>
-            
+
             <ui:define name="bottom">
                 bottom
             </ui:define>
-            
+
         </ui:composition>
-        
+
     </body>
 </html>
