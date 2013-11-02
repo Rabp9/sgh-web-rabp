@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <body> 
+        <ui:composition template="./../templates/template.xhtml">
+
+            <ui:define name="title">
+                Mantenimiento Actividades
+            </ui:define>
+
+            <ui:define name="recursos">
+                recursos
+            </ui:define>
+
+            <ui:define name="dialogs">
+                <h:form id="frmRegistroActividad">
+                    <p:growl id="mensaje"/>
+                    <p:dialog id="dlgNuevoActividad" header="Nueva Actividad" widgetVar="dialogoNuevoActividad" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Código" for="txtCodigo"/>
+                            <p:inputText id="txtCodigo" value="${mantenimientoActividadBean.actividad.codigo}" 
+                                maxlength="2" onblur="value=value.toUpperCase()" readonly="${mantenimientoActividadBean.readOnly}">
+                                <p:watermark value="Código de 2 letras" for="txtCodigo"/>
+                            </p:inputText>
+
+                            <p:outputLabel value="Descripción" for="txtDescripcion"/>
+                            <p:inputText id="txtDescripcion" value="${mantenimientoActividadBean.actividad.descripcion}"
+                                         maxlength="60" onblur="value=value.toUpperCase()" readonly="${mantenimientoActividadBean.readOnly}">
+                                <p:watermark value="Escriba una descripción" for="txtDescripcion"/>
+                            </p:inputText>
+
+                            <h:panelGroup/>
+                            <h:panelGroup>
+                                <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoActividadBean.crear()}" 
+                                                 oncomplete="dialogoNuevoActividad.hide()"/>
+                                <p:commandButton value="Borrar" type="reset"/>
+                            </h:panelGroup>
+                        </p:panelGrid>
+                    </p:dialog>
+                    
+                    <p:dialog id="dlgRegistroActividad" header="Registro Actividad" widgetVar="dialogoRegistroActividad" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Código" for="txtRCodigo"/>
+                            <p:inputText id="txtRCodigo" value="${mantenimientoActividadBean.selectedActividad.codigo}" 
+                                maxlength="2" onblur="value=value.toUpperCase()" readonly="${mantenimientoActividadBean.readOnly}">
+                                <p:watermark value="Código de 2 letras" for="txtCodigo"/>
+                            </p:inputText>
+
+                            <p:outputLabel value="Descripción" for="txtRDescripcion"/>
+                            <p:inputText id="txtRDescripcion" value="${mantenimientoActividadBean.selectedActividad.descripcion}"
+                                         maxlength="60" onblur="value=value.toUpperCase()" readonly="${mantenimientoActividadBean.readOnly}">
+                                <p:watermark value="Escriba una descripción" for="txtDescripcion"/>
+                            </p:inputText>
+
+                            <h:panelGroup/>
+                            <h:panelGroup>
+                                <p:commandButton value="Cerrar" oncomplete="dialogoRegistroActividad.hide()"/>
+                            </h:panelGroup>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+            </ui:define>
+            
+            <ui:define name="top">
+                top
+            </ui:define>
+
+            <ui:define name="left">
+                left
+            </ui:define>
+
+            <ui:define name="content">
+                <h:form id="frmMantenimientoActividad" title="Formulario de Mantenimiento de Actividades">
+                    <p:panel id="pnlMantenimientoActividad" header="Mantenimiento Actividades">
+                        <p:dataTable id="tblActividades" var="actividad" value="${mantenimientoActividadBean.listaActividades}"
+                            sortMode="multiple" rowKey="${actividad.codigo}" paginator="true" rows="10" 
+                            currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                            rowsPerPageTemplate="5,10,20" selection="${mantenimientoActividadBean.selectedActividad}" selectionMode="single"
+                            emptyMessage="Ninguna Actividad Registrada" scrollable="true" scrollHeight="190"
+                            resizableColumns="true">
+                                                         
+                            <f:facet name="header">  
+                                Lista de Actividades
+                            </f:facet>  
+                            
+                            <p:column sortBy="${actividad.codigo}" filterBy="${actividad.codigo}" headerText="Código" width="150">  
+                                <h:outputText value="${actividad.codigo}" />  
+                            </p:column>
+                            
+                            <p:column sortBy="${actividad.descripcion}" filterBy="${actividad.descripcion}" filterMatchMode="contains" headerText="Descripción">  
+                                <h:outputText value="${actividad.descripcion}" />  
+                            </p:column>
+                            
+                            <f:facet name="footer">  
+                                <p:commandButton id="btnNuevo" value="Nuevo" icon="ui-icon-plus" update="_frmRegistroActividad"
+                                    oncomplete="dialogoNuevoActividad.show()"/>
+                                <p:commandButton id="btnDetalle" value="Detalle" icon="ui-icon-zoomin" update="_frmRegistroActividad"
+                                    actionListener="${mantenimientoActividadBean.setRegistro('Detalle', true)}" oncomplete="dialogoRegistroActividad.show()"/>
+                   <!-- <p:commandButton id="btnModificar" value="Modificar" icon="ui-icon-pencil" update="_frmRegistroActividad"
+                                    actionListener="${mantenimientoActividadBean.setRegistro('Modificar', false)}" oncomplete="dialogoRegistroActividad.show()"/>
+                                <p:commandButton id="btnEliminar" value="Eliminar" icon="ui-icon-minus" update="_frmRegistroActividad"
+                                    actionListener="${mantenimientoActividadBean.setRegistro('Eliminar', true)}" oncomplete="dialogoRegistroActividad.show()"/> 
+                    -->
+                            </f:facet>  
+                            
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
+                
+            </ui:define>
+            
+            <ui:define name="bottom">
+                bottom
+            </ui:define>
+            
+        </ui:composition>
+        
+    </body>
+</html>

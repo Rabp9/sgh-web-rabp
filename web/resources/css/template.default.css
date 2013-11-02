@@ -1,0 +1,15 @@
+/* 
+    Document   : template.default
+    Created on : 01-nov-2013, 11:10:16
+    Author     : Roberto
+    Description:
+        Plantilla por defecto de todas las páginas webs
+*/
+body {
+    font-size: 80%;
+}
+
+.ui-panelgrid td, .ui-panelgrid tr
+{
+    border-style: none !important;
+}

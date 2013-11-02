@@ -5,25 +5,28 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://java.sun.com/jsf/facelets">
     <h:head>
-        <title><ui:insert name="title">Title</ui:insert></title>
+        <title>SGH-WEB - <ui:insert name="title">Title</ui:insert></title>
+        <h:outputStylesheet library="css" name="template.default.css"/>
         <ui:insert name="recursos"></ui:insert>
     </h:head>
     <h:body>
+        <ui:insert name="dialogs">Dialogs</ui:insert>
+        
         <p:layout fullPage="true">  
 
-            <p:layoutUnit position="north" size="100" collapsible="true">  
+            <p:layoutUnit id="lyTop" position="north" size="100" collapsible="true">  
                 <ui:insert name="top">Top</ui:insert>
             </p:layoutUnit>  
             
-            <p:layoutUnit position="west" size="200" header="Left" resizable="true" collapsible="true">  
+            <p:layoutUnit id="lyWest" position="west" size="200" header="Left" resizable="true" collapsible="true">  
                 <ui:insert name="left">Left</ui:insert>
             </p:layoutUnit>  
             
-            <p:layoutUnit position="center">  
+            <p:layoutUnit id="lyContent" position="center">  
                  <ui:insert name="content">Content</ui:insert>   
             </p:layoutUnit>  
 
-            <p:layoutUnit position="south" size="100" resizable="true" collapsible="true">  
+            <p:layoutUnit id="lySouth" position="south" size="100" resizable="true" collapsible="true">  
                 <ui:insert name="bottom">Bottom</ui:insert>
             </p:layoutUnit>  
 
