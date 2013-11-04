@@ -13,3 +13,8 @@ body {
 {
     border-style: none !important;
 }
+
+#graphicImageLogo {
+    margin: 0 20%;
+    width: 60%;
+}
