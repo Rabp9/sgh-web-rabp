@@ -3,10 +3,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:ui="http://java.sun.com/jsf/facelets">
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
     <h:head>
         <title>SGH-WEB - <ui:insert name="title">Title</ui:insert></title>
         <h:outputStylesheet library="css" name="template.default.css"/>
+        <h:outputScript library="js" name="template.default.js" />
         <ui:insert name="recursos"></ui:insert>
     </h:head>
     <h:body>
@@ -15,11 +17,41 @@
         <p:layout fullPage="true">  
 
             <p:layoutUnit id="lyTop" position="north" size="100" collapsible="true">  
+                <h:graphicImage library="img" name="banner.png"/>
                 <ui:insert name="top">Top</ui:insert>
             </p:layoutUnit>  
             
-            <p:layoutUnit id="lyWest" position="west" size="200" header="Left" resizable="true" collapsible="true">  
+            <p:layoutUnit id="lyWest" position="west" size="200" header="Usuario" resizable="true" collapsible="true">  
                 <ui:insert name="left">Left</ui:insert>
+                <h:form>
+                    <p:slideMenu backLabel="Átrás" style="width: 96%;">
+                        <p:submenu label="Mantenimiento" icon="ui-icon-refresh">  
+                            <p:menuitem value="Actividades" icon="ui-icon-disk" />  
+                            <p:menuitem value="Update" icon="ui-icon-arrowrefresh-1-w" />  
+                            <f:facet name="footer">asdas</f:facet>
+                        </p:submenu>  
+                        <p:submenu label="Reporte" icon="ui-icon-newwin">  
+                            <p:menuitem value="Delete" ajax="false" icon="ui-icon-close"/>  
+                        </p:submenu>  
+                        <p:separator />  
+                        <p:submenu label="Navigations" icon="ui-icon-extlink">  
+                            <p:submenu label="Prime Links">  
+                                <p:menuitem value="Prime" url="http://www.prime.com.tr" />  
+                                <p:menuitem value="PrimeFaces" url="http://www.primefaces.org" />  
+                            </p:submenu>  
+                            <p:menuitem value="Mobile" />  
+                        </p:submenu>  
+                    </p:slideMenu>  
+                </h:form>
+                <p:ajaxStatus>  
+                    <f:facet name="start">  
+                        <p:graphicImage library="img" name="ajax-loader.gif" />  
+                    </f:facet>  
+
+                    <f:facet name="complete">  
+                        <h:outputText value="" />  
+                    </f:facet>  
+                </p:ajaxStatus> 
             </p:layoutUnit>  
             
             <p:layoutUnit id="lyContent" position="center">  
@@ -27,7 +59,13 @@
             </p:layoutUnit>  
 
             <p:layoutUnit id="lySouth" position="south" size="100" resizable="true" collapsible="true">  
-                <ui:insert name="bottom">Bottom</ui:insert>
+                <p:feedReader id="feedNoticias" size="6" value="http://www.essalud.gob.pe/feed/" var="feed">
+                    <h:outputText value="${feed.title}" style="font-weight: bold"/>  
+                    <br />  
+                    <h:outputText value="${feed.description.value}" escape="false"/>
+                    <p:separator /> 
+                    <f:facet name="error">Error al mostrar noticia.</f:facet>
+                </p:feedReader> 
             </p:layoutUnit>  
 
         </p:layout>  

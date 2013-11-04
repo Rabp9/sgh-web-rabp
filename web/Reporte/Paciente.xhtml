@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../templates/template.xhtml">
+
+            <ui:define name="title">
+                Reporte Pacientes
+            </ui:define>
+
+            <ui:define name="recursos">
+            </ui:define>
+
+            <ui:define name="dialogs">
+                dialogs
+            </ui:define>
+
+            <ui:define name="top">
+                top
+            </ui:define>
+
+            <ui:define name="left">
+            </ui:define>
+
+            <ui:define name="content">
+                <h:form id="frmReportePaciente" title="Formulario de Reporte de Pacientes">
+                    <p:panel id="pnlReportePaciente" header="Reporte General">
+                        <p:fieldset legend="Reporte General" toggleable="true">
+                            <p:dataTable id="tblPacientes" var="paciente" value="${reportePacienteBean.listaPacientes}"
+                                sortMode="multiple" rowKey="${paciente.dni}" paginator="true" rows="10" 
+                                currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                rowsPerPageTemplate="5,10,20" selection="${reportePacienteBean.selectedPaciente}" selectionMode="single"
+                                emptyMessage="Ningún Paciente Registrado" scrollable="true" scrollHeight="190"
+                                resizableColumns="true">
+
+                                <f:facet name="header">  
+                                    Lista de Pacientes
+                                </f:facet>  
+
+                                <p:column sortBy="${paciente.dni}" filterBy="${paciente.dni}" headerText="Código" width="150">  
+                                    <h:outputText value="${paciente.dni}" />  
+                                </p:column>
+
+                                <p:column sortBy="${paciente.nombre}" filterBy="${paciente.nombre}" filterMatchMode="contains" headerText="Nombre">  
+                                    <h:outputText value="${paciente.nombre}" />  
+                                </p:column>
+
+                                <f:facet name="footer">  
+                                    <p:commandButton id="btnReportarGeneral" value="Reportar" icon="ui-icon-plus"/>
+                                </f:facet>  
+
+                            </p:dataTable>
+                        </p:fieldset>            
+                        <p:fieldset legend="Reporte Detallado" toggleable="true">
+                            <p:outputLabel value="Número de DNI" for="txtDni"/>
+                            <p:inputText id="txtDni" value="${reportePacienteBean.dni}"/>
+                            <p:commandButton id="btnReportarDetalle" value="Reportar" icon="ui-icon-plus"/>
+                        </p:fieldset>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.sghweb.controllers.ActividadJpaController;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
@@ -22,7 +22,7 @@ import org.sghweb.jpa.Actividad;
  * @author Roberto
  */
 @ManagedBean
-@RequestScoped
+@ViewScoped
 public class MantenimientoActividadBean implements Serializable {
 
     private List<Actividad> listaActividades;
@@ -40,6 +40,8 @@ public class MantenimientoActividadBean implements Serializable {
         try {
             actividad.setEstado(Short.parseShort("1"));
             ajc.create(actividad);
+            listaActividades = ajc.findActividadEntities();
+            actividad = new Actividad();
             FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Actividad Registrada correctamente", null);
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
         } catch (PreexistingEntityException ex) {
@@ -52,7 +54,42 @@ public class MantenimientoActividadBean implements Serializable {
             Logger.getLogger(MantenimientoActividadBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+        
+    public void editar() {
+        try {
+            ajc.edit(selectedActividad);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Actividad Modificada correctamente", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        } catch (PreexistingEntityException ex) {
+            Logger.getLogger(MantenimientoActividadBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RollbackFailureException ex) {
+            Logger.getLogger(MantenimientoActividadBean.class.getName()).log(Level.SEVERE, null, ex);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al modificar Actividad", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        } catch (Exception ex) {
+            Logger.getLogger(MantenimientoActividadBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
+    public void eliminar() {
+        try {
+            if(selectedActividad != null) {
+                selectedActividad.setEstado(Short.parseShort("2"));
+                ajc.edit(selectedActividad);
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Actividad Eliminada correctamente", null);
+                FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            }
+        } catch (PreexistingEntityException ex) {
+            Logger.getLogger(MantenimientoActividadBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RollbackFailureException ex) {
+            Logger.getLogger(MantenimientoActividadBean.class.getName()).log(Level.SEVERE, null, ex);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al Eliminar Actividad", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        } catch (Exception ex) {
+            Logger.getLogger(MantenimientoActividadBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+        
     public List<Actividad> getListaActividades() {
         return listaActividades;
     }

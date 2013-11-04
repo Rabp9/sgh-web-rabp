@@ -16,7 +16,6 @@
             </ui:define>
 
             <ui:define name="recursos">
-                recursos
             </ui:define>
 
             <ui:define name="dialogs">
@@ -26,15 +25,13 @@
                         showEffect="clip" hideEffect="fold" modal="true">  
                         <ezcomp:ccRegistroActividad
                             accion="Nuevo" actividad="${mantenimientoActividadBean.actividad}"
-                            readOnly="false"/>
-                        <p:panelGrid columns="2">
-                            <h:panelGroup/>
-                            <h:panelGroup>
-                                <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoActividadBean.crear()}" 
-                                                 oncomplete="dialogoNuevoActividad.hide()"/>
-                                <p:commandButton value="Borrar" type="reset"/>
-                            </h:panelGroup>
-                        </p:panelGrid>
+                            readOnlyCodigo="false"
+                            readOnlyDatos="false"/>    
+                        <f:facet name="footer">
+                            <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoActividadBean.crear()}" 
+                                oncomplete="dialogoNuevoActividad.hide()" icon="ui-icon-check" update="frmMantenimientoActividad"/>
+                            <p:commandButton value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w"/>
+                        </f:facet>
                     </p:dialog>
                 </h:form>
                 
@@ -43,13 +40,11 @@
                         showEffect="clip" hideEffect="fold" modal="true">  
                         <ezcomp:ccRegistroActividad
                             accion="Detalle" actividad="${mantenimientoActividadBean.selectedActividad}"
-                            readOnly="true"/>
-                        <p:panelGrid columns="2">
-                            <h:panelGroup/>
-                            <h:panelGroup>
-                                <p:commandButton value="Cerrar" oncomplete="dialogoDetalleActividad.hide()"/>
-                            </h:panelGroup>
-                        </p:panelGrid>
+                            readOnlyCodigo="true"
+                            readOnlyDatos="true"/> 
+                        <f:facet name="footer">
+                            <p:commandButton value="Cerrar" oncomplete="dialogoDetalleActividad.hide()" icon="ui-icon-close"/>
+                        </f:facet>
                     </p:dialog>
                 </h:form>
                 
@@ -58,17 +53,30 @@
                         showEffect="clip" hideEffect="fold" modal="true">  
                         <ezcomp:ccRegistroActividad
                             accion="Modificar" actividad="${mantenimientoActividadBean.selectedActividad}"
-                            readOnly="false"/>
-                        <p:panelGrid columns="2">
-                            <h:panelGroup/>
-                            <h:panelGroup>
-                                <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoActividadBean.editar()}" 
-                                    oncomplete="dialogoModificarActividad.hide()"/>
-                                <p:commandButton value="Borrar" type="reset"/>
-                            </h:panelGroup>
-                        </p:panelGrid>
+                            readOnlyCodigo="true"
+                            readOnlyDatos="false"/>
+                        <f:facet name="footer">
+                            <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoActividadBean.editar()}" 
+                                oncomplete="dialogoModificarActividad.hide()" icon="ui-icon-check"/>
+                            <p:commandButton value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w"/>
+                        </f:facet>
                     </p:dialog>
                 </h:form>
+                
+                <h:form id="frmEliminarActividad">
+                    <p:dialog id="dlgEliminarActividad" header="Eliminar Actividad" widgetVar="dialogoEliminarActividad" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroActividad
+                            accion="Eliminar" actividad="${mantenimientoActividadBean.selectedActividad}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="true"/>
+                        <f:facet name="footer">
+                            <p:commandButton value="Eliminar" ajax="false" actionListener="${mantenimientoActividadBean.eliminar()}" 
+                                oncomplete="dialogoEliminarActividad.hide()" icon="ui-icon-check"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
             </ui:define>
 
             <ui:define name="top">
@@ -76,7 +84,6 @@
             </ui:define>
 
             <ui:define name="left">
-                left
             </ui:define>
 
             <ui:define name="content">
@@ -107,15 +114,15 @@
                                     oncomplete="dialogoNuevoActividad.show()"/>
                                 <p:commandButton id="btnDetalle" value="Detalle" icon="ui-icon-zoomin" update="_frmDetalleActividad"
                                     oncomplete="dialogoDetalleActividad.show()"/>
+                                <p:commandButton id="btnModificar" value="Modificar" icon="ui-icon-pencil" update="_frmModificarActividad"
+                                    oncomplete="dialogoModificarActividad.show()"/>
+                                <p:commandButton id="btnEliminar" value="Eliminar" icon="ui-icon-minus" update="_frmEliminarActividad"
+                                    oncomplete="dialogoEliminarActividad.show()"/>
                             </f:facet>  
                             
                         </p:dataTable>
                     </p:panel>
                 </h:form>
-            </ui:define>
-
-            <ui:define name="bottom">
-                bottom
             </ui:define>
 
         </ui:composition>
