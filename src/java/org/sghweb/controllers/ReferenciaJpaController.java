@@ -22,7 +22,7 @@ import org.sghweb.jpa.ReferenciaPK;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 public class ReferenciaJpaController implements Serializable {
 

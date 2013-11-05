@@ -18,14 +18,14 @@
         <p:panelGrid columns="2">
             <p:outputLabel value="Código" for="txtCodigo${cc.attrs.accion}"/>
             <p:inputText id="txtCodigo${cc.attrs.accion}" value="${cc.attrs.actividad.codigo}" 
-                         maxlength="2" onblur="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyCodigo}"
+                         maxlength="2" onkeyup="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyCodigo}"
                          required="true">
                 <p:watermark value="Código de 2 letras" for="txtCodigo${cc.attrs.accion}"/>
             </p:inputText>
 
             <p:outputLabel value="Descripción" for="txtDescripcion${cc.attrs.accion}"/>
             <p:inputText id="txtDescripcion${cc.attrs.accion}" value="${cc.attrs.actividad.descripcion}"
-                         maxlength="60" onblur="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyDatos}"
+                         maxlength="60" onkeyup="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyDatos}"
                          required="true">
                 <p:watermark value="Escriba una descripción" for="txtDescripcion${cc.attrs.accion}"/>
             </p:inputText>

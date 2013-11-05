@@ -20,7 +20,7 @@ import org.sghweb.jpa.Diagnostico;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 public class DiagnosticoJpaController implements Serializable {
 

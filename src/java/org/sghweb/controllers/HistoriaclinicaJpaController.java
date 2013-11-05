@@ -22,7 +22,7 @@ import org.sghweb.jpa.Paciente;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 public class HistoriaclinicaJpaController implements Serializable {
 

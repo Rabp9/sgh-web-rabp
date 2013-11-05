@@ -6,41 +6,49 @@ package org.sghweb.controllers;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
-import org.sghweb.jpa.Medicamento;
+import org.sghweb.jpa.VwReportepaciente;
 
 /**
  *
  * @author Roberto
  */
-public class MedicamentoJpaController implements Serializable {
+public class VwReportepacienteJpaController implements Serializable {
 
-    public MedicamentoJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public VwReportepacienteJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
         this.emf = emf;
     }
+    @Resource
     private UserTransaction utx = null;
+    @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
+        if (emf == null) { 
+            emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
+        }
         return emf.createEntityManager();
     }
 
-    public void create(Medicamento medicamento) throws PreexistingEntityException, RollbackFailureException, Exception {
+    public void create(VwReportepaciente vwReportepaciente) throws PreexistingEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
             em = getEntityManager();
-            em.persist(medicamento);
+            em.persist(vwReportepaciente);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -48,8 +56,8 @@ public class MedicamentoJpaController implements Serializable {
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
-            if (findMedicamento(medicamento.getCodigo()) != null) {
-                throw new PreexistingEntityException("Medicamento " + medicamento + " already exists.", ex);
+            if (findVwReportepaciente(vwReportepaciente.getDni()) != null) {
+                throw new PreexistingEntityException("VwReportepaciente " + vwReportepaciente + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -59,12 +67,12 @@ public class MedicamentoJpaController implements Serializable {
         }
     }
 
-    public void edit(Medicamento medicamento) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void edit(VwReportepaciente vwReportepaciente) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
             em = getEntityManager();
-            medicamento = em.merge(medicamento);
+            vwReportepaciente = em.merge(vwReportepaciente);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -74,9 +82,9 @@ public class MedicamentoJpaController implements Serializable {
             }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                String id = medicamento.getCodigo();
-                if (findMedicamento(id) == null) {
-                    throw new NonexistentEntityException("The medicamento with id " + id + " no longer exists.");
+                String id = vwReportepaciente.getDni();
+                if (findVwReportepaciente(id) == null) {
+                    throw new NonexistentEntityException("The vwReportepaciente with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -92,14 +100,14 @@ public class MedicamentoJpaController implements Serializable {
         try {
             utx.begin();
             em = getEntityManager();
-            Medicamento medicamento;
+            VwReportepaciente vwReportepaciente;
             try {
-                medicamento = em.getReference(Medicamento.class, id);
-                medicamento.getCodigo();
+                vwReportepaciente = em.getReference(VwReportepaciente.class, id);
+                vwReportepaciente.getDni();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The medicamento with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The vwReportepaciente with id " + id + " no longer exists.", enfe);
             }
-            em.remove(medicamento);
+            em.remove(vwReportepaciente);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -115,19 +123,19 @@ public class MedicamentoJpaController implements Serializable {
         }
     }
 
-    public List<Medicamento> findMedicamentoEntities() {
-        return findMedicamentoEntities(true, -1, -1);
+    public List<VwReportepaciente> findVwReportepacienteEntities() {
+        return findVwReportepacienteEntities(true, -1, -1);
     }
 
-    public List<Medicamento> findMedicamentoEntities(int maxResults, int firstResult) {
-        return findMedicamentoEntities(false, maxResults, firstResult);
+    public List<VwReportepaciente> findVwReportepacienteEntities(int maxResults, int firstResult) {
+        return findVwReportepacienteEntities(false, maxResults, firstResult);
     }
 
-    private List<Medicamento> findMedicamentoEntities(boolean all, int maxResults, int firstResult) {
+    private List<VwReportepaciente> findVwReportepacienteEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(Medicamento.class));
+            cq.select(cq.from(VwReportepaciente.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -139,20 +147,20 @@ public class MedicamentoJpaController implements Serializable {
         }
     }
 
-    public Medicamento findMedicamento(String id) {
+    public VwReportepaciente findVwReportepaciente(String id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(Medicamento.class, id);
+            return em.find(VwReportepaciente.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getMedicamentoCount() {
+    public int getVwReportepacienteCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Medicamento> rt = cq.from(Medicamento.class);
+            Root<VwReportepaciente> rt = cq.from(VwReportepaciente.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();

@@ -14,11 +14,15 @@ import com.lowagie.text.FontFactory;
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.PdfWriter;
 import java.awt.Color;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +30,13 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
+import org.apache.commons.io.IOUtils;
 import org.primefaces.event.SelectEvent;
-import org.sghweb.controllers.PacienteJpaController;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+import org.sghweb.controllers.VwReportepacienteJpaController;
 import org.sghweb.jpa.Paciente;
+import org.sghweb.jpa.VwReportepaciente;
 
 /**
  *
@@ -38,35 +46,35 @@ import org.sghweb.jpa.Paciente;
 @RequestScoped
 public class ReportePacienteBean implements Serializable {
    
-    private List<Paciente> listaPacientes;
-    private Paciente selectedPaciente;
-    private PacienteJpaController pjc;
+    private List<VwReportepaciente> listaReportePacientes;
+    private VwReportepaciente selectedReportePaciente;
+    private VwReportepacienteJpaController vrjc;
     private String dni;
+    private StreamedContent reporte;  
 
     public ReportePacienteBean() {
-        pjc = new PacienteJpaController(null, null);
-        listaPacientes = pjc.findPacienteEntities();
+        vrjc = new VwReportepacienteJpaController(null, null);
+        listaReportePacientes = vrjc.findVwReportepacienteEntities();
         dni = "";
     }
 
     public List<String> listaDni(String query) {  
         List<String> results = new ArrayList();  
           
-        for(Paciente paciente : listaPacientes) {
-            if(paciente.getDni().startsWith(query))
-                results.add(paciente.getDni());
+        for(VwReportepaciente vwReportepaciente : getListaReportePacientes()) {
+            if(vwReportepaciente.getDni().startsWith(query))
+                results.add(vwReportepaciente.getDni());
         }
           
         return results;  
     }  
          
     public void onRowSelect(SelectEvent event) {
-        Paciente paciente = (Paciente) event.getObject();
-        dni = paciente.getDni();
+        VwReportepaciente vwReportepaciente = (VwReportepaciente) event.getObject();
+        setDni(vwReportepaciente.getDni());
     }
     
-    public void preProcessPDF(Object document) throws IOException,
-        BadElementException, DocumentException {
+    public void preProcessPDF(Object document) throws IOException, BadElementException, DocumentException {
         Document pdf = (Document) document;
         ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
         pdf.open();           
@@ -88,32 +96,48 @@ public class ReportePacienteBean implements Serializable {
         titulo.setAlignment(Element.ALIGN_CENTER);
         pdf.add(titulo);
         
-        pdf.add(new Paragraph("Número total de Pacientes: " + listaPacientes.size()));
+        pdf.add(new Paragraph("Número total de Pacientes: " + getListaReportePacientes().size()));
         pdf.add(Chunk.NEWLINE);
     }
+
+    public void reportarPaciente() throws IOException, BadElementException, DocumentException {
+        Document document = new Document();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PdfWriter.getInstance(document, os);
+        document.open();
+        
+        // INICIO Escritura de Reporte
+        document.add(new Paragraph("A Hello World PDF document."));
+
+        //Fin Escritura de Reprote
+        
+        document.close(); // no need to close PDFwriter?
+        InputStream is = new ByteArrayInputStream(os.toByteArray());
+        setReporte(new DefaultStreamedContent(is, "application/pdf", "ohyeah.pdf"));
+    }
     
-    public List<Paciente> getListaPacientes() {
-        return listaPacientes;
+    public List<VwReportepaciente> getListaReportePacientes() {
+        return listaReportePacientes;
     }
 
-    public void setListaPacientes(List<Paciente> listaPacientes) {
-        this.listaPacientes = listaPacientes;
+    public void setListaReportePacientes(List<VwReportepaciente> listaReportePacientes) {
+        this.listaReportePacientes = listaReportePacientes;
     }
 
-    public Paciente getSelectedPaciente() {
-        return selectedPaciente;
+    public VwReportepaciente getSelectedReportePaciente() {
+        return selectedReportePaciente;
     }
 
-    public void setSelectedPaciente(Paciente selectedPaciente) {
-        this.selectedPaciente = selectedPaciente;
+    public void setSelectedReportePaciente(VwReportepaciente selectedReportePaciente) {
+        this.selectedReportePaciente = selectedReportePaciente;
     }
 
-    public PacienteJpaController getPjc() {
-        return pjc;
+    public VwReportepacienteJpaController getVrjc() {
+        return vrjc;
     }
 
-    public void setPjc(PacienteJpaController pjc) {
-        this.pjc = pjc;
+    public void setVrjc(VwReportepacienteJpaController vrjc) {
+        this.vrjc = vrjc;
     }
 
     public String getDni() {
@@ -122,6 +146,14 @@ public class ReportePacienteBean implements Serializable {
 
     public void setDni(String dni) {
         this.dni = dni;
+    }
+
+    public StreamedContent getReporte() {
+        return reporte;
+    }
+
+    public void setReporte(StreamedContent reporte) {
+        this.reporte = reporte;
     }
 
 }

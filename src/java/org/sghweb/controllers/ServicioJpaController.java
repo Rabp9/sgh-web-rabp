@@ -20,7 +20,7 @@ import org.sghweb.jpa.Servicio;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 public class ServicioJpaController implements Serializable {
 
