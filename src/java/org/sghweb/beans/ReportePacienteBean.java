@@ -1,29 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.sghweb.beans;
 
-import com.lowagie.text.BadElementException;
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.HeaderFooter;
-import com.lowagie.text.Image;
-import com.lowagie.text.Paragraph;
+import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
@@ -197,7 +180,7 @@ public class ReportePacienteBean implements Serializable {
         
         pdf.close(); // no need to close PDFwriter?
         InputStream is = new ByteArrayInputStream(os.toByteArray());
-        setReporte(new DefaultStreamedContent(is, "application/pdf", "ohyeah.pdf"));
+        setReporte(new DefaultStreamedContent(is, "application/pdf", "Paciente.pdf"));
     }
     
     public List<VwReportepaciente> getListaReportePacientes() {
@@ -239,5 +222,4 @@ public class ReportePacienteBean implements Serializable {
     public void setReporte(StreamedContent reporte) {
         this.reporte = reporte;
     }
-
 }
