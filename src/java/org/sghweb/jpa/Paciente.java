@@ -81,7 +81,7 @@ public class Paciente implements Serializable {
     @Column(name = "titular")
     private String titular;
     @Column(name = "estado")
-    private Short estado;
+    private Character estado;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "paciente")
     private List<Cita> citaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "paciente")
@@ -182,11 +182,11 @@ public class Paciente implements Serializable {
         this.titular = titular;
     }
 
-    public Short getEstado() {
+    public Character getEstado() {
         return estado;
     }
 
-    public void setEstado(Short estado) {
+    public void setEstado(Character estado) {
         this.estado = estado;
     }
 

@@ -35,7 +35,7 @@ public class MantenimientoActividadBean implements Serializable {
     
     public void crear() {
         try {
-            actividad.setEstado(Short.parseShort("1"));
+            actividad.setEstado('1');
             ajc.create(actividad);
             listaActividades = ajc.findActividadEntities();
             actividad = new Actividad();
@@ -71,7 +71,7 @@ public class MantenimientoActividadBean implements Serializable {
     public void eliminar() {
         try {
             if(selectedActividad != null) {
-                selectedActividad.setEstado(Short.parseShort("2"));
+                selectedActividad.setEstado('2');
                 ajc.edit(selectedActividad);
                 FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Actividad Eliminada correctamente", null);
                 FacesContext.getCurrentInstance().addMessage(null, facesMessage);

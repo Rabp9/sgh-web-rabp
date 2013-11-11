@@ -44,7 +44,7 @@ public class Diagnostico implements Serializable {
     @Column(name = "sexoAfectado")
     private String sexoAfectado;
     @Column(name = "estado")
-    private Short estado;
+    private Character estado;
 
     public Diagnostico() {
     }
@@ -77,11 +77,11 @@ public class Diagnostico implements Serializable {
         this.sexoAfectado = sexoAfectado;
     }
 
-    public Short getEstado() {
+    public Character getEstado() {
         return estado;
     }
 
-    public void setEstado(Short estado) {
+    public void setEstado(Character estado) {
         this.estado = estado;
     }
 

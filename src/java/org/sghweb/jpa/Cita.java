@@ -29,10 +29,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Cita.findAll", query = "SELECT c FROM Cita c"),
     @NamedQuery(name = "Cita.findByActoMedico", query = "SELECT c FROM Cita c WHERE c.citaPK.actoMedico = :actoMedico"),
-    @NamedQuery(name = "Cita.findByFecha", query = "SELECT c FROM Cita c WHERE c.fecha = :fecha"),
     @NamedQuery(name = "Cita.findByPacientedni", query = "SELECT c FROM Cita c WHERE c.citaPK.pacientedni = :pacientedni"),
     @NamedQuery(name = "Cita.findByMedicocmp", query = "SELECT c FROM Cita c WHERE c.citaPK.medicocmp = :medicocmp"),
-    @NamedQuery(name = "Cita.findByMedicodni", query = "SELECT c FROM Cita c WHERE c.citaPK.medicodni = :medicodni")})
+    @NamedQuery(name = "Cita.findByMedicodni", query = "SELECT c FROM Cita c WHERE c.citaPK.medicodni = :medicodni"),
+    @NamedQuery(name = "Cita.findByFecha", query = "SELECT c FROM Cita c WHERE c.fecha = :fecha"),
+    @NamedQuery(name = "Cita.findByEstado", query = "SELECT c FROM Cita c WHERE c.estado = :estado")})
 public class Cita implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -40,6 +41,8 @@ public class Cita implements Serializable {
     @Column(name = "fecha")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fecha;
+    @Column(name = "estado")
+    private Character estado;
     @JoinColumns({
         @JoinColumn(name = "Medico_cmp", referencedColumnName = "cmp", insertable = false, updatable = false),
         @JoinColumn(name = "Medico_dni", referencedColumnName = "dni", insertable = false, updatable = false)})
@@ -74,6 +77,14 @@ public class Cita implements Serializable {
 
     public void setFecha(Date fecha) {
         this.fecha = fecha;
+    }
+
+    public Character getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Character estado) {
+        this.estado = estado;
     }
 
     public Medico getMedico() {

@@ -19,6 +19,7 @@ import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
+import org.sghweb.jpa.Detalleserviciomedico;
 import org.sghweb.jpa.Medico;
 import org.sghweb.jpa.MedicoPK;
 
@@ -46,6 +47,9 @@ public class MedicoJpaController implements Serializable {
         if (medico.getCitaList() == null) {
             medico.setCitaList(new ArrayList<Cita>());
         }
+        if (medico.getDetalleserviciomedicoList() == null) {
+            medico.setDetalleserviciomedicoList(new ArrayList<Detalleserviciomedico>());
+        }
         EntityManager em = null;
         try {
             utx.begin();
@@ -56,6 +60,12 @@ public class MedicoJpaController implements Serializable {
                 attachedCitaList.add(citaListCitaToAttach);
             }
             medico.setCitaList(attachedCitaList);
+            List<Detalleserviciomedico> attachedDetalleserviciomedicoList = new ArrayList<Detalleserviciomedico>();
+            for (Detalleserviciomedico detalleserviciomedicoListDetalleserviciomedicoToAttach : medico.getDetalleserviciomedicoList()) {
+                detalleserviciomedicoListDetalleserviciomedicoToAttach = em.getReference(detalleserviciomedicoListDetalleserviciomedicoToAttach.getClass(), detalleserviciomedicoListDetalleserviciomedicoToAttach.getDetalleserviciomedicoPK());
+                attachedDetalleserviciomedicoList.add(detalleserviciomedicoListDetalleserviciomedicoToAttach);
+            }
+            medico.setDetalleserviciomedicoList(attachedDetalleserviciomedicoList);
             em.persist(medico);
             for (Cita citaListCita : medico.getCitaList()) {
                 Medico oldMedicoOfCitaListCita = citaListCita.getMedico();
@@ -64,6 +74,15 @@ public class MedicoJpaController implements Serializable {
                 if (oldMedicoOfCitaListCita != null) {
                     oldMedicoOfCitaListCita.getCitaList().remove(citaListCita);
                     oldMedicoOfCitaListCita = em.merge(oldMedicoOfCitaListCita);
+                }
+            }
+            for (Detalleserviciomedico detalleserviciomedicoListDetalleserviciomedico : medico.getDetalleserviciomedicoList()) {
+                Medico oldMedicoOfDetalleserviciomedicoListDetalleserviciomedico = detalleserviciomedicoListDetalleserviciomedico.getMedico();
+                detalleserviciomedicoListDetalleserviciomedico.setMedico(medico);
+                detalleserviciomedicoListDetalleserviciomedico = em.merge(detalleserviciomedicoListDetalleserviciomedico);
+                if (oldMedicoOfDetalleserviciomedicoListDetalleserviciomedico != null) {
+                    oldMedicoOfDetalleserviciomedicoListDetalleserviciomedico.getDetalleserviciomedicoList().remove(detalleserviciomedicoListDetalleserviciomedico);
+                    oldMedicoOfDetalleserviciomedicoListDetalleserviciomedico = em.merge(oldMedicoOfDetalleserviciomedicoListDetalleserviciomedico);
                 }
             }
             utx.commit();
@@ -92,6 +111,8 @@ public class MedicoJpaController implements Serializable {
             Medico persistentMedico = em.find(Medico.class, medico.getMedicoPK());
             List<Cita> citaListOld = persistentMedico.getCitaList();
             List<Cita> citaListNew = medico.getCitaList();
+            List<Detalleserviciomedico> detalleserviciomedicoListOld = persistentMedico.getDetalleserviciomedicoList();
+            List<Detalleserviciomedico> detalleserviciomedicoListNew = medico.getDetalleserviciomedicoList();
             List<String> illegalOrphanMessages = null;
             for (Cita citaListOldCita : citaListOld) {
                 if (!citaListNew.contains(citaListOldCita)) {
@@ -99,6 +120,14 @@ public class MedicoJpaController implements Serializable {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
                     illegalOrphanMessages.add("You must retain Cita " + citaListOldCita + " since its medico field is not nullable.");
+                }
+            }
+            for (Detalleserviciomedico detalleserviciomedicoListOldDetalleserviciomedico : detalleserviciomedicoListOld) {
+                if (!detalleserviciomedicoListNew.contains(detalleserviciomedicoListOldDetalleserviciomedico)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Detalleserviciomedico " + detalleserviciomedicoListOldDetalleserviciomedico + " since its medico field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -111,6 +140,13 @@ public class MedicoJpaController implements Serializable {
             }
             citaListNew = attachedCitaListNew;
             medico.setCitaList(citaListNew);
+            List<Detalleserviciomedico> attachedDetalleserviciomedicoListNew = new ArrayList<Detalleserviciomedico>();
+            for (Detalleserviciomedico detalleserviciomedicoListNewDetalleserviciomedicoToAttach : detalleserviciomedicoListNew) {
+                detalleserviciomedicoListNewDetalleserviciomedicoToAttach = em.getReference(detalleserviciomedicoListNewDetalleserviciomedicoToAttach.getClass(), detalleserviciomedicoListNewDetalleserviciomedicoToAttach.getDetalleserviciomedicoPK());
+                attachedDetalleserviciomedicoListNew.add(detalleserviciomedicoListNewDetalleserviciomedicoToAttach);
+            }
+            detalleserviciomedicoListNew = attachedDetalleserviciomedicoListNew;
+            medico.setDetalleserviciomedicoList(detalleserviciomedicoListNew);
             medico = em.merge(medico);
             for (Cita citaListNewCita : citaListNew) {
                 if (!citaListOld.contains(citaListNewCita)) {
@@ -120,6 +156,17 @@ public class MedicoJpaController implements Serializable {
                     if (oldMedicoOfCitaListNewCita != null && !oldMedicoOfCitaListNewCita.equals(medico)) {
                         oldMedicoOfCitaListNewCita.getCitaList().remove(citaListNewCita);
                         oldMedicoOfCitaListNewCita = em.merge(oldMedicoOfCitaListNewCita);
+                    }
+                }
+            }
+            for (Detalleserviciomedico detalleserviciomedicoListNewDetalleserviciomedico : detalleserviciomedicoListNew) {
+                if (!detalleserviciomedicoListOld.contains(detalleserviciomedicoListNewDetalleserviciomedico)) {
+                    Medico oldMedicoOfDetalleserviciomedicoListNewDetalleserviciomedico = detalleserviciomedicoListNewDetalleserviciomedico.getMedico();
+                    detalleserviciomedicoListNewDetalleserviciomedico.setMedico(medico);
+                    detalleserviciomedicoListNewDetalleserviciomedico = em.merge(detalleserviciomedicoListNewDetalleserviciomedico);
+                    if (oldMedicoOfDetalleserviciomedicoListNewDetalleserviciomedico != null && !oldMedicoOfDetalleserviciomedicoListNewDetalleserviciomedico.equals(medico)) {
+                        oldMedicoOfDetalleserviciomedicoListNewDetalleserviciomedico.getDetalleserviciomedicoList().remove(detalleserviciomedicoListNewDetalleserviciomedico);
+                        oldMedicoOfDetalleserviciomedicoListNewDetalleserviciomedico = em.merge(oldMedicoOfDetalleserviciomedicoListNewDetalleserviciomedico);
                     }
                 }
             }
@@ -164,6 +211,13 @@ public class MedicoJpaController implements Serializable {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
                 illegalOrphanMessages.add("This Medico (" + medico + ") cannot be destroyed since the Cita " + citaListOrphanCheckCita + " in its citaList field has a non-nullable medico field.");
+            }
+            List<Detalleserviciomedico> detalleserviciomedicoListOrphanCheck = medico.getDetalleserviciomedicoList();
+            for (Detalleserviciomedico detalleserviciomedicoListOrphanCheckDetalleserviciomedico : detalleserviciomedicoListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Medico (" + medico + ") cannot be destroyed since the Detalleserviciomedico " + detalleserviciomedicoListOrphanCheckDetalleserviciomedico + " in its detalleserviciomedicoList field has a non-nullable medico field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);

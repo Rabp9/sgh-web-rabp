@@ -6,18 +6,22 @@ package org.sghweb.jpa;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -64,7 +68,9 @@ public class Medicamento implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fechaVencimiento;
     @Column(name = "estado")
-    private Short estado;
+    private Character estado;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "medicamento")
+    private List<Receta> recetaList;
 
     public Medicamento() {
     }
@@ -137,12 +143,21 @@ public class Medicamento implements Serializable {
         this.fechaVencimiento = fechaVencimiento;
     }
 
-    public Short getEstado() {
+    public Character getEstado() {
         return estado;
     }
 
-    public void setEstado(Short estado) {
+    public void setEstado(Character estado) {
         this.estado = estado;
+    }
+
+    @XmlTransient
+    public List<Receta> getRecetaList() {
+        return recetaList;
+    }
+
+    public void setRecetaList(List<Receta> recetaList) {
+        this.recetaList = recetaList;
     }
 
     @Override

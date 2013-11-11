@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Referencia.findAll", query = "SELECT r FROM Referencia r"),
     @NamedQuery(name = "Referencia.findByNumeroRegistro", query = "SELECT r FROM Referencia r WHERE r.referenciaPK.numeroRegistro = :numeroRegistro"),
+    @NamedQuery(name = "Referencia.findByPacientedni", query = "SELECT r FROM Referencia r WHERE r.referenciaPK.pacientedni = :pacientedni"),
     @NamedQuery(name = "Referencia.findByFechaEmision", query = "SELECT r FROM Referencia r WHERE r.fechaEmision = :fechaEmision"),
     @NamedQuery(name = "Referencia.findByFechaRecibida", query = "SELECT r FROM Referencia r WHERE r.fechaRecibida = :fechaRecibida"),
     @NamedQuery(name = "Referencia.findByMotivo", query = "SELECT r FROM Referencia r WHERE r.motivo = :motivo"),
-    @NamedQuery(name = "Referencia.findByEstado", query = "SELECT r FROM Referencia r WHERE r.estado = :estado"),
-    @NamedQuery(name = "Referencia.findByPacientedni", query = "SELECT r FROM Referencia r WHERE r.referenciaPK.pacientedni = :pacientedni")})
+    @NamedQuery(name = "Referencia.findByEstado", query = "SELECT r FROM Referencia r WHERE r.estado = :estado")})
 public class Referencia implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -54,7 +54,7 @@ public class Referencia implements Serializable {
     @Column(name = "motivo")
     private String motivo;
     @Column(name = "estado")
-    private Short estado;
+    private Character estado;
     @JoinColumn(name = "Paciente_dni", referencedColumnName = "dni", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Paciente paciente;
@@ -108,11 +108,11 @@ public class Referencia implements Serializable {
         this.motivo = motivo;
     }
 
-    public Short getEstado() {
+    public Character getEstado() {
         return estado;
     }
 
-    public void setEstado(Short estado) {
+    public void setEstado(Character estado) {
         this.estado = estado;
     }
 

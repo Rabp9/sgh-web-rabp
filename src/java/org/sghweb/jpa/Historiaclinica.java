@@ -56,7 +56,7 @@ public class Historiaclinica implements Serializable {
     @Column(name = "numCitasTotal")
     private Integer numCitasTotal;
     @Column(name = "estado")
-    private Short estado;
+    private Character estado;
     @JoinColumn(name = "Paciente_dni", referencedColumnName = "dni", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Paciente paciente;
@@ -118,11 +118,11 @@ public class Historiaclinica implements Serializable {
         this.numCitasTotal = numCitasTotal;
     }
 
-    public Short getEstado() {
+    public Character getEstado() {
         return estado;
     }
 
-    public void setEstado(Short estado) {
+    public void setEstado(Character estado) {
         this.estado = estado;
     }
 

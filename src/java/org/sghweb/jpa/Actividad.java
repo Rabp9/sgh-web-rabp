@@ -40,7 +40,7 @@ public class Actividad implements Serializable {
     @Column(name = "descripcion")
     private String descripcion;
     @Column(name = "estado")
-    private Short estado;
+    private Character estado;
 
     public Actividad() {
     }
@@ -65,11 +65,11 @@ public class Actividad implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Short getEstado() {
+    public Character getEstado() {
         return estado;
     }
 
-    public void setEstado(Short estado) {
+    public void setEstado(Character estado) {
         this.estado = estado;
     }
 

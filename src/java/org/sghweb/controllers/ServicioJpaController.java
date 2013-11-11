@@ -5,14 +5,17 @@
 package org.sghweb.controllers;
 
 import java.io.Serializable;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import org.sghweb.jpa.Detalleserviciomedico;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
+import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
@@ -36,11 +39,29 @@ public class ServicioJpaController implements Serializable {
     }
 
     public void create(Servicio servicio) throws PreexistingEntityException, RollbackFailureException, Exception {
+        if (servicio.getDetalleserviciomedicoList() == null) {
+            servicio.setDetalleserviciomedicoList(new ArrayList<Detalleserviciomedico>());
+        }
         EntityManager em = null;
         try {
             utx.begin();
             em = getEntityManager();
+            List<Detalleserviciomedico> attachedDetalleserviciomedicoList = new ArrayList<Detalleserviciomedico>();
+            for (Detalleserviciomedico detalleserviciomedicoListDetalleserviciomedicoToAttach : servicio.getDetalleserviciomedicoList()) {
+                detalleserviciomedicoListDetalleserviciomedicoToAttach = em.getReference(detalleserviciomedicoListDetalleserviciomedicoToAttach.getClass(), detalleserviciomedicoListDetalleserviciomedicoToAttach.getDetalleserviciomedicoPK());
+                attachedDetalleserviciomedicoList.add(detalleserviciomedicoListDetalleserviciomedicoToAttach);
+            }
+            servicio.setDetalleserviciomedicoList(attachedDetalleserviciomedicoList);
             em.persist(servicio);
+            for (Detalleserviciomedico detalleserviciomedicoListDetalleserviciomedico : servicio.getDetalleserviciomedicoList()) {
+                Servicio oldServicioOfDetalleserviciomedicoListDetalleserviciomedico = detalleserviciomedicoListDetalleserviciomedico.getServicio();
+                detalleserviciomedicoListDetalleserviciomedico.setServicio(servicio);
+                detalleserviciomedicoListDetalleserviciomedico = em.merge(detalleserviciomedicoListDetalleserviciomedico);
+                if (oldServicioOfDetalleserviciomedicoListDetalleserviciomedico != null) {
+                    oldServicioOfDetalleserviciomedicoListDetalleserviciomedico.getDetalleserviciomedicoList().remove(detalleserviciomedicoListDetalleserviciomedico);
+                    oldServicioOfDetalleserviciomedicoListDetalleserviciomedico = em.merge(oldServicioOfDetalleserviciomedicoListDetalleserviciomedico);
+                }
+            }
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -59,12 +80,45 @@ public class ServicioJpaController implements Serializable {
         }
     }
 
-    public void edit(Servicio servicio) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void edit(Servicio servicio) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
             em = getEntityManager();
+            Servicio persistentServicio = em.find(Servicio.class, servicio.getCodigo());
+            List<Detalleserviciomedico> detalleserviciomedicoListOld = persistentServicio.getDetalleserviciomedicoList();
+            List<Detalleserviciomedico> detalleserviciomedicoListNew = servicio.getDetalleserviciomedicoList();
+            List<String> illegalOrphanMessages = null;
+            for (Detalleserviciomedico detalleserviciomedicoListOldDetalleserviciomedico : detalleserviciomedicoListOld) {
+                if (!detalleserviciomedicoListNew.contains(detalleserviciomedicoListOldDetalleserviciomedico)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Detalleserviciomedico " + detalleserviciomedicoListOldDetalleserviciomedico + " since its servicio field is not nullable.");
+                }
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
+            List<Detalleserviciomedico> attachedDetalleserviciomedicoListNew = new ArrayList<Detalleserviciomedico>();
+            for (Detalleserviciomedico detalleserviciomedicoListNewDetalleserviciomedicoToAttach : detalleserviciomedicoListNew) {
+                detalleserviciomedicoListNewDetalleserviciomedicoToAttach = em.getReference(detalleserviciomedicoListNewDetalleserviciomedicoToAttach.getClass(), detalleserviciomedicoListNewDetalleserviciomedicoToAttach.getDetalleserviciomedicoPK());
+                attachedDetalleserviciomedicoListNew.add(detalleserviciomedicoListNewDetalleserviciomedicoToAttach);
+            }
+            detalleserviciomedicoListNew = attachedDetalleserviciomedicoListNew;
+            servicio.setDetalleserviciomedicoList(detalleserviciomedicoListNew);
             servicio = em.merge(servicio);
+            for (Detalleserviciomedico detalleserviciomedicoListNewDetalleserviciomedico : detalleserviciomedicoListNew) {
+                if (!detalleserviciomedicoListOld.contains(detalleserviciomedicoListNewDetalleserviciomedico)) {
+                    Servicio oldServicioOfDetalleserviciomedicoListNewDetalleserviciomedico = detalleserviciomedicoListNewDetalleserviciomedico.getServicio();
+                    detalleserviciomedicoListNewDetalleserviciomedico.setServicio(servicio);
+                    detalleserviciomedicoListNewDetalleserviciomedico = em.merge(detalleserviciomedicoListNewDetalleserviciomedico);
+                    if (oldServicioOfDetalleserviciomedicoListNewDetalleserviciomedico != null && !oldServicioOfDetalleserviciomedicoListNewDetalleserviciomedico.equals(servicio)) {
+                        oldServicioOfDetalleserviciomedicoListNewDetalleserviciomedico.getDetalleserviciomedicoList().remove(detalleserviciomedicoListNewDetalleserviciomedico);
+                        oldServicioOfDetalleserviciomedicoListNewDetalleserviciomedico = em.merge(oldServicioOfDetalleserviciomedicoListNewDetalleserviciomedico);
+                    }
+                }
+            }
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -87,7 +141,7 @@ public class ServicioJpaController implements Serializable {
         }
     }
 
-    public void destroy(String id) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void destroy(String id) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
@@ -98,6 +152,17 @@ public class ServicioJpaController implements Serializable {
                 servicio.getCodigo();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The servicio with id " + id + " no longer exists.", enfe);
+            }
+            List<String> illegalOrphanMessages = null;
+            List<Detalleserviciomedico> detalleserviciomedicoListOrphanCheck = servicio.getDetalleserviciomedicoList();
+            for (Detalleserviciomedico detalleserviciomedicoListOrphanCheckDetalleserviciomedico : detalleserviciomedicoListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Servicio (" + servicio + ") cannot be destroyed since the Detalleserviciomedico " + detalleserviciomedicoListOrphanCheckDetalleserviciomedico + " in its detalleserviciomedicoList field has a non-nullable servicio field.");
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
             }
             em.remove(servicio);
             utx.commit();

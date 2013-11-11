@@ -5,16 +5,20 @@
 package org.sghweb.jpa;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -46,7 +50,9 @@ public class Servicio implements Serializable {
     @Column(name = "tipo")
     private String tipo;
     @Column(name = "estado")
-    private Short estado;
+    private Character estado;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "servicio")
+    private List<Detalleserviciomedico> detalleserviciomedicoList;
 
     public Servicio() {
     }
@@ -84,12 +90,21 @@ public class Servicio implements Serializable {
         this.tipo = tipo;
     }
 
-    public Short getEstado() {
+    public Character getEstado() {
         return estado;
     }
 
-    public void setEstado(Short estado) {
+    public void setEstado(Character estado) {
         this.estado = estado;
+    }
+
+    @XmlTransient
+    public List<Detalleserviciomedico> getDetalleserviciomedicoList() {
+        return detalleserviciomedicoList;
+    }
+
+    public void setDetalleserviciomedicoList(List<Detalleserviciomedico> detalleserviciomedicoList) {
+        this.detalleserviciomedicoList = detalleserviciomedicoList;
     }
 
     @Override

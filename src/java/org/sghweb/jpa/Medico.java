@@ -47,9 +47,11 @@ public class Medico implements Serializable {
     @Column(name = "telefono")
     private String telefono;
     @Column(name = "estado")
-    private Short estado;
+    private Character estado;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "medico")
     private List<Cita> citaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "medico")
+    private List<Detalleserviciomedico> detalleserviciomedicoList;
 
     public Medico() {
     }
@@ -91,11 +93,11 @@ public class Medico implements Serializable {
         this.telefono = telefono;
     }
 
-    public Short getEstado() {
+    public Character getEstado() {
         return estado;
     }
 
-    public void setEstado(Short estado) {
+    public void setEstado(Character estado) {
         this.estado = estado;
     }
 
@@ -106,6 +108,15 @@ public class Medico implements Serializable {
 
     public void setCitaList(List<Cita> citaList) {
         this.citaList = citaList;
+    }
+
+    @XmlTransient
+    public List<Detalleserviciomedico> getDetalleserviciomedicoList() {
+        return detalleserviciomedicoList;
+    }
+
+    public void setDetalleserviciomedicoList(List<Detalleserviciomedico> detalleserviciomedicoList) {
+        this.detalleserviciomedicoList = detalleserviciomedicoList;
     }
 
     @Override
