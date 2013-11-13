@@ -43,6 +43,8 @@ public class MantenimientoActividadBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
         } catch (PreexistingEntityException ex) {
             Logger.getLogger(MantenimientoActividadBean.class.getName()).log(Level.SEVERE, null, ex);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ya existe la Actividad", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
         } catch (RollbackFailureException ex) {
             Logger.getLogger(MantenimientoActividadBean.class.getName()).log(Level.SEVERE, null, ex);
             FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al registrar Actividad", null);

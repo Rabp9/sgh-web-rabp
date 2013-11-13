@@ -58,10 +58,12 @@ public class ActividadJpaController implements Serializable {
             try {
                 utx.rollback();
             } catch (Exception re) {
+                if (findActividad(actividad.getCodigo()) != null) {
+                    throw new PreexistingEntityException("Actividad " + actividad + " already exists.", ex);
+                }
+                if(!findActividadByDescripcion(actividad.getDescripcion()).isEmpty())
+                    throw new PreexistingEntityException("Actividad " + actividad + " already exists.", ex);
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
-            }
-            if (findActividad(actividad.getCodigo()) != null) {
-                throw new PreexistingEntityException("Actividad " + actividad + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -73,8 +75,6 @@ public class ActividadJpaController implements Serializable {
 
     public void edit(Actividad actividad) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
-        Context initCtx = new InitialContext(); 
-        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -175,4 +175,8 @@ public class ActividadJpaController implements Serializable {
         }
     }
     
+    public List<Actividad> findActividadByDescripcion(String descripcion) {
+        EntityManager em = getEntityManager();
+        return em.createNamedQuery("Actividad.findByDescripcion").setParameter("descripcion", descripcion).getResultList();
+     }    
 }

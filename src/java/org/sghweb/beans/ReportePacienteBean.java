@@ -56,7 +56,7 @@ public class ReportePacienteBean implements Serializable {
         setDni(vwReportepaciente.getDni());
     }
     
-    public void preProcessPDF(Object document) throws IOException, BadElementException, DocumentException {
+   /* public void preProcessPDF(Object document) throws IOException, BadElementException, DocumentException {
         Document pdf = (Document) document;
         ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
         pdf.open();           
@@ -80,8 +80,38 @@ public class ReportePacienteBean implements Serializable {
         
         pdf.add(new Paragraph("Número total de Pacientes: " + getListaReportePacientes().size()));
         pdf.add(Chunk.NEWLINE);
+        
+    }*/
+    public void reportarGeneral() throws IOException, BadElementException, DocumentException {
+        Document pdf = new Document();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PdfWriter.getInstance(pdf, os);   
+        ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        pdf.open();
+        
+        // INICIO Escritura de Reporte
+        
+        // Cabecera
+        Paragraph cabecera = new Paragraph();
+        String logo = servletContext.getRealPath("") + File.separator + "resources"+ File.separator + "img" + File.separator + "logo - header.png";
+        cabecera.add(Image.getInstance(logo));
+        pdf.setHeader(new HeaderFooter(cabecera, false));    
+        
+        // Título
+        pdf.add(cabecera);
+        Paragraph titulo = new Paragraph("Lista de pacientes", FontFactory.getFont(FontFactory.HELVETICA, 22, Font.BOLD, new Color(0, 0, 0)));
+        titulo.setAlignment(Element.ALIGN_CENTER);
+        pdf.add(titulo);
+        
+        //Mostrar información de Pacientes
+        List<VwReportepaciente> vwReportepacientes = vrjc.findVwReportepacienteEntities();  
+        pdf.add(Chunk.NEWLINE);
+        PdfPTable table = new PdfPTable(6);
+        for (VwReportepaciente vwReportepaciente : vwReportepacientes) {
+            
+        }
     }
-
+    
     public void reportarPaciente() throws IOException, BadElementException, DocumentException {
         Document pdf = new Document();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -107,7 +137,6 @@ public class ReportePacienteBean implements Serializable {
         
         VwReportepaciente vwReportepaciente = vrjc.findVwReportepaciente(dni);
         if(vwReportepaciente == null) {
-            System.out.println("dasasddsadasdasas");
             FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "No existe Pacietne con DNI: " + dni, null);
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
             return;

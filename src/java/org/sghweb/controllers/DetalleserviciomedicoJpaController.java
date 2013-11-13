@@ -42,9 +42,9 @@ public class DetalleserviciomedicoJpaController implements Serializable {
         if (detalleserviciomedico.getDetalleserviciomedicoPK() == null) {
             detalleserviciomedico.setDetalleserviciomedicoPK(new DetalleserviciomedicoPK());
         }
-        detalleserviciomedico.getDetalleserviciomedicoPK().setServiciocodigo(detalleserviciomedico.getServicio().getCodigo());
-        detalleserviciomedico.getDetalleserviciomedicoPK().setMedicodni(detalleserviciomedico.getMedico().getMedicoPK().getDni());
         detalleserviciomedico.getDetalleserviciomedicoPK().setMedicocmp(detalleserviciomedico.getMedico().getMedicoPK().getCmp());
+        detalleserviciomedico.getDetalleserviciomedicoPK().setMedicodni(detalleserviciomedico.getMedico().getMedicoPK().getDni());
+        detalleserviciomedico.getDetalleserviciomedicoPK().setServiciocodigo(detalleserviciomedico.getServicio().getCodigo());
         EntityManager em = null;
         try {
             utx.begin();
@@ -87,9 +87,9 @@ public class DetalleserviciomedicoJpaController implements Serializable {
     }
 
     public void edit(Detalleserviciomedico detalleserviciomedico) throws NonexistentEntityException, RollbackFailureException, Exception {
-        detalleserviciomedico.getDetalleserviciomedicoPK().setServiciocodigo(detalleserviciomedico.getServicio().getCodigo());
-        detalleserviciomedico.getDetalleserviciomedicoPK().setMedicodni(detalleserviciomedico.getMedico().getMedicoPK().getDni());
         detalleserviciomedico.getDetalleserviciomedicoPK().setMedicocmp(detalleserviciomedico.getMedico().getMedicoPK().getCmp());
+        detalleserviciomedico.getDetalleserviciomedicoPK().setMedicodni(detalleserviciomedico.getMedico().getMedicoPK().getDni());
+        detalleserviciomedico.getDetalleserviciomedicoPK().setServiciocodigo(detalleserviciomedico.getServicio().getCodigo());
         EntityManager em = null;
         try {
             utx.begin();

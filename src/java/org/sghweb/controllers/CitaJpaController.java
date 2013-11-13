@@ -42,9 +42,9 @@ public class CitaJpaController implements Serializable {
         if (cita.getCitaPK() == null) {
             cita.setCitaPK(new CitaPK());
         }
+        cita.getCitaPK().setMedicocmp(cita.getMedico().getMedicoPK().getCmp());
         cita.getCitaPK().setPacientedni(cita.getPaciente().getDni());
         cita.getCitaPK().setMedicodni(cita.getMedico().getMedicoPK().getDni());
-        cita.getCitaPK().setMedicocmp(cita.getMedico().getMedicoPK().getCmp());
         EntityManager em = null;
         try {
             utx.begin();
@@ -87,9 +87,9 @@ public class CitaJpaController implements Serializable {
     }
 
     public void edit(Cita cita) throws NonexistentEntityException, RollbackFailureException, Exception {
+        cita.getCitaPK().setMedicocmp(cita.getMedico().getMedicoPK().getCmp());
         cita.getCitaPK().setPacientedni(cita.getPaciente().getDni());
         cita.getCitaPK().setMedicodni(cita.getMedico().getMedicoPK().getDni());
-        cita.getCitaPK().setMedicocmp(cita.getMedico().getMedicoPK().getCmp());
         EntityManager em = null;
         try {
             utx.begin();

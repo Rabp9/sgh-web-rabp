@@ -79,7 +79,7 @@
 
             <ui:define name="content">
                 <h:form id="frmReporteReceta" title="Formulario de Reporte de Recetas">
-                    <p:panel id="pnlReporteReceta" header="Reporte de Recetas">
+                    <p:panel id="pnlReporteReceta" header="Reporte de Recetas" style="overflow: hidden">
                         <p:fieldset legend="Paciente">
                             <p:panelGrid columns="3">
                                 
@@ -109,16 +109,15 @@
                                 
                             </p:panelGrid>
                         </p:fieldset>
-                        <p:panelGrid columns="8">
+                        <p:panelGrid columns="2" style="float: left">
                             <p:outputLabel value="Fecha Inicio: " for="calendarFechaInicio"/>
-                            <p:calendar id="calendarFechaInicio"/> 
-                            <h:panelGroup/>
-                            <h:panelGroup/>
-                            <h:panelGroup/>
-                            <h:panelGroup/>
+                            <p:calendar id="calendarFechaInicio"/>
+                        </p:panelGrid>
+                        <p:panelGrid columns="2" style="float: right">
                             <p:outputLabel value="Fecha Inicio: " for="calendarFechaFin"/>
                             <p:calendar id="calendarFechaFin"/> 
                         </p:panelGrid>
+                        
                     </p:panel>
                 </h:form>
             </ui:define>

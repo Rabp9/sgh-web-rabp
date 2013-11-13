@@ -79,8 +79,8 @@
                                 </p:column>
                                 
                                 <f:facet name="footer">  
-                                    <p:commandButton id="btnReportarGeneral" ajax="false" value="Reportar Todos" icon="ui-icon-search">
-                                        <p:dataExporter type="pdf" target="tblPacientes" fileName="Pacientes" preProcessor="${reportePacienteBean.preProcessPDF}"/>  
+                                    <p:commandButton id="btnReportarGeneral" ajax="false" actionListener="${reportePacienteBean.reportarGeneral}" value="Reportar" icon="ui-icon-search">
+                                        <p:fileDownload value="${reportePacienteBean.reporte}" />  
                                     </p:commandButton>
                                 </f:facet>  
 
