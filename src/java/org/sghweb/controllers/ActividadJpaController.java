@@ -7,6 +7,8 @@ package org.sghweb.controllers;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
@@ -45,6 +47,8 @@ public class ActividadJpaController implements Serializable {
 
     public void create(Actividad actividad) throws PreexistingEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -69,6 +73,8 @@ public class ActividadJpaController implements Serializable {
 
     public void edit(Actividad actividad) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
