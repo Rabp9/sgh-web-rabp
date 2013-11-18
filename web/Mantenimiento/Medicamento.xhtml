@@ -93,8 +93,8 @@
                             rowsPerPageTemplate="5,10,20" selection="${mantenimientoMedicamentoBean.selectedMedicamento}" selectionMode="single"
                             emptyMessage="Ningún Medicamento Registrado" scrollable="true" scrollHeight="190"
                             resizableColumns="true">
-                                                         
-                            <f:facet name="header">  
+
+                            <f:facet name="header">
                                 Lista de Medicamentos
                             </f:facet>  
                             
@@ -106,12 +106,18 @@
                                 <h:outputText value="${medicamento.descripcion}" />  
                             </p:column>
                                              
+                            <p:column sortBy="${medicamento.presentacion}" filterBy="${medicamento.presentacion}" filterMatchMode="contains" headerText="Presentación">
+                                <h:outputText value="${medicamento.presentacion}" />  
+                            </p:column>
+                            
                             <p:column sortBy="${medicamento.stock}" filterBy="${medicamento.stock}" filterMatchMode="contains" headerText="Stock">
                                 <h:outputText value="${medicamento.stock}" />  
                             </p:column>
                                                  
                             <p:column sortBy="${medicamento.fechaVencimiento}" filterBy="${medicamento.fechaVencimiento}" filterMatchMode="contains" headerText="Fecha de Vencimiento">
-                                <h:outputText value="${medicamento.fechaVencimiento}" />  
+                                <h:outputText value="${medicamento.fechaVencimiento}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
                             </p:column>
                             
                             <f:facet name="footer">  

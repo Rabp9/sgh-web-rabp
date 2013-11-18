@@ -18,20 +18,20 @@
         <p:panelGrid columns="2">
             <p:outputLabel value="Código" for="txtCodigo${cc.attrs.accion}"/>
             <p:inputText id="txtCodigo${cc.attrs.accion}" value="${cc.attrs.medicamento.codigo}" 
-                         maxlength="6" onkeyup="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyCodigo}"
+                         maxlength="6" readonly="${cc.attrs.readOnlyCodigo}"
                          required="true">
                 <p:watermark value="Código de 6 letras" for="txtCodigo${cc.attrs.accion}"/>
             </p:inputText>
 
             <p:outputLabel value="Descripción" for="txtDescripcion${cc.attrs.accion}"/>
             <p:inputText id="txtDescripcion${cc.attrs.accion}" value="${cc.attrs.medicamento.descripcion}"
-                         maxlength="60" onkeyup="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyCodigo}"
+                         maxlength="60" readonly="${cc.attrs.readOnlyCodigo}"
                          required="true">
                 <p:watermark value="Escribe una descripción" for="txtDescripcion${cc.attrs.accion}"/>
             </p:inputText> 
             
             <p:outputLabel value="Presentación" for="somPresentacion${cc.attrs.accion}"/>
-            <p:selectOneMenu id="somPresentacion${cc.attrs.accion}" value="${cc.attrs.medicamento.presentacion}">
+            <p:selectOneMenu id="somPresentacion${cc.attrs.accion}" value="${cc.attrs.medicamento.presentacion}" disabled="${cc.attrs.readOnlyCodigo}">
                 <f:selectItem itemLabel="Selecciona una opción" itemValue="" />  
                 <f:selectItem itemLabel="TB" itemValue="TB"/>
                 <f:selectItem itemLabel="AM" itemValue="AM"/>
@@ -59,27 +59,27 @@
             
             <p:outputLabel value="Stock" for="spnStock${cc.attrs.accion}"/>
             <p:spinner id="spnStock${cc.attrs.accion}" value="${cc.attrs.medicamento.stock}"
-                       readonly="${cc.attrs.readOnlyDatos}">
+                       readonly="${cc.attrs.readOnlyDatos}" min="0">
                 <p:watermark value="Indique el stock actual" for="spnStock${cc.attrs.accion}"/>
             </p:spinner>
                       
             <p:outputLabel value="Stock Mínimo" for="spnStockMinimo${cc.attrs.accion}"/>
             <p:spinner id="spnStockMinimo${cc.attrs.accion}" value="${cc.attrs.medicamento.stockMin}"
-                       readonly="${cc.attrs.readOnlyDatos}">
+                       readonly="${cc.attrs.readOnlyDatos}" min="0">
                 <p:watermark value="Indique el stock minimo" for="spnStockMinimo${cc.attrs.accion}"/>
             </p:spinner>
                       
             <p:outputLabel value="Stock Máximo" for="spnStockMaximo${cc.attrs.accion}"/>
             <p:spinner id="spnStockMaximo${cc.attrs.accion}" value="${cc.attrs.medicamento.stockMax}"
-                       readonly="${cc.attrs.readOnlyDatos}">
+                       readonly="${cc.attrs.readOnlyDatos}" min="0">
                 <p:watermark value="Indique el stock máximo" for="spnStockMaximo${cc.attrs.accion}"/>
             </p:spinner>
             
             <p:outputLabel value="Fecha Ingreso" for="clnFechaIngreso${cc.attrs.accion}"/>
-            <p:calendar id="clnFechaIngreso" value="${cc.attrs.fechaIngreso}" readonly="${cc.attrs.readOnlyDatos}"/>
+            <p:calendar id="clnFechaIngreso${cc.attrs.accion}" value="${cc.attrs.fechaIngreso}" readonly="${cc.attrs.readOnlyDatos}"
    
             <p:outputLabel value="Fecha Vencimiento" for="clnFechaVencimiento${cc.attrs.accion}"/>
-            <p:calendar id="clnFechaVencimiento" value="${cc.attrs.fechaVencimiento}" readonly="${cc.attrs.readOnlyDatos}"/>
+            <p:calendar id="clnFechaVencimiento${cc.attrs.accion}" value="${cc.attrs.fechaVencimiento}" readonly="${cc.attrs.readOnlyDatos}"
             
         </p:panelGrid>
     </cc:implementation>

@@ -12,13 +12,19 @@ import javax.persistence.criteria.Root;
 import org.sghweb.jpa.Receta;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 import javax.transaction.UserTransaction;
 import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
+import org.sghweb.jpa.Actividad;
 import org.sghweb.jpa.Medicamento;
 
 /**
@@ -31,10 +37,15 @@ public class MedicamentoJpaController implements Serializable {
         this.utx = utx;
         this.emf = emf;
     }
+    @Resource
     private UserTransaction utx = null;
+    @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
+        if (emf == null) { 
+            emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
+        }
         return emf.createEntityManager();
     }
 
@@ -42,7 +53,9 @@ public class MedicamentoJpaController implements Serializable {
         if (medicamento.getRecetaList() == null) {
             medicamento.setRecetaList(new ArrayList<Receta>());
         }
-        EntityManager em = null;
+        EntityManager em = null;  
+        Context initCtx = new InitialContext();   
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -67,10 +80,12 @@ public class MedicamentoJpaController implements Serializable {
             try {
                 utx.rollback();
             } catch (Exception re) {
+                if (findMedicamento(medicamento.getCodigo()) != null) {
+                    throw new PreexistingEntityException("Medicamento " + medicamento + " already exists.", ex);
+                }
+                if(!findMedicamentoByDescripcion(medicamento.getDescripcion()).isEmpty())
+                    throw new PreexistingEntityException("Medicamento " + medicamento + " already exists.", ex);
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
-            }
-            if (findMedicamento(medicamento.getCodigo()) != null) {
-                throw new PreexistingEntityException("Medicamento " + medicamento + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -81,7 +96,9 @@ public class MedicamentoJpaController implements Serializable {
     }
 
     public void edit(Medicamento medicamento) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
-        EntityManager em = null;
+        EntityManager em = null;  
+        Context initCtx = new InitialContext();   
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -143,6 +160,8 @@ public class MedicamentoJpaController implements Serializable {
 
     public void destroy(String id) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext();   
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -225,5 +244,9 @@ public class MedicamentoJpaController implements Serializable {
             em.close();
         }
     }
-    
+     
+    public List<Medicamento> findMedicamentoByDescripcion(String descripcion) {
+        EntityManager em = getEntityManager();
+        return em.createNamedQuery("Medicamento.findByDescripcion").setParameter("descripcion", descripcion).getResultList();
+    }   
 }
