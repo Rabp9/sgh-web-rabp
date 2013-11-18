@@ -19,22 +19,23 @@
             </ui:define>
 
             <ui:define name="dialogs">
-                
+       
                 <p:growl id="mensaje"/>
                 
                 <h:form id="frmNuevoDiagnostico">
-                    <p:dialog id="dlgNuevoDiagnostico" header="Nueva Diagnostico" widgetVar="dialogoNuevoDiagnostico" resizable="false"  
-                        showEffect="clip" hideEffect="fold" modal="true">  
+                    <p:dialog id="dlgNuevoDiagnostico" header="Nueva Diagnostico" widgetVar="dialogoNuevoDiagnostico" resizable="false" 
+                              showEffect="clip" hideEffect="fold" modal="true">  
                         <ezcomp:ccRegistroDiagnostico
                             accion="Nuevo" diagnostico="${mantenimientoDiagnosticoBean.diagnostico}"
                             readOnlyCodigo="false"
-                            readOnlyDatos="false"/>    
+                            readOnlyDatos="false"/>  
                         <f:facet name="footer">
                             <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoDiagnosticoBean.crear()}" 
-                                oncomplete="dialogoNuevoDiagnostico.hide()" icon="ui-icon-check" update="frmMantenimientoDiagnostico"/>
+                                             oncomplete="dialogoNuevoDiagnostico.hide()" icon="ui-icon-check" update="frmMantenimientoDiagnostico"/>
                             <p:commandButton value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w"/>
                         </f:facet>
                     </p:dialog>
+                  
                 </h:form>
                 
                 <h:form id="frmDetalleDiagnostico">
@@ -85,7 +86,6 @@
             </ui:define>
 
             <ui:define name="content">
-                
                 <h:form id="frmMantenimientoDiagnostico" title="Formulario de Mantenimiento de Diagnósticos">
                     <p:panel id="pnlMantenimientoDiagnostico" header="Mantenimiento Diagnósticos">
                         <p:dataTable id="tblDiagnosticos" var="diagnostico" value="${mantenimientoDiagnosticoBean.listaDiagnosticos}"

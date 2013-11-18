@@ -18,14 +18,14 @@
         <p:panelGrid columns="2">
             <p:outputLabel value="Código" for="txtCodigo${cc.attrs.accion}"/>
             <p:inputText id="txtCodigo${cc.attrs.accion}" value="${cc.attrs.diagnostico.codigo}" 
-                         maxlength="5" onkeyup="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyCodigo}"
+                         maxlength="5" readonly="${cc.attrs.readOnlyCodigo}"
                          required="true">
                 <p:watermark value="Código de 5 letras" for="txtCodigo${cc.attrs.accion}"/>
             </p:inputText>
 
             <p:outputLabel value="Descripción" for="textareaDescripcion${cc.attrs.accion}"/>
             <p:inputTextarea id="textareaDescripcion${cc.attrs.accion}" value="${cc.attrs.diagnostico.descripcion}"
-                         maxlength="250" onkeyup="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyCodigo}"
+                         maxlength="250" readonly="${cc.attrs.readOnlyCodigo}"
                          required="true">
                 <p:watermark value="Escriba una descripción" for="textareaDescripcion${cc.attrs.accion}"/>
             </p:inputTextarea> 
