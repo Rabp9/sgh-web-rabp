@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ezcomp="http://java.sun.com/jsf/composite/ezcomp"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../templates/template.xhtml">
+
+            <ui:define name="title">
+                Mantenimiento Servicios
+            </ui:define>
+
+            <ui:define name="recursos">
+            </ui:define>
+
+            <ui:define name="dialogs">
+                <p:growl id="mensaje"/>
+                <h:form id="frmNuevoServicio">
+                    <p:dialog id="dlgNuevoServicio" header="Nueva Servicio" widgetVar="dialogoNuevoServicio" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroServicio
+                            accion="Nuevo" servicio="${mantenimientoServicioBean.servicio}"
+                            readOnlyCodigo="false"
+                            readOnlyDatos="false"/>    
+                        <f:facet name="footer">
+                            <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoServicioBean.crear()}" 
+                                oncomplete="dialogoNuevoServicio.hide()" icon="ui-icon-check" update="frmMantenimientoServicio"/>
+                            <p:commandButton value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmDetalleServicio">
+                    <p:dialog id="dlgDetalleServicio" header="Detalle Servicio" widgetVar="dialogoDetalleServicio" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroServicio
+                            accion="Detalle" servicio="${mantenimientoServicioBean.selectedServicio}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="true"/> 
+                        <f:facet name="footer">
+                            <p:commandButton value="Cerrar" oncomplete="dialogoDetalleServicio.hide()" icon="ui-icon-close"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmModificarServicio">
+                    <p:dialog id="dlgModificarServicio" header="Modificar Servicio" widgetVar="dialogoModificarServicio" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroServicio
+                            accion="Modificar" servicio="${mantenimientoServicioBean.selectedServicio}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="false"/>
+                        <f:facet name="footer">
+                            <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoServicioBean.editar()}" 
+                                oncomplete="dialogoModificarServicio.hide()" icon="ui-icon-check"/>
+                            <p:commandButton value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmEliminarServicio">
+                    <p:dialog id="dlgEliminarServicio" header="Eliminar Servicio" widgetVar="dialogoEliminarServicio" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroServicio
+                            accion="Eliminar" servicio="${mantenimientoServicioBean.selectedServicio}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="true"/>
+                        <f:facet name="footer">
+                            <p:commandButton value="Eliminar" ajax="false" actionListener="${mantenimientoServicioBean.eliminar()}" 
+                                oncomplete="dialogoEliminarServicio.hide()" icon="ui-icon-check"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+            </ui:define>
+
+            <ui:define name="left">
+
+            </ui:define>
+
+            <ui:define name="content">
+                <h:form id="frmMantenimientoServicio" title="Formulario de Mantenimiento de Servicios">
+                    <p:panel id="pnlMantenimientoServicio" header="Mantenimiento Servicios">
+                        <p:dataTable id="tblServicios" var="servicio" value="${mantenimientoServicioBean.listaServicios}"
+                            sortMode="multiple" rowKey="${servicio.codigo}" paginator="true" rows="10" 
+                            currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                            rowsPerPageTemplate="5,10,20" selection="${mantenimientoServicioBean.selectedServicio}" selectionMode="single"
+                            emptyMessage="Ningún Servicio Registrado" scrollable="true" scrollHeight="190"
+                            resizableColumns="true">
+                                                         
+                            <f:facet name="header">  
+                                Lista de Servicios
+                            </f:facet>  
+                            
+                            <p:column sortBy="${servicio.codigo}" filterBy="${servicio.codigo}" headerText="Código" width="150">  
+                                <h:outputText value="${servicio.codigo}" />  
+                            </p:column>
+                            
+                            <p:column sortBy="${servicio.descripcion}" filterBy="${servicio.descripcion}" filterMatchMode="contains" headerText="Descripción">  
+                                <h:outputText value="${servicio.descripcion}" />  
+                            </p:column>
+                            
+                            <p:column sortBy="${servicio.tipo}" filterBy="${servicio.tipo}" filterMatchMode="contains" headerText="Tipo">  
+                                <h:outputText value="${servicio.tipo}" />  
+                            </p:column>
+                         
+                            <f:facet name="footer">  
+                                <p:commandButton id="btnNuevo" value="Nuevo" icon="ui-icon-plus" update="_frmNuevoServicio"
+                                    oncomplete="dialogoNuevoServicio.show()"/>
+                                <p:commandButton id="btnDetalle" value="Detalle" icon="ui-icon-zoomin" update="_frmDetalleServicio"
+                                    oncomplete="dialogoDetalleServicio.show()"/>
+                                <p:commandButton id="btnModificar" value="Modificar" icon="ui-icon-pencil" update="_frmModificarServicio"
+                                    oncomplete="dialogoModificarServicio.show()"/>
+                                <p:commandButton id="btnEliminar" value="Eliminar" icon="ui-icon-minus" update="_frmEliminarServicio"
+                                    oncomplete="dialogoEliminarServicio.show()"/>
+                            </f:facet>  
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

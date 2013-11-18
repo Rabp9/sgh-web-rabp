@@ -19,17 +19,19 @@
             </ui:define>
 
             <ui:define name="dialogs">
+                
                 <p:growl id="mensaje"/>
+                
                 <h:form id="frmNuevoActividad">
                     <p:dialog id="dlgNuevoActividad" header="Nueva Actividad" widgetVar="dialogoNuevoActividad" resizable="false"  
-                        showEffect="clip" hideEffect="fold" modal="true">  
-                        <ezcomp:ccRegistroActividad
+                              showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroActividad 
                             accion="Nuevo" actividad="${mantenimientoActividadBean.actividad}"
                             readOnlyCodigo="false"
                             readOnlyDatos="false"/>    
                         <f:facet name="footer">
                             <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoActividadBean.crear()}" 
-                                oncomplete="dialogoNuevoActividad.hide()" icon="ui-icon-check" update="frmMantenimientoActividad"/>
+                                             oncomplete="if (args &amp;&amp; !args.validationFailed) dialogoNuevoActividad.hide()" icon="ui-icon-check" update="frmMantenimientoActividad"/>
                             <p:commandButton value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w"/>
                         </f:facet>
                     </p:dialog>
@@ -37,7 +39,7 @@
                 
                 <h:form id="frmDetalleActividad">
                     <p:dialog id="dlgDetalleActividad" header="Detalle Actividad" widgetVar="dialogoDetalleActividad" resizable="false"  
-                        showEffect="clip" hideEffect="fold" modal="true">  
+                              showEffect="clip" hideEffect="fold" modal="true">  
                         <ezcomp:ccRegistroActividad
                             accion="Detalle" actividad="${mantenimientoActividadBean.selectedActividad}"
                             readOnlyCodigo="true"
@@ -50,14 +52,14 @@
                 
                 <h:form id="frmModificarActividad">
                     <p:dialog id="dlgModificarActividad" header="Modificar Actividad" widgetVar="dialogoModificarActividad" resizable="false"  
-                        showEffect="clip" hideEffect="fold" modal="true">  
+                              showEffect="clip" hideEffect="fold" modal="true">  
                         <ezcomp:ccRegistroActividad
                             accion="Modificar" actividad="${mantenimientoActividadBean.selectedActividad}"
                             readOnlyCodigo="true"
                             readOnlyDatos="false"/>
                         <f:facet name="footer">
                             <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoActividadBean.editar()}" 
-                                oncomplete="dialogoModificarActividad.hide()" icon="ui-icon-check"/>
+                                             oncomplete="dialogoModificarActividad.hide()" icon="ui-icon-check"/>
                             <p:commandButton value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w"/>
                         </f:facet>
                     </p:dialog>
@@ -65,14 +67,14 @@
                 
                 <h:form id="frmEliminarActividad">
                     <p:dialog id="dlgEliminarActividad" header="Eliminar Actividad" widgetVar="dialogoEliminarActividad" resizable="false"  
-                        showEffect="clip" hideEffect="fold" modal="true">  
+                              showEffect="clip" hideEffect="fold" modal="true">  
                         <ezcomp:ccRegistroActividad
                             accion="Eliminar" actividad="${mantenimientoActividadBean.selectedActividad}"
                             readOnlyCodigo="true"
                             readOnlyDatos="true"/>
                         <f:facet name="footer">
                             <p:commandButton value="Eliminar" ajax="false" actionListener="${mantenimientoActividadBean.eliminar()}" 
-                                oncomplete="dialogoEliminarActividad.hide()" icon="ui-icon-check"/>
+                                             oncomplete="dialogoEliminarActividad.hide()" icon="ui-icon-check"/>
                         </f:facet>
                     </p:dialog>
                 </h:form>
@@ -83,15 +85,16 @@
             </ui:define>
 
             <ui:define name="content">
+                
                 <h:form id="frmMantenimientoActividad" title="Formulario de Mantenimiento de Actividades">
                     <p:panel id="pnlMantenimientoActividad" header="Mantenimiento Actividades">
                         <p:dataTable id="tblActividades" var="actividad" value="${mantenimientoActividadBean.listaActividades}"
-                            sortMode="multiple" rowKey="${actividad.codigo}" paginator="true" rows="10" 
-                            currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
-                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                            rowsPerPageTemplate="5,10,20" selection="${mantenimientoActividadBean.selectedActividad}" selectionMode="single"
-                            emptyMessage="Ninguna Actividad Registrada" scrollable="true" scrollHeight="190"
-                            resizableColumns="true">
+                                     sortMode="multiple" rowKey="${actividad.codigo}" paginator="true" rows="10" 
+                                     currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                     rowsPerPageTemplate="5,10,20" selection="${mantenimientoActividadBean.selectedActividad}" selectionMode="single"
+                                     emptyMessage="Ninguna Actividad Registrada" scrollable="true" scrollHeight="190"
+                                     resizableColumns="true">
                                                          
                             <f:facet name="header">  
                                 Lista de Actividades
@@ -107,13 +110,13 @@
                             
                             <f:facet name="footer">  
                                 <p:commandButton id="btnNuevo" value="Nuevo" icon="ui-icon-plus" update="_frmNuevoActividad"
-                                    oncomplete="dialogoNuevoActividad.show()"/>
+                                                 oncomplete="dialogoNuevoActividad.show()"/>
                                 <p:commandButton id="btnDetalle" value="Detalle" icon="ui-icon-zoomin" update="_frmDetalleActividad"
-                                    oncomplete="dialogoDetalleActividad.show()"/>
+                                                 oncomplete="dialogoDetalleActividad.show()"/>
                                 <p:commandButton id="btnModificar" value="Modificar" icon="ui-icon-pencil" update="_frmModificarActividad"
-                                    oncomplete="dialogoModificarActividad.show()"/>
+                                                 oncomplete="dialogoModificarActividad.show()"/>
                                 <p:commandButton id="btnEliminar" value="Eliminar" icon="ui-icon-minus" update="_frmEliminarActividad"
-                                    oncomplete="dialogoEliminarActividad.show()"/>
+                                                 oncomplete="dialogoEliminarActividad.show()"/>
                             </f:facet>  
                             
                         </p:dataTable>

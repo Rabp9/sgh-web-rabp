@@ -6,7 +6,9 @@ package org.sghweb.jpa;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -15,11 +17,13 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -30,6 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Detalleserviciomedico.findAll", query = "SELECT d FROM Detalleserviciomedico d"),
+    @NamedQuery(name = "Detalleserviciomedico.findByIdDetalleServicioMedico", query = "SELECT d FROM Detalleserviciomedico d WHERE d.detalleserviciomedicoPK.idDetalleServicioMedico = :idDetalleServicioMedico"),
     @NamedQuery(name = "Detalleserviciomedico.findByServiciocodigo", query = "SELECT d FROM Detalleserviciomedico d WHERE d.detalleserviciomedicoPK.serviciocodigo = :serviciocodigo"),
     @NamedQuery(name = "Detalleserviciomedico.findByMedicocmp", query = "SELECT d FROM Detalleserviciomedico d WHERE d.detalleserviciomedicoPK.medicocmp = :medicocmp"),
     @NamedQuery(name = "Detalleserviciomedico.findByMedicodni", query = "SELECT d FROM Detalleserviciomedico d WHERE d.detalleserviciomedicoPK.medicodni = :medicodni"),
@@ -47,6 +52,8 @@ public class Detalleserviciomedico implements Serializable {
     @Column(name = "fechaFin")
     @Temporal(TemporalType.DATE)
     private Date fechaFin;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "detalleserviciomedico")
+    private List<Turno> turnoList;
     @JoinColumns({
         @JoinColumn(name = "Medico_cmp", referencedColumnName = "cmp", insertable = false, updatable = false),
         @JoinColumn(name = "Medico_dni", referencedColumnName = "dni", insertable = false, updatable = false)})
@@ -68,8 +75,8 @@ public class Detalleserviciomedico implements Serializable {
         this.fechaInicio = fechaInicio;
     }
 
-    public Detalleserviciomedico(String serviciocodigo, String medicocmp, String medicodni) {
-        this.detalleserviciomedicoPK = new DetalleserviciomedicoPK(serviciocodigo, medicocmp, medicodni);
+    public Detalleserviciomedico(int idDetalleServicioMedico, String serviciocodigo, String medicocmp, String medicodni) {
+        this.detalleserviciomedicoPK = new DetalleserviciomedicoPK(idDetalleServicioMedico, serviciocodigo, medicocmp, medicodni);
     }
 
     public DetalleserviciomedicoPK getDetalleserviciomedicoPK() {
@@ -94,6 +101,15 @@ public class Detalleserviciomedico implements Serializable {
 
     public void setFechaFin(Date fechaFin) {
         this.fechaFin = fechaFin;
+    }
+
+    @XmlTransient
+    public List<Turno> getTurnoList() {
+        return turnoList;
+    }
+
+    public void setTurnoList(List<Turno> turnoList) {
+        this.turnoList = turnoList;
     }
 
     public Medico getMedico() {

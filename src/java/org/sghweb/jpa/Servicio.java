@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Servicio.findAll", query = "SELECT s FROM Servicio s"),
     @NamedQuery(name = "Servicio.findByCodigo", query = "SELECT s FROM Servicio s WHERE s.codigo = :codigo"),
     @NamedQuery(name = "Servicio.findByDescripcion", query = "SELECT s FROM Servicio s WHERE s.descripcion = :descripcion"),
-    @NamedQuery(name = "Servicio.findByTipo", query = "SELECT s FROM Servicio s WHERE s.tipo = :tipo"),
+    @NamedQuery(name = "Servicio.findByDepartamento", query = "SELECT s FROM Servicio s WHERE s.departamento = :departamento"),
     @NamedQuery(name = "Servicio.findByEstado", query = "SELECT s FROM Servicio s WHERE s.estado = :estado")})
 public class Servicio implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -47,8 +47,8 @@ public class Servicio implements Serializable {
     @Column(name = "descripcion")
     private String descripcion;
     @Size(max = 45)
-    @Column(name = "tipo")
-    private String tipo;
+    @Column(name = "departamento")
+    private String departamento;
     @Column(name = "estado")
     private Character estado;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "servicio")
@@ -82,12 +82,12 @@ public class Servicio implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getDepartamento() {
+        return departamento;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setDepartamento(String departamento) {
+        this.departamento = departamento;
     }
 
     public Character getEstado() {

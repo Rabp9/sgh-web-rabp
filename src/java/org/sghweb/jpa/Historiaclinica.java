@@ -6,7 +6,9 @@ package org.sghweb.jpa;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -14,11 +16,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -60,6 +64,8 @@ public class Historiaclinica implements Serializable {
     @JoinColumn(name = "Paciente_dni", referencedColumnName = "dni", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Paciente paciente;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "historiaclinica")
+    private List<Detallehistoriaclinica> detallehistoriaclinicaList;
 
     public Historiaclinica() {
     }
@@ -132,6 +138,15 @@ public class Historiaclinica implements Serializable {
 
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
+    }
+
+    @XmlTransient
+    public List<Detallehistoriaclinica> getDetallehistoriaclinicaList() {
+        return detallehistoriaclinicaList;
+    }
+
+    public void setDetallehistoriaclinicaList(List<Detallehistoriaclinica> detallehistoriaclinicaList) {
+        this.detallehistoriaclinicaList = detallehistoriaclinicaList;
     }
 
     @Override

@@ -19,6 +19,7 @@ import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
+import org.sghweb.jpa.Detalleorden;
 import org.sghweb.jpa.Orden;
 
 /**
@@ -42,6 +43,9 @@ public class OrdenJpaController implements Serializable {
         if (orden.getRecetaList() == null) {
             orden.setRecetaList(new ArrayList<Receta>());
         }
+        if (orden.getDetalleordenList() == null) {
+            orden.setDetalleordenList(new ArrayList<Detalleorden>());
+        }
         EntityManager em = null;
         try {
             utx.begin();
@@ -52,6 +56,12 @@ public class OrdenJpaController implements Serializable {
                 attachedRecetaList.add(recetaListRecetaToAttach);
             }
             orden.setRecetaList(attachedRecetaList);
+            List<Detalleorden> attachedDetalleordenList = new ArrayList<Detalleorden>();
+            for (Detalleorden detalleordenListDetalleordenToAttach : orden.getDetalleordenList()) {
+                detalleordenListDetalleordenToAttach = em.getReference(detalleordenListDetalleordenToAttach.getClass(), detalleordenListDetalleordenToAttach.getDetalleordenPK());
+                attachedDetalleordenList.add(detalleordenListDetalleordenToAttach);
+            }
+            orden.setDetalleordenList(attachedDetalleordenList);
             em.persist(orden);
             for (Receta recetaListReceta : orden.getRecetaList()) {
                 Orden oldOrdenOfRecetaListReceta = recetaListReceta.getOrden();
@@ -60,6 +70,15 @@ public class OrdenJpaController implements Serializable {
                 if (oldOrdenOfRecetaListReceta != null) {
                     oldOrdenOfRecetaListReceta.getRecetaList().remove(recetaListReceta);
                     oldOrdenOfRecetaListReceta = em.merge(oldOrdenOfRecetaListReceta);
+                }
+            }
+            for (Detalleorden detalleordenListDetalleorden : orden.getDetalleordenList()) {
+                Orden oldOrdenOfDetalleordenListDetalleorden = detalleordenListDetalleorden.getOrden();
+                detalleordenListDetalleorden.setOrden(orden);
+                detalleordenListDetalleorden = em.merge(detalleordenListDetalleorden);
+                if (oldOrdenOfDetalleordenListDetalleorden != null) {
+                    oldOrdenOfDetalleordenListDetalleorden.getDetalleordenList().remove(detalleordenListDetalleorden);
+                    oldOrdenOfDetalleordenListDetalleorden = em.merge(oldOrdenOfDetalleordenListDetalleorden);
                 }
             }
             utx.commit();
@@ -88,6 +107,8 @@ public class OrdenJpaController implements Serializable {
             Orden persistentOrden = em.find(Orden.class, orden.getNroOrden());
             List<Receta> recetaListOld = persistentOrden.getRecetaList();
             List<Receta> recetaListNew = orden.getRecetaList();
+            List<Detalleorden> detalleordenListOld = persistentOrden.getDetalleordenList();
+            List<Detalleorden> detalleordenListNew = orden.getDetalleordenList();
             List<String> illegalOrphanMessages = null;
             for (Receta recetaListOldReceta : recetaListOld) {
                 if (!recetaListNew.contains(recetaListOldReceta)) {
@@ -95,6 +116,14 @@ public class OrdenJpaController implements Serializable {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
                     illegalOrphanMessages.add("You must retain Receta " + recetaListOldReceta + " since its orden field is not nullable.");
+                }
+            }
+            for (Detalleorden detalleordenListOldDetalleorden : detalleordenListOld) {
+                if (!detalleordenListNew.contains(detalleordenListOldDetalleorden)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Detalleorden " + detalleordenListOldDetalleorden + " since its orden field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -107,6 +136,13 @@ public class OrdenJpaController implements Serializable {
             }
             recetaListNew = attachedRecetaListNew;
             orden.setRecetaList(recetaListNew);
+            List<Detalleorden> attachedDetalleordenListNew = new ArrayList<Detalleorden>();
+            for (Detalleorden detalleordenListNewDetalleordenToAttach : detalleordenListNew) {
+                detalleordenListNewDetalleordenToAttach = em.getReference(detalleordenListNewDetalleordenToAttach.getClass(), detalleordenListNewDetalleordenToAttach.getDetalleordenPK());
+                attachedDetalleordenListNew.add(detalleordenListNewDetalleordenToAttach);
+            }
+            detalleordenListNew = attachedDetalleordenListNew;
+            orden.setDetalleordenList(detalleordenListNew);
             orden = em.merge(orden);
             for (Receta recetaListNewReceta : recetaListNew) {
                 if (!recetaListOld.contains(recetaListNewReceta)) {
@@ -116,6 +152,17 @@ public class OrdenJpaController implements Serializable {
                     if (oldOrdenOfRecetaListNewReceta != null && !oldOrdenOfRecetaListNewReceta.equals(orden)) {
                         oldOrdenOfRecetaListNewReceta.getRecetaList().remove(recetaListNewReceta);
                         oldOrdenOfRecetaListNewReceta = em.merge(oldOrdenOfRecetaListNewReceta);
+                    }
+                }
+            }
+            for (Detalleorden detalleordenListNewDetalleorden : detalleordenListNew) {
+                if (!detalleordenListOld.contains(detalleordenListNewDetalleorden)) {
+                    Orden oldOrdenOfDetalleordenListNewDetalleorden = detalleordenListNewDetalleorden.getOrden();
+                    detalleordenListNewDetalleorden.setOrden(orden);
+                    detalleordenListNewDetalleorden = em.merge(detalleordenListNewDetalleorden);
+                    if (oldOrdenOfDetalleordenListNewDetalleorden != null && !oldOrdenOfDetalleordenListNewDetalleorden.equals(orden)) {
+                        oldOrdenOfDetalleordenListNewDetalleorden.getDetalleordenList().remove(detalleordenListNewDetalleorden);
+                        oldOrdenOfDetalleordenListNewDetalleorden = em.merge(oldOrdenOfDetalleordenListNewDetalleorden);
                     }
                 }
             }
@@ -160,6 +207,13 @@ public class OrdenJpaController implements Serializable {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
                 illegalOrphanMessages.add("This Orden (" + orden + ") cannot be destroyed since the Receta " + recetaListOrphanCheckReceta + " in its recetaList field has a non-nullable orden field.");
+            }
+            List<Detalleorden> detalleordenListOrphanCheck = orden.getDetalleordenList();
+            for (Detalleorden detalleordenListOrphanCheckDetalleorden : detalleordenListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Orden (" + orden + ") cannot be destroyed since the Detalleorden " + detalleordenListOrphanCheckDetalleorden + " in its detalleordenList field has a non-nullable orden field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);

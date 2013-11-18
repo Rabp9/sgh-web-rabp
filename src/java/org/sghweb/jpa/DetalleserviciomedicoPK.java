@@ -18,6 +18,9 @@ import javax.validation.constraints.Size;
 @Embeddable
 public class DetalleserviciomedicoPK implements Serializable {
     @Basic(optional = false)
+    @Column(name = "idDetalleServicioMedico")
+    private int idDetalleServicioMedico;
+    @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 3)
     @Column(name = "Servicio_codigo")
@@ -36,10 +39,19 @@ public class DetalleserviciomedicoPK implements Serializable {
     public DetalleserviciomedicoPK() {
     }
 
-    public DetalleserviciomedicoPK(String serviciocodigo, String medicocmp, String medicodni) {
+    public DetalleserviciomedicoPK(int idDetalleServicioMedico, String serviciocodigo, String medicocmp, String medicodni) {
+        this.idDetalleServicioMedico = idDetalleServicioMedico;
         this.serviciocodigo = serviciocodigo;
         this.medicocmp = medicocmp;
         this.medicodni = medicodni;
+    }
+
+    public int getIdDetalleServicioMedico() {
+        return idDetalleServicioMedico;
+    }
+
+    public void setIdDetalleServicioMedico(int idDetalleServicioMedico) {
+        this.idDetalleServicioMedico = idDetalleServicioMedico;
     }
 
     public String getServiciocodigo() {
@@ -69,6 +81,7 @@ public class DetalleserviciomedicoPK implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
+        hash += (int) idDetalleServicioMedico;
         hash += (serviciocodigo != null ? serviciocodigo.hashCode() : 0);
         hash += (medicocmp != null ? medicocmp.hashCode() : 0);
         hash += (medicodni != null ? medicodni.hashCode() : 0);
@@ -82,6 +95,9 @@ public class DetalleserviciomedicoPK implements Serializable {
             return false;
         }
         DetalleserviciomedicoPK other = (DetalleserviciomedicoPK) object;
+        if (this.idDetalleServicioMedico != other.idDetalleServicioMedico) {
+            return false;
+        }
         if ((this.serviciocodigo == null && other.serviciocodigo != null) || (this.serviciocodigo != null && !this.serviciocodigo.equals(other.serviciocodigo))) {
             return false;
         }
@@ -96,7 +112,7 @@ public class DetalleserviciomedicoPK implements Serializable {
 
     @Override
     public String toString() {
-        return "org.sghweb.jpa.DetalleserviciomedicoPK[ serviciocodigo=" + serviciocodigo + ", medicocmp=" + medicocmp + ", medicodni=" + medicodni + " ]";
+        return "org.sghweb.jpa.DetalleserviciomedicoPK[ idDetalleServicioMedico=" + idDetalleServicioMedico + ", serviciocodigo=" + serviciocodigo + ", medicocmp=" + medicocmp + ", medicodni=" + medicodni + " ]";
     }
     
 }

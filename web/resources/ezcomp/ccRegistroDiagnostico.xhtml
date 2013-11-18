@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="accion" required="true"/>
+        <cc:attribute name="diagnostico" required="false"/>
+        <cc:attribute name="readOnlyCodigo" required="false"/>
+        <cc:attribute name="readOnlyDatos" required="false"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>  
+        <p:panelGrid columns="2">
+            <p:outputLabel value="Código" for="txtCodigo${cc.attrs.accion}"/>
+            <p:inputText id="txtCodigo${cc.attrs.accion}" value="${cc.attrs.diagnostico.codigo}" 
+                         maxlength="5" onkeyup="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyCodigo}"
+                         required="true">
+                <p:watermark value="Código de 5 letras" for="txtCodigo${cc.attrs.accion}"/>
+            </p:inputText>
+
+            <p:outputLabel value="Descripción" for="textareaDescripcion${cc.attrs.accion}"/>
+            <p:inputTextarea id="textareaDescripcion${cc.attrs.accion}" value="${cc.attrs.diagnostico.descripcion}"
+                         maxlength="250" onkeyup="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyCodigo}"
+                         required="true">
+                <p:watermark value="Escriba una descripción" for="textareaDescripcion${cc.attrs.accion}"/>
+            </p:inputTextarea> 
+            
+            <p:outputLabel value="Sexo Afectado" for="somSexoAfectado${cc.attrs.accion}"/>
+            <p:selectOneMenu id="somSexoAfectado${cc.attrs.accion}" value="${cc.attrs.diagnostico.sexoAfectado}" required="${cc.attrs.readOnlyDatos}">
+                <f:selectItem itemLabel="Selecciona una opción" itemValue="" />  
+                <f:selectItem itemLabel="FEMENINO" itemValue="FEMENINO"/>
+                <f:selectItem itemLabel="MASCULINO" itemValue="MASCULINO"/>
+                <f:selectItem itemLabel="AMBOS" itemValue="AMBOS"/>
+            </p:selectOneMenu>
+            
+        </p:panelGrid>
+    </cc:implementation>
+</html>

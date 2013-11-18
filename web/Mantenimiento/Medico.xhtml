@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ezcomp="http://java.sun.com/jsf/composite/ezcomp">
+
+    <body>
+
+        <ui:composition template="./../templates/template.xhtml">
+
+            <ui:define name="title">
+                Mantenimiento Médicos
+            </ui:define>
+
+            <ui:define name="recursos">
+            </ui:define>
+
+            <ui:define name="dialogs">
+                <p:growl id="mensaje"/>
+                <h:form id="frmNuevoMedico">
+                    <p:dialog id="dlgNuevoMedico" header="Nueva Medico" widgetVar="dialogoNuevoMedico" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroMedico
+                            accion="Nuevo" medico="${mantenimientoMedicoBean.medico}"
+                            readOnlyCodigo="false"
+                            readOnlyDatos="false"/>    
+                        <f:facet name="footer">
+                            <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoMedicoBean.crear()}" 
+                                oncomplete="dialogoNuevoMedico.hide()" icon="ui-icon-check" update="frmMantenimientoMedico"/>
+                            <p:commandButton value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmDetalleMedico">
+                    <p:dialog id="dlgDetalleMedico" header="Detalle Medico" widgetVar="dialogoDetalleMedico" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroMedico
+                            accion="Detalle" medico="${mantenimientoMedicoBean.selectedMedico}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="true"/> 
+                        <f:facet name="footer">
+                            <p:commandButton value="Cerrar" oncomplete="dialogoDetalleMedico.hide()" icon="ui-icon-close"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmModificarMedico">
+                    <p:dialog id="dlgModificarMedico" header="Modificar Medico" widgetVar="dialogoModificarMedico" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroMedico
+                            accion="Modificar" medico="${mantenimientoMedicoBean.selectedMedico}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="false"/>
+                        <f:facet name="footer">
+                            <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoMedicoBean.editar()}" 
+                                oncomplete="dialogoModificarMedico.hide()" icon="ui-icon-check"/>
+                            <p:commandButton value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmEliminarMedico">
+                    <p:dialog id="dlgEliminarMedico" header="Eliminar Medico" widgetVar="dialogoEliminarMedico" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroMedico
+                            accion="Eliminar" medico="${mantenimientoMedicoBean.selectedMedico}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="true"/>
+                        <f:facet name="footer">
+                            <p:commandButton value="Eliminar" ajax="false" actionListener="${mantenimientoMedicoBean.eliminar()}" 
+                                oncomplete="dialogoEliminarMedico.hide()" icon="ui-icon-check"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+            </ui:define>
+
+            <ui:define name="left">
+            </ui:define>
+
+            <ui:define name="content">
+                <h:form id="frmMantenimientoMedico" title="Formulario de Mantenimiento de Médicos">
+                    <p:panel id="pnlMantenimientoMedico" header="Mantenimiento Médicos">
+                        <p:dataTable id="tblMedicos" var="medico" value="${mantenimientoMedicoBean.listaMedicos}"
+                            sortMode="multiple" rowKey="${medico.medicoPK.cmp}" paginator="true" rows="10" 
+                            currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                            rowsPerPageTemplate="5,10,20" selection="${mantenimientoMedicoBean.selectedMedico}" selectionMode="single"
+                            emptyMessage="Ninguna Medico Registrada" scrollable="true" scrollHeight="190"
+                            resizableColumns="true">
+                                                         
+                            <f:facet name="header">  
+                                Lista de Médicos
+                            </f:facet>  
+                            
+                            <p:column sortBy="${medico.medicoPK.cmp}" filterBy="${medico.medicoPK.cmp}" headerText="CMP" width="150">  
+                                <h:outputText value="${medico.medicoPK.cmp}" />  
+                            </p:column>
+                            
+                            <p:column sortBy="${medico.medicoPK.dni}" filterBy="${medico.medicoPK.dni}" filterMatchMode="contains" headerText="DNI">  
+                                <h:outputText value="${medico.medicoPK.dni}" />  
+                            </p:column>
+                                             
+                            <p:column sortBy="${medico.nombreCompleto}" filterBy="${medico.nombreCompleto}" filterMatchMode="contains" headerText="Nombre Completo">  
+                                <h:outputText value="${medico.nombreCompleto}" />  
+                            </p:column>
+                            
+                            <p:column sortBy="${medico.telefono}" filterBy="${medico.telefono}" filterMatchMode="contains" headerText="Télefono">  
+                                <h:outputText value="${medico.telefono}" />  
+                            </p:column>
+                            
+                            <f:facet name="footer">  
+                                <p:commandButton id="btnNuevo" value="Nuevo" icon="ui-icon-plus" update="_frmNuevoMedico"
+                                    oncomplete="dialogoNuevoMedico.show()"/>
+                                <p:commandButton id="btnDetalle" value="Detalle" icon="ui-icon-zoomin" update="_frmDetalleMedico"
+                                    oncomplete="dialogoDetalleMedico.show()"/>
+                                <p:commandButton id="btnModificar" value="Modificar" icon="ui-icon-pencil" update="_frmModificarMedico"
+                                    oncomplete="dialogoModificarMedico.show()"/>
+                                <p:commandButton id="btnEliminar" value="Eliminar" icon="ui-icon-minus" update="_frmEliminarMedico"
+                                    oncomplete="dialogoEliminarMedico.show()"/>
+                            </f:facet>  
+                            
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

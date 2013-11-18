@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ezcomp="http://java.sun.com/jsf/composite/ezcomp">
+
+    <body>
+
+        <ui:composition template="./../templates/template.xhtml">
+
+            <ui:define name="title">
+                Mantenimiento Pacientes
+            </ui:define>
+
+            <ui:define name="recursos">
+            </ui:define>
+
+            <ui:define name="dialogs">
+                <p:growl id="mensaje"/>
+                <h:form id="frmNuevoPaciente">
+                    <p:dialog id="dlgNuevoPaciente" header="Nueva Paciente" widgetVar="dialogoNuevoPaciente" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroPaciente
+                            accion="Nuevo" paciente="${mantenimientoPacienteBean.paciente}"
+                            readOnlyCodigo="false"
+                            readOnlyDatos="false"/>    
+                        <f:facet name="footer">
+                            <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoPacienteBean.crear()}" 
+                                oncomplete="dialogoNuevoPaciente.hide()" icon="ui-icon-check" update="frmMantenimientoPaciente"/>
+                            <p:commandButton value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmDetallePaciente">
+                    <p:dialog id="dlgDetallePaciente" header="Detalle Paciente" widgetVar="dialogoDetallePaciente" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroPaciente
+                            accion="Detalle" paciente="${mantenimientoPacienteBean.selectedPaciente}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="true"/> 
+                        <f:facet name="footer">
+                            <p:commandButton value="Cerrar" oncomplete="dialogoDetallePaciente.hide()" icon="ui-icon-close"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmModificarPaciente">
+                    <p:dialog id="dlgModificarPaciente" header="Modificar Paciente" widgetVar="dialogoModificarPaciente" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroPaciente
+                            accion="Modificar" paciente="${mantenimientoPacienteBean.selectedPaciente}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="false"/>
+                        <f:facet name="footer">
+                            <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoPacienteBean.editar()}" 
+                                oncomplete="dialogoModificarPaciente.hide()" icon="ui-icon-check"/>
+                            <p:commandButton value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmEliminarPaciente">
+                    <p:dialog id="dlgEliminarPaciente" header="Eliminar Paciente" widgetVar="dialogoEliminarPaciente" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroPaciente
+                            accion="Eliminar" paciente="${mantenimientoPacienteBean.selectedPaciente}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="true"/>
+                        <f:facet name="footer">
+                            <p:commandButton value="Eliminar" ajax="false" actionListener="${mantenimientoPacienteBean.eliminar()}" 
+                                oncomplete="dialogoEliminarPaciente.hide()" icon="ui-icon-check"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+            </ui:define>
+
+            <ui:define name="left">
+                left
+            </ui:define>
+
+            <ui:define name="content">
+                content
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

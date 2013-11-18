@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ezcomp="http://java.sun.com/jsf/composite/ezcomp">
+
+    <body>
+
+        <ui:composition template="./../templates/template.xhtml">
+
+            <ui:define name="title">
+                Mantenimiento Diagnósticos
+            </ui:define>
+
+            <ui:define name="recursos">
+            </ui:define>
+
+            <ui:define name="dialogs">
+                
+                <p:growl id="mensaje"/>
+                
+                <h:form id="frmNuevoDiagnostico">
+                    <p:dialog id="dlgNuevoDiagnostico" header="Nueva Diagnostico" widgetVar="dialogoNuevoDiagnostico" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroDiagnostico
+                            accion="Nuevo" diagnostico="${mantenimientoDiagnosticoBean.diagnostico}"
+                            readOnlyCodigo="false"
+                            readOnlyDatos="false"/>    
+                        <f:facet name="footer">
+                            <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoDiagnosticoBean.crear()}" 
+                                oncomplete="dialogoNuevoDiagnostico.hide()" icon="ui-icon-check" update="frmMantenimientoDiagnostico"/>
+                            <p:commandButton value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmDetalleDiagnostico">
+                    <p:dialog id="dlgDetalleDiagnostico" header="Detalle Diagnostico" widgetVar="dialogoDetalleDiagnostico" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroDiagnostico
+                            accion="Detalle" diagnostico="${mantenimientoDiagnosticoBean.selectedDiagnostico}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="true"/> 
+                        <f:facet name="footer">
+                            <p:commandButton value="Cerrar" oncomplete="dialogoDetalleDiagnostico.hide()" icon="ui-icon-close"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmModificarDiagnostico">
+                    <p:dialog id="dlgModificarDiagnostico" header="Modificar Diagnostico" widgetVar="dialogoModificarDiagnostico" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroDiagnostico
+                            accion="Modificar" diagnostico="${mantenimientoDiagnosticoBean.selectedDiagnostico}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="false"/>
+                        <f:facet name="footer">
+                            <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoDiagnosticoBean.editar()}" 
+                                oncomplete="dialogoModificarDiagnostico.hide()" icon="ui-icon-check"/>
+                            <p:commandButton value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmEliminarDiagnostico">
+                    <p:dialog id="dlgEliminarDiagnostico" header="Eliminar Diagnostico" widgetVar="dialogoEliminarDiagnostico" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroDiagnostico
+                            accion="Eliminar" diagnostico="${mantenimientoDiagnosticoBean.selectedDiagnostico}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="true"/>
+                        <f:facet name="footer">
+                            <p:commandButton value="Eliminar" ajax="false" actionListener="${mantenimientoDiagnosticoBean.eliminar()}" 
+                                oncomplete="dialogoEliminarDiagnostico.hide()" icon="ui-icon-check"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+            </ui:define>
+
+            <ui:define name="left">
+            </ui:define>
+
+            <ui:define name="content">
+                
+                <h:form id="frmMantenimientoDiagnostico" title="Formulario de Mantenimiento de Diagnósticos">
+                    <p:panel id="pnlMantenimientoDiagnostico" header="Mantenimiento Diagnósticos">
+                        <p:dataTable id="tblDiagnosticos" var="diagnostico" value="${mantenimientoDiagnosticoBean.listaDiagnosticos}"
+                            sortMode="multiple" rowKey="${diagnostico.codigo}" paginator="true" rows="10" 
+                            currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                            rowsPerPageTemplate="5,10,20" selection="${mantenimientoDiagnosticoBean.selectedDiagnostico}" selectionMode="single"
+                            emptyMessage="Ningún Diagnóstico Registrado" scrollable="true" scrollHeight="190"
+                            resizableColumns="true">
+                                                         
+                            <f:facet name="header">  
+                                Lista de Diagnósticos
+                            </f:facet>  
+                            
+                            <p:column sortBy="${diagnostico.codigo}" filterBy="${diagnostico.codigo}" headerText="Código" width="150">  
+                                <h:outputText value="${diagnostico.codigo}" />  
+                            </p:column>
+                            
+                            <p:column sortBy="${diagnostico.descripcion}" filterBy="${diagnostico.descripcion}" filterMatchMode="contains" headerText="Descripción">  
+                                <h:outputText value="${diagnostico.descripcion}" />  
+                            </p:column>
+                                             
+                            <p:column sortBy="${diagnostico.sexoAfectado}" filterBy="${diagnostico.sexoAfectado}" filterMatchMode="exact" headerText="Sexo Afectado"
+                                      filterOptions="${mantenimientoDiagnosticoBean.sexoAfectadoOptions}">
+                                <h:outputText value="${diagnostico.sexoAfectado}" />  
+                            </p:column>
+                            
+                            <f:facet name="footer">  
+                                <p:commandButton id="btnNuevo" value="Nuevo" icon="ui-icon-plus" update="_frmNuevoDiagnostico"
+                                    oncomplete="dialogoNuevoDiagnostico.show()"/>
+                                <p:commandButton id="btnDetalle" value="Detalle" icon="ui-icon-zoomin" update="_frmDetalleDiagnostico"
+                                    oncomplete="dialogoDetalleDiagnostico.show()"/>
+                                <p:commandButton id="btnModificar" value="Modificar" icon="ui-icon-pencil" update="_frmModificarDiagnostico"
+                                    oncomplete="dialogoModificarDiagnostico.show()"/>
+                                <p:commandButton id="btnEliminar" value="Eliminar" icon="ui-icon-minus" update="_frmEliminarDiagnostico"
+                                    oncomplete="dialogoEliminarDiagnostico.show()"/>
+                            </f:facet>  
+                            
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

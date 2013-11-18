@@ -5,21 +5,24 @@
 package org.sghweb.controllers;
 
 import java.io.Serializable;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import org.sghweb.jpa.Medico;
+import org.sghweb.jpa.Servicio;
+import org.sghweb.jpa.Turno;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
+import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
 import org.sghweb.jpa.Detalleserviciomedico;
 import org.sghweb.jpa.DetalleserviciomedicoPK;
-import org.sghweb.jpa.Medico;
-import org.sghweb.jpa.Servicio;
 
 /**
  *
@@ -42,9 +45,12 @@ public class DetalleserviciomedicoJpaController implements Serializable {
         if (detalleserviciomedico.getDetalleserviciomedicoPK() == null) {
             detalleserviciomedico.setDetalleserviciomedicoPK(new DetalleserviciomedicoPK());
         }
-        detalleserviciomedico.getDetalleserviciomedicoPK().setMedicocmp(detalleserviciomedico.getMedico().getMedicoPK().getCmp());
+        if (detalleserviciomedico.getTurnoList() == null) {
+            detalleserviciomedico.setTurnoList(new ArrayList<Turno>());
+        }
         detalleserviciomedico.getDetalleserviciomedicoPK().setMedicodni(detalleserviciomedico.getMedico().getMedicoPK().getDni());
         detalleserviciomedico.getDetalleserviciomedicoPK().setServiciocodigo(detalleserviciomedico.getServicio().getCodigo());
+        detalleserviciomedico.getDetalleserviciomedicoPK().setMedicocmp(detalleserviciomedico.getMedico().getMedicoPK().getCmp());
         EntityManager em = null;
         try {
             utx.begin();
@@ -59,6 +65,12 @@ public class DetalleserviciomedicoJpaController implements Serializable {
                 servicio = em.getReference(servicio.getClass(), servicio.getCodigo());
                 detalleserviciomedico.setServicio(servicio);
             }
+            List<Turno> attachedTurnoList = new ArrayList<Turno>();
+            for (Turno turnoListTurnoToAttach : detalleserviciomedico.getTurnoList()) {
+                turnoListTurnoToAttach = em.getReference(turnoListTurnoToAttach.getClass(), turnoListTurnoToAttach.getTurnoPK());
+                attachedTurnoList.add(turnoListTurnoToAttach);
+            }
+            detalleserviciomedico.setTurnoList(attachedTurnoList);
             em.persist(detalleserviciomedico);
             if (medico != null) {
                 medico.getDetalleserviciomedicoList().add(detalleserviciomedico);
@@ -67,6 +79,15 @@ public class DetalleserviciomedicoJpaController implements Serializable {
             if (servicio != null) {
                 servicio.getDetalleserviciomedicoList().add(detalleserviciomedico);
                 servicio = em.merge(servicio);
+            }
+            for (Turno turnoListTurno : detalleserviciomedico.getTurnoList()) {
+                Detalleserviciomedico oldDetalleserviciomedicoOfTurnoListTurno = turnoListTurno.getDetalleserviciomedico();
+                turnoListTurno.setDetalleserviciomedico(detalleserviciomedico);
+                turnoListTurno = em.merge(turnoListTurno);
+                if (oldDetalleserviciomedicoOfTurnoListTurno != null) {
+                    oldDetalleserviciomedicoOfTurnoListTurno.getTurnoList().remove(turnoListTurno);
+                    oldDetalleserviciomedicoOfTurnoListTurno = em.merge(oldDetalleserviciomedicoOfTurnoListTurno);
+                }
             }
             utx.commit();
         } catch (Exception ex) {
@@ -86,10 +107,10 @@ public class DetalleserviciomedicoJpaController implements Serializable {
         }
     }
 
-    public void edit(Detalleserviciomedico detalleserviciomedico) throws NonexistentEntityException, RollbackFailureException, Exception {
-        detalleserviciomedico.getDetalleserviciomedicoPK().setMedicocmp(detalleserviciomedico.getMedico().getMedicoPK().getCmp());
+    public void edit(Detalleserviciomedico detalleserviciomedico) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         detalleserviciomedico.getDetalleserviciomedicoPK().setMedicodni(detalleserviciomedico.getMedico().getMedicoPK().getDni());
         detalleserviciomedico.getDetalleserviciomedicoPK().setServiciocodigo(detalleserviciomedico.getServicio().getCodigo());
+        detalleserviciomedico.getDetalleserviciomedicoPK().setMedicocmp(detalleserviciomedico.getMedico().getMedicoPK().getCmp());
         EntityManager em = null;
         try {
             utx.begin();
@@ -99,6 +120,20 @@ public class DetalleserviciomedicoJpaController implements Serializable {
             Medico medicoNew = detalleserviciomedico.getMedico();
             Servicio servicioOld = persistentDetalleserviciomedico.getServicio();
             Servicio servicioNew = detalleserviciomedico.getServicio();
+            List<Turno> turnoListOld = persistentDetalleserviciomedico.getTurnoList();
+            List<Turno> turnoListNew = detalleserviciomedico.getTurnoList();
+            List<String> illegalOrphanMessages = null;
+            for (Turno turnoListOldTurno : turnoListOld) {
+                if (!turnoListNew.contains(turnoListOldTurno)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Turno " + turnoListOldTurno + " since its detalleserviciomedico field is not nullable.");
+                }
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
             if (medicoNew != null) {
                 medicoNew = em.getReference(medicoNew.getClass(), medicoNew.getMedicoPK());
                 detalleserviciomedico.setMedico(medicoNew);
@@ -107,6 +142,13 @@ public class DetalleserviciomedicoJpaController implements Serializable {
                 servicioNew = em.getReference(servicioNew.getClass(), servicioNew.getCodigo());
                 detalleserviciomedico.setServicio(servicioNew);
             }
+            List<Turno> attachedTurnoListNew = new ArrayList<Turno>();
+            for (Turno turnoListNewTurnoToAttach : turnoListNew) {
+                turnoListNewTurnoToAttach = em.getReference(turnoListNewTurnoToAttach.getClass(), turnoListNewTurnoToAttach.getTurnoPK());
+                attachedTurnoListNew.add(turnoListNewTurnoToAttach);
+            }
+            turnoListNew = attachedTurnoListNew;
+            detalleserviciomedico.setTurnoList(turnoListNew);
             detalleserviciomedico = em.merge(detalleserviciomedico);
             if (medicoOld != null && !medicoOld.equals(medicoNew)) {
                 medicoOld.getDetalleserviciomedicoList().remove(detalleserviciomedico);
@@ -123,6 +165,17 @@ public class DetalleserviciomedicoJpaController implements Serializable {
             if (servicioNew != null && !servicioNew.equals(servicioOld)) {
                 servicioNew.getDetalleserviciomedicoList().add(detalleserviciomedico);
                 servicioNew = em.merge(servicioNew);
+            }
+            for (Turno turnoListNewTurno : turnoListNew) {
+                if (!turnoListOld.contains(turnoListNewTurno)) {
+                    Detalleserviciomedico oldDetalleserviciomedicoOfTurnoListNewTurno = turnoListNewTurno.getDetalleserviciomedico();
+                    turnoListNewTurno.setDetalleserviciomedico(detalleserviciomedico);
+                    turnoListNewTurno = em.merge(turnoListNewTurno);
+                    if (oldDetalleserviciomedicoOfTurnoListNewTurno != null && !oldDetalleserviciomedicoOfTurnoListNewTurno.equals(detalleserviciomedico)) {
+                        oldDetalleserviciomedicoOfTurnoListNewTurno.getTurnoList().remove(turnoListNewTurno);
+                        oldDetalleserviciomedicoOfTurnoListNewTurno = em.merge(oldDetalleserviciomedicoOfTurnoListNewTurno);
+                    }
+                }
             }
             utx.commit();
         } catch (Exception ex) {
@@ -146,7 +199,7 @@ public class DetalleserviciomedicoJpaController implements Serializable {
         }
     }
 
-    public void destroy(DetalleserviciomedicoPK id) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void destroy(DetalleserviciomedicoPK id) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
@@ -157,6 +210,17 @@ public class DetalleserviciomedicoJpaController implements Serializable {
                 detalleserviciomedico.getDetalleserviciomedicoPK();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The detalleserviciomedico with id " + id + " no longer exists.", enfe);
+            }
+            List<String> illegalOrphanMessages = null;
+            List<Turno> turnoListOrphanCheck = detalleserviciomedico.getTurnoList();
+            for (Turno turnoListOrphanCheckTurno : turnoListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Detalleserviciomedico (" + detalleserviciomedico + ") cannot be destroyed since the Turno " + turnoListOrphanCheckTurno + " in its turnoList field has a non-nullable detalleserviciomedico field.");
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
             }
             Medico medico = detalleserviciomedico.getMedico();
             if (medico != null) {

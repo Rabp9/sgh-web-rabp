@@ -3,34 +3,38 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://java.sun.com/jsf/composite"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core">
 
     <!-- INTERFACE -->
-    <cc:interface>
+    <cc:interface>        
         <cc:attribute name="accion" required="true"/>
-        <cc:attribute name="actividad" required="false"/>
+        <cc:attribute name="servicio" required="false"/>
         <cc:attribute name="readOnlyCodigo" required="false"/>
         <cc:attribute name="readOnlyDatos" required="false"/>
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <p:panelGrid columns="2">
+        <p:panelGrid columns="3">
             <p:outputLabel value="Código" for="txtCodigo${cc.attrs.accion}"/>
-            <p:inputText id="txtCodigo${cc.attrs.accion}" value="${cc.attrs.actividad.codigo}" 
-                         maxlength="2" readonly="${cc.attrs.readOnlyCodigo}"
+            <p:inputText id="txtCodigo${cc.attrs.accion}" value="${cc.attrs.servicio.codigo}" 
+                         maxlength="2" onkeyup="value = value.toUpperCase()" readonly="${cc.attrs.readOnlyCodigo}"
                          required="true">
                 <p:watermark value="Código de 2 letras" for="txtCodigo${cc.attrs.accion}"/>
             </p:inputText>
 
             <p:outputLabel value="Descripción" for="txtDescripcion${cc.attrs.accion}"/>
-            <p:inputText id="txtDescripcion${cc.attrs.accion}" value="${cc.attrs.actividad.descripcion}"
-                         maxlength="60" readonly="${cc.attrs.readOnlyDatos}"
+            <p:inputText id="txtDescripcion${cc.attrs.accion}" value="${cc.attrs.servicio.descripcion}"
+                         maxlength="60" onkeyup="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyDatos}"
                          required="true">
                 <p:watermark value="Escriba una descripción" for="txtDescripcion${cc.attrs.accion}"/>
             </p:inputText>
             
+            <p:outputLabel value="Tipo" for="somDepartamento${cc.attrs.accion}"/>
+            <p:selectOneMenu id="somDepartamento${cc.attrs.accion}" effect="fade">  
+                <f:selectItem itemLabel="Selecciona un tipo" itemValue="" />  
+                <f:selectItem itemLabel="Hospitalización" itemValue="1"/>  
+            </p:selectOneMenu> 
         </p:panelGrid>
     </cc:implementation>
 </html>

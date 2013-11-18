@@ -5,21 +5,23 @@
 package org.sghweb.controllers;
 
 import java.io.Serializable;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import org.sghweb.jpa.Medico;
+import org.sghweb.jpa.Detallehistoriaclinica;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
+import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
 import org.sghweb.jpa.Cita;
 import org.sghweb.jpa.CitaPK;
-import org.sghweb.jpa.Medico;
-import org.sghweb.jpa.Paciente;
 
 /**
  *
@@ -42,8 +44,10 @@ public class CitaJpaController implements Serializable {
         if (cita.getCitaPK() == null) {
             cita.setCitaPK(new CitaPK());
         }
+        if (cita.getDetallehistoriaclinicaList() == null) {
+            cita.setDetallehistoriaclinicaList(new ArrayList<Detallehistoriaclinica>());
+        }
         cita.getCitaPK().setMedicocmp(cita.getMedico().getMedicoPK().getCmp());
-        cita.getCitaPK().setPacientedni(cita.getPaciente().getDni());
         cita.getCitaPK().setMedicodni(cita.getMedico().getMedicoPK().getDni());
         EntityManager em = null;
         try {
@@ -54,19 +58,25 @@ public class CitaJpaController implements Serializable {
                 medico = em.getReference(medico.getClass(), medico.getMedicoPK());
                 cita.setMedico(medico);
             }
-            Paciente paciente = cita.getPaciente();
-            if (paciente != null) {
-                paciente = em.getReference(paciente.getClass(), paciente.getDni());
-                cita.setPaciente(paciente);
+            List<Detallehistoriaclinica> attachedDetallehistoriaclinicaList = new ArrayList<Detallehistoriaclinica>();
+            for (Detallehistoriaclinica detallehistoriaclinicaListDetallehistoriaclinicaToAttach : cita.getDetallehistoriaclinicaList()) {
+                detallehistoriaclinicaListDetallehistoriaclinicaToAttach = em.getReference(detallehistoriaclinicaListDetallehistoriaclinicaToAttach.getClass(), detallehistoriaclinicaListDetallehistoriaclinicaToAttach.getDetallehistoriaclinicaPK());
+                attachedDetallehistoriaclinicaList.add(detallehistoriaclinicaListDetallehistoriaclinicaToAttach);
             }
+            cita.setDetallehistoriaclinicaList(attachedDetallehistoriaclinicaList);
             em.persist(cita);
             if (medico != null) {
                 medico.getCitaList().add(cita);
                 medico = em.merge(medico);
             }
-            if (paciente != null) {
-                paciente.getCitaList().add(cita);
-                paciente = em.merge(paciente);
+            for (Detallehistoriaclinica detallehistoriaclinicaListDetallehistoriaclinica : cita.getDetallehistoriaclinicaList()) {
+                Cita oldCitaOfDetallehistoriaclinicaListDetallehistoriaclinica = detallehistoriaclinicaListDetallehistoriaclinica.getCita();
+                detallehistoriaclinicaListDetallehistoriaclinica.setCita(cita);
+                detallehistoriaclinicaListDetallehistoriaclinica = em.merge(detallehistoriaclinicaListDetallehistoriaclinica);
+                if (oldCitaOfDetallehistoriaclinicaListDetallehistoriaclinica != null) {
+                    oldCitaOfDetallehistoriaclinicaListDetallehistoriaclinica.getDetallehistoriaclinicaList().remove(detallehistoriaclinicaListDetallehistoriaclinica);
+                    oldCitaOfDetallehistoriaclinicaListDetallehistoriaclinica = em.merge(oldCitaOfDetallehistoriaclinicaListDetallehistoriaclinica);
+                }
             }
             utx.commit();
         } catch (Exception ex) {
@@ -86,9 +96,8 @@ public class CitaJpaController implements Serializable {
         }
     }
 
-    public void edit(Cita cita) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void edit(Cita cita) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         cita.getCitaPK().setMedicocmp(cita.getMedico().getMedicoPK().getCmp());
-        cita.getCitaPK().setPacientedni(cita.getPaciente().getDni());
         cita.getCitaPK().setMedicodni(cita.getMedico().getMedicoPK().getDni());
         EntityManager em = null;
         try {
@@ -97,16 +106,31 @@ public class CitaJpaController implements Serializable {
             Cita persistentCita = em.find(Cita.class, cita.getCitaPK());
             Medico medicoOld = persistentCita.getMedico();
             Medico medicoNew = cita.getMedico();
-            Paciente pacienteOld = persistentCita.getPaciente();
-            Paciente pacienteNew = cita.getPaciente();
+            List<Detallehistoriaclinica> detallehistoriaclinicaListOld = persistentCita.getDetallehistoriaclinicaList();
+            List<Detallehistoriaclinica> detallehistoriaclinicaListNew = cita.getDetallehistoriaclinicaList();
+            List<String> illegalOrphanMessages = null;
+            for (Detallehistoriaclinica detallehistoriaclinicaListOldDetallehistoriaclinica : detallehistoriaclinicaListOld) {
+                if (!detallehistoriaclinicaListNew.contains(detallehistoriaclinicaListOldDetallehistoriaclinica)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Detallehistoriaclinica " + detallehistoriaclinicaListOldDetallehistoriaclinica + " since its cita field is not nullable.");
+                }
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
             if (medicoNew != null) {
                 medicoNew = em.getReference(medicoNew.getClass(), medicoNew.getMedicoPK());
                 cita.setMedico(medicoNew);
             }
-            if (pacienteNew != null) {
-                pacienteNew = em.getReference(pacienteNew.getClass(), pacienteNew.getDni());
-                cita.setPaciente(pacienteNew);
+            List<Detallehistoriaclinica> attachedDetallehistoriaclinicaListNew = new ArrayList<Detallehistoriaclinica>();
+            for (Detallehistoriaclinica detallehistoriaclinicaListNewDetallehistoriaclinicaToAttach : detallehistoriaclinicaListNew) {
+                detallehistoriaclinicaListNewDetallehistoriaclinicaToAttach = em.getReference(detallehistoriaclinicaListNewDetallehistoriaclinicaToAttach.getClass(), detallehistoriaclinicaListNewDetallehistoriaclinicaToAttach.getDetallehistoriaclinicaPK());
+                attachedDetallehistoriaclinicaListNew.add(detallehistoriaclinicaListNewDetallehistoriaclinicaToAttach);
             }
+            detallehistoriaclinicaListNew = attachedDetallehistoriaclinicaListNew;
+            cita.setDetallehistoriaclinicaList(detallehistoriaclinicaListNew);
             cita = em.merge(cita);
             if (medicoOld != null && !medicoOld.equals(medicoNew)) {
                 medicoOld.getCitaList().remove(cita);
@@ -116,13 +140,16 @@ public class CitaJpaController implements Serializable {
                 medicoNew.getCitaList().add(cita);
                 medicoNew = em.merge(medicoNew);
             }
-            if (pacienteOld != null && !pacienteOld.equals(pacienteNew)) {
-                pacienteOld.getCitaList().remove(cita);
-                pacienteOld = em.merge(pacienteOld);
-            }
-            if (pacienteNew != null && !pacienteNew.equals(pacienteOld)) {
-                pacienteNew.getCitaList().add(cita);
-                pacienteNew = em.merge(pacienteNew);
+            for (Detallehistoriaclinica detallehistoriaclinicaListNewDetallehistoriaclinica : detallehistoriaclinicaListNew) {
+                if (!detallehistoriaclinicaListOld.contains(detallehistoriaclinicaListNewDetallehistoriaclinica)) {
+                    Cita oldCitaOfDetallehistoriaclinicaListNewDetallehistoriaclinica = detallehistoriaclinicaListNewDetallehistoriaclinica.getCita();
+                    detallehistoriaclinicaListNewDetallehistoriaclinica.setCita(cita);
+                    detallehistoriaclinicaListNewDetallehistoriaclinica = em.merge(detallehistoriaclinicaListNewDetallehistoriaclinica);
+                    if (oldCitaOfDetallehistoriaclinicaListNewDetallehistoriaclinica != null && !oldCitaOfDetallehistoriaclinicaListNewDetallehistoriaclinica.equals(cita)) {
+                        oldCitaOfDetallehistoriaclinicaListNewDetallehistoriaclinica.getDetallehistoriaclinicaList().remove(detallehistoriaclinicaListNewDetallehistoriaclinica);
+                        oldCitaOfDetallehistoriaclinicaListNewDetallehistoriaclinica = em.merge(oldCitaOfDetallehistoriaclinicaListNewDetallehistoriaclinica);
+                    }
+                }
             }
             utx.commit();
         } catch (Exception ex) {
@@ -146,7 +173,7 @@ public class CitaJpaController implements Serializable {
         }
     }
 
-    public void destroy(CitaPK id) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void destroy(CitaPK id) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
@@ -158,15 +185,21 @@ public class CitaJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The cita with id " + id + " no longer exists.", enfe);
             }
+            List<String> illegalOrphanMessages = null;
+            List<Detallehistoriaclinica> detallehistoriaclinicaListOrphanCheck = cita.getDetallehistoriaclinicaList();
+            for (Detallehistoriaclinica detallehistoriaclinicaListOrphanCheckDetallehistoriaclinica : detallehistoriaclinicaListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Cita (" + cita + ") cannot be destroyed since the Detallehistoriaclinica " + detallehistoriaclinicaListOrphanCheckDetallehistoriaclinica + " in its detallehistoriaclinicaList field has a non-nullable cita field.");
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
             Medico medico = cita.getMedico();
             if (medico != null) {
                 medico.getCitaList().remove(cita);
                 medico = em.merge(medico);
-            }
-            Paciente paciente = cita.getPaciente();
-            if (paciente != null) {
-                paciente.getCitaList().remove(cita);
-                paciente = em.merge(paciente);
             }
             em.remove(cita);
             utx.commit();

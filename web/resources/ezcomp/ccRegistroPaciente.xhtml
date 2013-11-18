@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="accion" required="true"/>
+        <cc:attribute name="paciente" required="false"/>
+        <cc:attribute name="readOnlyCodigo" required="false"/>
+        <cc:attribute name="readOnlyDatos" required="false"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:panelGrid columns="2">
+            <p:outputLabel value="DNI" for="txtDNI${cc.attrs.accion}"/>
+            <p:inputText id="txtDNI${cc.attrs.accion}" value="${cc.attrs.paciente.dni}" 
+                         maxlength="8" onkeyup="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyCodigo}"
+                         required="true">
+                <p:watermark value="DNI de 8 digitos" for="txtDNI${cc.attrs.accion}"/>
+            </p:inputText>
+
+            <p:outputLabel value="Nombre Completo" for="txtNombreCompleto${cc.attrs.accion}"/>
+            <p:inputText id="txtNombreCompleto${cc.attrs.accion}" value="${cc.attrs.paciente.nombre}"
+                         maxlength="60" onkeyup="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyCodigo}"
+                         required="true">
+                <p:watermark value="Escriba el nombre completo" for="txtNombreCompleto${cc.attrs.accion}"/>
+            </p:inputText> 
+            
+            <p:outputLabel value="Ubicación Nacimiento" for="somUbicacionNacimiento${cc.attrs.accion}"/>
+            <p:selectOneMenu id="somNombreCompleto${cc.attrs.accion}" value="${cc.attrs.paciente.ubicacionNacimiento}"
+                             required="true">
+            </p:selectOneMenu>
+            
+            <p:outputLabel value="Ubicación Actual" for="somUbicacionActual${cc.attrs.accion}"/>
+            <p:selectOneMenu id="somUbicacionActual${cc.attrs.accion}" value="${cc.attrs.paciente.ubicacionActual }"
+                             required="true">
+            </p:selectOneMenu>
+                        
+            <p:outputLabel value="Dirección" for="txtaDireccion${cc.attrs.accion}"/>
+            <p:inputText id="txtaDireccion${cc.attrs.accion}" value="${cc.attrs.paciente.direccion}"
+                         maxlength="100" onkeyup="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyDatos}">
+                <p:watermark value="Escriba un número telefónico" for="txtTelefono${cc.attrs.accion}"/>
+            </p:inputText>
+            
+            <p:outputLabel value="Ubicación Actual" for="somUbicacionActual${cc.attrs.accion}"/>
+            <p:selectOneMenu id="somUbicacionActual${cc.attrs.accion}" value="${cc.attrs.paciente.ubicacionActual }"
+                             required="true">
+            </p:selectOneMenu>
+            
+        </p:panelGrid>
+    </cc:implementation>
+</html>

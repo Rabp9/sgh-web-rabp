@@ -35,9 +35,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Medicamento.findByCodigo", query = "SELECT m FROM Medicamento m WHERE m.codigo = :codigo"),
     @NamedQuery(name = "Medicamento.findByDescripcion", query = "SELECT m FROM Medicamento m WHERE m.descripcion = :descripcion"),
     @NamedQuery(name = "Medicamento.findByPresentacion", query = "SELECT m FROM Medicamento m WHERE m.presentacion = :presentacion"),
-    @NamedQuery(name = "Medicamento.findByQsmin", query = "SELECT m FROM Medicamento m WHERE m.qsmin = :qsmin"),
-    @NamedQuery(name = "Medicamento.findByQsmax", query = "SELECT m FROM Medicamento m WHERE m.qsmax = :qsmax"),
-    @NamedQuery(name = "Medicamento.findBySecuencia", query = "SELECT m FROM Medicamento m WHERE m.secuencia = :secuencia"),
+    @NamedQuery(name = "Medicamento.findByStock", query = "SELECT m FROM Medicamento m WHERE m.stock = :stock"),
+    @NamedQuery(name = "Medicamento.findByStockMin", query = "SELECT m FROM Medicamento m WHERE m.stockMin = :stockMin"),
+    @NamedQuery(name = "Medicamento.findByStockMax", query = "SELECT m FROM Medicamento m WHERE m.stockMax = :stockMax"),
     @NamedQuery(name = "Medicamento.findByFechaIngreso", query = "SELECT m FROM Medicamento m WHERE m.fechaIngreso = :fechaIngreso"),
     @NamedQuery(name = "Medicamento.findByFechaVencimiento", query = "SELECT m FROM Medicamento m WHERE m.fechaVencimiento = :fechaVencimiento"),
     @NamedQuery(name = "Medicamento.findByEstado", query = "SELECT m FROM Medicamento m WHERE m.estado = :estado")})
@@ -52,15 +52,19 @@ public class Medicamento implements Serializable {
     @Size(max = 60)
     @Column(name = "descripcion")
     private String descripcion;
-    @Size(max = 2)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 3)
     @Column(name = "presentacion")
     private String presentacion;
-    @Column(name = "qsmin")
-    private Integer qsmin;
-    @Column(name = "qsmax")
-    private Integer qsmax;
-    @Column(name = "secuencia")
-    private Integer secuencia;
+    @Column(name = "stock")
+    private Integer stock;
+    @Column(name = "stockMin")
+    private Integer stockMin;
+    @Column(name = "stockMax")
+    private Integer stockMax;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "fechaIngreso")
     @Temporal(TemporalType.DATE)
     private Date fechaIngreso;
@@ -77,6 +81,12 @@ public class Medicamento implements Serializable {
 
     public Medicamento(String codigo) {
         this.codigo = codigo;
+    }
+
+    public Medicamento(String codigo, String presentacion, Date fechaIngreso) {
+        this.codigo = codigo;
+        this.presentacion = presentacion;
+        this.fechaIngreso = fechaIngreso;
     }
 
     public String getCodigo() {
@@ -103,28 +113,28 @@ public class Medicamento implements Serializable {
         this.presentacion = presentacion;
     }
 
-    public Integer getQsmin() {
-        return qsmin;
+    public Integer getStock() {
+        return stock;
     }
 
-    public void setQsmin(Integer qsmin) {
-        this.qsmin = qsmin;
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 
-    public Integer getQsmax() {
-        return qsmax;
+    public Integer getStockMin() {
+        return stockMin;
     }
 
-    public void setQsmax(Integer qsmax) {
-        this.qsmax = qsmax;
+    public void setStockMin(Integer stockMin) {
+        this.stockMin = stockMin;
     }
 
-    public Integer getSecuencia() {
-        return secuencia;
+    public Integer getStockMax() {
+        return stockMax;
     }
 
-    public void setSecuencia(Integer secuencia) {
-        this.secuencia = secuencia;
+    public void setStockMax(Integer stockMax) {
+        this.stockMax = stockMax;
     }
 
     public Date getFechaIngreso() {

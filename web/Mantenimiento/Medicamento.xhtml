@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ezcomp="http://java.sun.com/jsf/composite/ezcomp"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="./../templates/template.xhtml">
+
+            <ui:define name="title">
+                Mantenimiento Medicamentos
+            </ui:define>
+
+            <ui:define name="recursos">
+            </ui:define>
+
+            <ui:define name="dialogs">
+                <p:growl id="mensaje"/>
+                <h:form id="frmNuevoMedicamento">
+                    <p:dialog id="dlgNuevoMedicamento" header="Nueva Medicamento" widgetVar="dialogoNuevoMedicamento" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroMedicamento
+                            accion="Nuevo" medicamento="${mantenimientoMedicamentoBean.medicamento}"
+                            readOnlyCodigo="false"
+                            readOnlyDatos="false"/>    
+                        <f:facet name="footer">
+                            <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoMedicamentoBean.crear()}" 
+                                oncomplete="dialogoNuevoMedicamento.hide()" icon="ui-icon-check" update="frmMantenimientoMedicamento"/>
+                            <p:commandButton value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmDetalleMedicamento">
+                    <p:dialog id="dlgDetalleMedicamento" header="Detalle Medicamento" widgetVar="dialogoDetalleMedicamento" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroMedicamento
+                            accion="Detalle" medicamento="${mantenimientoMedicamentoBean.selectedMedicamento}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="true"/> 
+                        <f:facet name="footer">
+                            <p:commandButton value="Cerrar" oncomplete="dialogoDetalleMedicamento.hide()" icon="ui-icon-close"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmModificarMedicamento">
+                    <p:dialog id="dlgModificarMedicamento" header="Modificar Medicamento" widgetVar="dialogoModificarMedicamento" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroMedicamento
+                            accion="Modificar" medicamento="${mantenimientoMedicamentoBean.selectedMedicamento}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="false"/>
+                        <f:facet name="footer">
+                            <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoMedicamentoBean.editar()}" 
+                                oncomplete="dialogoModificarMedicamento.hide()" icon="ui-icon-check"/>
+                            <p:commandButton value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmEliminarMedicamento">
+                    <p:dialog id="dlgEliminarMedicamento" header="Eliminar Medicamento" widgetVar="dialogoEliminarMedicamento" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <ezcomp:ccRegistroMedicamento
+                            accion="Eliminar" medicamento="${mantenimientoMedicamentoBean.selectedMedicamento}"
+                            readOnlyCodigo="true"
+                            readOnlyDatos="true"/>
+                        <f:facet name="footer">
+                            <p:commandButton value="Eliminar" ajax="false" actionListener="${mantenimientoMedicamentoBean.eliminar()}" 
+                                oncomplete="dialogoEliminarMedicamento.hide()" icon="ui-icon-check"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
+                
+            </ui:define>
+
+            <ui:define name="left">
+            </ui:define>
+
+            <ui:define name="content">
+       
+                <h:form id="frmMantenimientoMedicamento" title="Formulario de Mantenimiento de Medicamentos">
+                    <p:panel id="pnlMantenimientoMedicamento" header="Mantenimiento Medicamentos">
+                        <p:dataTable id="tblMedicamentos" var="medicamento" value="${mantenimientoMedicamentoBean.listaMedicamentos}"
+                            sortMode="multiple" rowKey="${medicamento.codigo}" paginator="true" rows="10" 
+                            currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                            rowsPerPageTemplate="5,10,20" selection="${mantenimientoMedicamentoBean.selectedMedicamento}" selectionMode="single"
+                            emptyMessage="Ningún Medicamento Registrado" scrollable="true" scrollHeight="190"
+                            resizableColumns="true">
+                                                         
+                            <f:facet name="header">  
+                                Lista de Medicamentos
+                            </f:facet>  
+                            
+                            <p:column sortBy="${medicamento.codigo}" filterBy="${medicamento.codigo}" headerText="Código" width="150">  
+                                <h:outputText value="${medicamento.codigo}" />  
+                            </p:column>
+                            
+                            <p:column sortBy="${medicamento.descripcion}" filterBy="${medicamento.descripcion}" filterMatchMode="contains" headerText="Descripción">  
+                                <h:outputText value="${medicamento.descripcion}" />  
+                            </p:column>
+                                             
+                            <p:column sortBy="${medicamento.stock}" filterBy="${medicamento.stock}" filterMatchMode="contains" headerText="Stock">
+                                <h:outputText value="${medicamento.stock}" />  
+                            </p:column>
+                                                 
+                            <p:column sortBy="${medicamento.fechaVencimiento}" filterBy="${medicamento.fechaVencimiento}" filterMatchMode="contains" headerText="Fecha de Vencimiento">
+                                <h:outputText value="${medicamento.fechaVencimiento}" />  
+                            </p:column>
+                            
+                            <f:facet name="footer">  
+                                <p:commandButton id="btnNuevo" value="Nuevo" icon="ui-icon-plus" update="_frmNuevoMedicamento"
+                                    oncomplete="dialogoNuevoMedicamento.show()"/>
+                                <p:commandButton id="btnDetalle" value="Detalle" icon="ui-icon-zoomin" update="_frmDetalleMedicamento"
+                                    oncomplete="dialogoDetalleMedicamento.show()"/>
+                                <p:commandButton id="btnModificar" value="Modificar" icon="ui-icon-pencil" update="_frmModificarMedicamento"
+                                    oncomplete="dialogoModificarMedicamento.show()"/>
+                                <p:commandButton id="btnEliminar" value="Eliminar" icon="ui-icon-minus" update="_frmEliminarMedicamento"
+                                    oncomplete="dialogoEliminarMedicamento.show()"/>
+                            </f:facet>  
+                            
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

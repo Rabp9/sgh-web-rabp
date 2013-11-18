@@ -5,16 +5,20 @@
 package org.sghweb.jpa;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -37,20 +41,29 @@ public class Diagnostico implements Serializable {
     @Size(min = 1, max = 5)
     @Column(name = "codigo")
     private String codigo;
-    @Size(max = 45)
+    @Size(max = 250)
     @Column(name = "descripcion")
     private String descripcion;
-    @Size(max = 45)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
     @Column(name = "sexoAfectado")
     private String sexoAfectado;
     @Column(name = "estado")
     private Character estado;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "diagnostico")
+    private List<Detallediagnostico> detallediagnosticoList;
 
     public Diagnostico() {
     }
 
     public Diagnostico(String codigo) {
         this.codigo = codigo;
+    }
+
+    public Diagnostico(String codigo, String sexoAfectado) {
+        this.codigo = codigo;
+        this.sexoAfectado = sexoAfectado;
     }
 
     public String getCodigo() {
@@ -83,6 +96,15 @@ public class Diagnostico implements Serializable {
 
     public void setEstado(Character estado) {
         this.estado = estado;
+    }
+
+    @XmlTransient
+    public List<Detallediagnostico> getDetallediagnosticoList() {
+        return detallediagnosticoList;
+    }
+
+    public void setDetallediagnosticoList(List<Detallediagnostico> detallediagnosticoList) {
+        this.detallediagnosticoList = detallediagnosticoList;
     }
 
     @Override

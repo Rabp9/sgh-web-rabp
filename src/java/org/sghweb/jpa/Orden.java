@@ -50,6 +50,8 @@ public class Orden implements Serializable {
     private Character estado;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "orden")
     private List<Receta> recetaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "orden")
+    private List<Detalleorden> detalleordenList;
 
     public Orden() {
     }
@@ -89,6 +91,15 @@ public class Orden implements Serializable {
 
     public void setRecetaList(List<Receta> recetaList) {
         this.recetaList = recetaList;
+    }
+
+    @XmlTransient
+    public List<Detalleorden> getDetalleordenList() {
+        return detalleordenList;
+    }
+
+    public void setDetalleordenList(List<Detalleorden> detalleordenList) {
+        this.detalleordenList = detalleordenList;
     }
 
     @Override

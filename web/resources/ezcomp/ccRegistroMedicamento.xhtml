@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="accion" required="true"/>
+        <cc:attribute name="medicamento" required="false"/>
+        <cc:attribute name="readOnlyCodigo" required="false"/>
+        <cc:attribute name="readOnlyDatos" required="false"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>  
+        <p:panelGrid columns="2">
+            <p:outputLabel value="Código" for="txtCodigo${cc.attrs.accion}"/>
+            <p:inputText id="txtCodigo${cc.attrs.accion}" value="${cc.attrs.medicamento.codigo}" 
+                         maxlength="6" onkeyup="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyCodigo}"
+                         required="true">
+                <p:watermark value="Código de 6 letras" for="txtCodigo${cc.attrs.accion}"/>
+            </p:inputText>
+
+            <p:outputLabel value="Descripción" for="txtDescripcion${cc.attrs.accion}"/>
+            <p:inputText id="txtDescripcion${cc.attrs.accion}" value="${cc.attrs.medicamento.descripcion}"
+                         maxlength="60" onkeyup="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyCodigo}"
+                         required="true">
+                <p:watermark value="Escribe una descripción" for="txtDescripcion${cc.attrs.accion}"/>
+            </p:inputText> 
+            
+            <p:outputLabel value="Presentación" for="somPresentacion${cc.attrs.accion}"/>
+            <p:selectOneMenu id="somPresentacion${cc.attrs.accion}" value="${cc.attrs.medicamento.presentacion}">
+                <f:selectItem itemLabel="Selecciona una opción" itemValue="" />  
+                <f:selectItem itemLabel="TB" itemValue="TB"/>
+                <f:selectItem itemLabel="AM" itemValue="AM"/>
+                <f:selectItem itemLabel="FR" itemValue="FR"/>
+                <f:selectItem itemLabel="PT" itemValue="PT"/>
+                <f:selectItem itemLabel="CAD" itemValue="CAD"/>
+                <f:selectItem itemLabel="TU" itemValue="TU"/>
+                <f:selectItem itemLabel="BL" itemValue="BL"/>
+                <f:selectItem itemLabel="CP" itemValue="CP"/>
+                <f:selectItem itemLabel="OV" itemValue="OV"/>
+                <f:selectItem itemLabel="UN" itemValue="UN"/>
+                <f:selectItem itemLabel="G" itemValue="G"/>
+                <f:selectItem itemLabel="SOB" itemValue="SOB"/>
+                <f:selectItem itemLabel="SU" itemValue="SU"/>
+                <f:selectItem itemLabel="POT" itemValue="POT"/>
+                <f:selectItem itemLabel="BOL" itemValue="BOL"/>
+                <f:selectItem itemLabel="CM3" itemValue="CM3"/>
+                <f:selectItem itemLabel="SB" itemValue="SB"/>
+                <f:selectItem itemLabel="PQ" itemValue="PQ"/>
+                <f:selectItem itemLabel="ROL" itemValue="ROL"/>
+                <f:selectItem itemLabel="HJ" itemValue="HJ"/>
+                <f:selectItem itemLabel="PBA" itemValue="PBA"/>
+                <f:selectItem itemLabel="M3" itemValue="M3"/>
+            </p:selectOneMenu>
+            
+            <p:outputLabel value="Stock" for="spnStock${cc.attrs.accion}"/>
+            <p:spinner id="spnStock${cc.attrs.accion}" value="${cc.attrs.medicamento.stock}"
+                       readonly="${cc.attrs.readOnlyDatos}">
+                <p:watermark value="Indique el stock actual" for="spnStock${cc.attrs.accion}"/>
+            </p:spinner>
+                      
+            <p:outputLabel value="Stock Mínimo" for="spnStockMinimo${cc.attrs.accion}"/>
+            <p:spinner id="spnStockMinimo${cc.attrs.accion}" value="${cc.attrs.medicamento.stockMin}"
+                       readonly="${cc.attrs.readOnlyDatos}">
+                <p:watermark value="Indique el stock minimo" for="spnStockMinimo${cc.attrs.accion}"/>
+            </p:spinner>
+                      
+            <p:outputLabel value="Stock Máximo" for="spnStockMaximo${cc.attrs.accion}"/>
+            <p:spinner id="spnStockMaximo${cc.attrs.accion}" value="${cc.attrs.medicamento.stockMax}"
+                       readonly="${cc.attrs.readOnlyDatos}">
+                <p:watermark value="Indique el stock máximo" for="spnStockMaximo${cc.attrs.accion}"/>
+            </p:spinner>
+            
+            <p:outputLabel value="Fecha Ingreso" for="clnFechaIngreso${cc.attrs.accion}"/>
+            <p:calendar id="clnFechaIngreso" value="${cc.attrs.fechaIngreso}" readonly="${cc.attrs.readOnlyDatos}"/>
+   
+            <p:outputLabel value="Fecha Vencimiento" for="clnFechaVencimiento${cc.attrs.accion}"/>
+            <p:calendar id="clnFechaVencimiento" value="${cc.attrs.fechaVencimiento}" readonly="${cc.attrs.readOnlyDatos}"/>
+            
+        </p:panelGrid>
+    </cc:implementation>
+</html>

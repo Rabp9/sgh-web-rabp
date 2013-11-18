@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Paciente.findAll", query = "SELECT p FROM Paciente p"),
     @NamedQuery(name = "Paciente.findByDni", query = "SELECT p FROM Paciente p WHERE p.dni = :dni"),
-    @NamedQuery(name = "Paciente.findByNombre", query = "SELECT p FROM Paciente p WHERE p.nombre = :nombre"),
+    @NamedQuery(name = "Paciente.findByNombreCompleto", query = "SELECT p FROM Paciente p WHERE p.nombreCompleto = :nombreCompleto"),
     @NamedQuery(name = "Paciente.findByUbicacionNacimiento", query = "SELECT p FROM Paciente p WHERE p.ubicacionNacimiento = :ubicacionNacimiento"),
     @NamedQuery(name = "Paciente.findByUbicacionActual", query = "SELECT p FROM Paciente p WHERE p.ubicacionActual = :ubicacionActual"),
     @NamedQuery(name = "Paciente.findByDireccion", query = "SELECT p FROM Paciente p WHERE p.direccion = :direccion"),
@@ -53,9 +53,9 @@ public class Paciente implements Serializable {
     private String dni;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "nombre")
-    private String nombre;
+    @Size(min = 1, max = 60)
+    @Column(name = "nombreCompleto")
+    private String nombreCompleto;
     @Size(max = 45)
     @Column(name = "ubicacionNacimiento")
     private String ubicacionNacimiento;
@@ -83,8 +83,6 @@ public class Paciente implements Serializable {
     @Column(name = "estado")
     private Character estado;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "paciente")
-    private List<Cita> citaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "paciente")
     private List<Historiaclinica> historiaclinicaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "paciente")
     private List<Referencia> referenciaList;
@@ -96,9 +94,9 @@ public class Paciente implements Serializable {
         this.dni = dni;
     }
 
-    public Paciente(String dni, String nombre, Date fechaNacimiento) {
+    public Paciente(String dni, String nombreCompleto, Date fechaNacimiento) {
         this.dni = dni;
-        this.nombre = nombre;
+        this.nombreCompleto = nombreCompleto;
         this.fechaNacimiento = fechaNacimiento;
     }
 
@@ -110,12 +108,12 @@ public class Paciente implements Serializable {
         this.dni = dni;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreCompleto() {
+        return nombreCompleto;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
     }
 
     public String getUbicacionNacimiento() {
@@ -188,15 +186,6 @@ public class Paciente implements Serializable {
 
     public void setEstado(Character estado) {
         this.estado = estado;
-    }
-
-    @XmlTransient
-    public List<Cita> getCitaList() {
-        return citaList;
-    }
-
-    public void setCitaList(List<Cita> citaList) {
-        this.citaList = citaList;
     }
 
     @XmlTransient

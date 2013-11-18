@@ -49,9 +49,9 @@ public class Medico implements Serializable {
     @Column(name = "estado")
     private Character estado;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "medico")
-    private List<Cita> citaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "medico")
     private List<Detalleserviciomedico> detalleserviciomedicoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "medico")
+    private List<Cita> citaList;
 
     public Medico() {
     }
@@ -102,21 +102,21 @@ public class Medico implements Serializable {
     }
 
     @XmlTransient
-    public List<Cita> getCitaList() {
-        return citaList;
-    }
-
-    public void setCitaList(List<Cita> citaList) {
-        this.citaList = citaList;
-    }
-
-    @XmlTransient
     public List<Detalleserviciomedico> getDetalleserviciomedicoList() {
         return detalleserviciomedicoList;
     }
 
     public void setDetalleserviciomedicoList(List<Detalleserviciomedico> detalleserviciomedicoList) {
         this.detalleserviciomedicoList = detalleserviciomedicoList;
+    }
+
+    @XmlTransient
+    public List<Cita> getCitaList() {
+        return citaList;
+    }
+
+    public void setCitaList(List<Cita> citaList) {
+        this.citaList = citaList;
     }
 
     @Override

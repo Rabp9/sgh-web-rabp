@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="form" required="true"/>
+        <cc:attribute name="pacienteBean" required="true"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:fieldset legend="Paciente">
+            <p:panelGrid columns="3">
+                                
+                <p:outputLabel value="Número de DNI: " for="autoCompleteDni"/>
+                <p:autoComplete id="autoCompleteDni" value="${cc.attrs.pacienteBean.vwReportepaciente.dni}" 
+                                completeMethod="${cc.attrs.pacienteBean.listaDni}" maxResults="10" size="50">
+                    <p:ajax event="keyup" update="${cc.attrs.form}_txtNumeroRegistro, ${cc.attrs.form}_txtNombre, ${cc.attrs.form}_txtAutogenerado, ${cc.attrs.form}_txtTitular" listener="${cc.attrs.pacienteBean.verificar}"/>  
+                    <p:ajax event="itemSelect" update="${cc.attrs.form}_txtNumeroRegistro, ${cc.attrs.form}_txtNombre, ${cc.attrs.form}_txtAutogenerado, ${cc.attrs.form}_txtTitular" listener="${cc.attrs.pacienteBean.verificar}"/> 
+                    
+                </p:autoComplete>
+                <p:commandButton id="btnBuscar" value="Buscar" icon="ui-icon-search" oncomplete="dialogoSeleccionarPacietne.show()"/>
+                                
+                <p:outputLabel value="Número de Registro: " for="txtNumeroRegistro"/>
+                <p:inputText id="txtNumeroRegistro" value="${cc.attrs.pacienteBean.vwReportepaciente.numeroRegistro}" readonly="true" size="50"/>
+                <h:panelGroup/>
+                                
+                <p:outputLabel value="Nombre: " for="txtNombre"/>
+                <p:inputText id="txtNombre" value="${cc.attrs.pacienteBean.vwReportepaciente.nombreCompleto}" readonly="true" size="50"/> 
+                <h:panelGroup/>
+                                
+                <p:outputLabel value="Autogenerado: " for="txtAutogenerado"/>
+                <p:inputText id="txtAutogenerado" value="${cc.attrs.pacienteBean.vwReportepaciente.autogenerado}" readonly="true" size="50"/>
+                <h:panelGroup/>
+                                                                
+                <p:outputLabel value="Titular: " for="txtTitular"/>
+                <p:inputText id="txtTitular" value="${cc.attrs.pacienteBean.vwReportepaciente.titular}" readonly="true" size="50"/>
+                <h:panelGroup/>
+                                
+            </p:panelGrid>
+        </p:fieldset>
+    </cc:implementation>
+</html>

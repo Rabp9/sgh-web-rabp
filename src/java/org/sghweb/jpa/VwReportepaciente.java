@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "VwReportepaciente.findAll", query = "SELECT v FROM VwReportepaciente v"),
     @NamedQuery(name = "VwReportepaciente.findByDni", query = "SELECT v FROM VwReportepaciente v WHERE v.dni = :dni"),
-    @NamedQuery(name = "VwReportepaciente.findByNombre", query = "SELECT v FROM VwReportepaciente v WHERE v.nombre = :nombre"),
+    @NamedQuery(name = "VwReportepaciente.findByNombreCompleto", query = "SELECT v FROM VwReportepaciente v WHERE v.nombreCompleto = :nombreCompleto"),
     @NamedQuery(name = "VwReportepaciente.findByUbicacionNacimiento", query = "SELECT v FROM VwReportepaciente v WHERE v.ubicacionNacimiento = :ubicacionNacimiento"),
     @NamedQuery(name = "VwReportepaciente.findByUbicacionActual", query = "SELECT v FROM VwReportepaciente v WHERE v.ubicacionActual = :ubicacionActual"),
     @NamedQuery(name = "VwReportepaciente.findByDireccion", query = "SELECT v FROM VwReportepaciente v WHERE v.direccion = :direccion"),
@@ -54,9 +54,9 @@ public class VwReportepaciente implements Serializable {
     private String dni;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "nombre")
-    private String nombre;
+    @Size(min = 1, max = 60)
+    @Column(name = "nombreCompleto")
+    private String nombreCompleto;
     @Size(max = 45)
     @Column(name = "ubicacionNacimiento")
     private String ubicacionNacimiento;
@@ -111,12 +111,12 @@ public class VwReportepaciente implements Serializable {
         this.dni = dni;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreCompleto() {
+        return nombreCompleto;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
     }
 
     public String getUbicacionNacimiento() {

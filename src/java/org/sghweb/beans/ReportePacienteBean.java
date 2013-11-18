@@ -149,7 +149,7 @@ public class ReportePacienteBean implements Serializable {
         table.addCell(cell1);
         
         table.addCell("Nombre: ");
-        table.addCell(vwReportepaciente.getNombre());
+        table.addCell(vwReportepaciente.getNombreCompleto());
         
         table.addCell("DNI: ");
         table.addCell(vwReportepaciente.getDni());        

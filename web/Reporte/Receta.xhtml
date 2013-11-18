@@ -96,7 +96,7 @@
                                 <h:panelGroup/>
                                 
                                 <p:outputLabel value="Nombre: " for="txtNombre"/>
-                                <p:inputText id="txtNombre" value="${reporteRecetaBean.vwReportepaciente.nombre}" readonly="true" size="50"/> 
+                                <p:inputText id="txtNombre" value="${reporteRecetaBean.vwReportepaciente.nombreCompleto}" readonly="true" size="50"/> 
                                 <h:panelGroup/>
                                 
                                 <p:outputLabel value="Autogenerado: " for="txtAutogenerado"/>
@@ -117,7 +117,6 @@
                             <p:outputLabel value="Fecha Inicio: " for="calendarFechaFin"/>
                             <p:calendar id="calendarFechaFin"/> 
                         </p:panelGrid>
-                        
                     </p:panel>
                 </h:form>
             </ui:define>
