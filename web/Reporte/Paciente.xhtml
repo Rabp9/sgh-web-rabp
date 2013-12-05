@@ -57,11 +57,11 @@
                                     <h:outputText value="${reportePaciente.numeroRegistro}" />  
                                 </p:column>
                                 
-                                <p:column sortBy="${reportePaciente.nombre}" filterBy="${reportePaciente.nombre}" filterMatchMode="contains">  
+                                <p:column sortBy="${reportePaciente.nombreCompleto}" filterBy="${reportePaciente.nombreCompleto}" filterMatchMode="contains">  
                                     <f:facet name="header">
-                                        <h:outputText value="Nombre" />  
+                                        <h:outputText value="Nombre Completo" />  
                                     </f:facet>
-                                    <h:outputText value="${reportePaciente.nombre}" />  
+                                    <h:outputText value="${reportePaciente.nombreCompleto}" />  
                                 </p:column>
                                 
                                 <p:column sortBy="${reportePaciente.autogenerado}" filterBy="${reportePaciente.autogenerado}" filterMatchMode="contains" width="160">  
@@ -83,9 +83,11 @@
                                         <p:fileDownload value="${reportePacienteBean.reporte}" />  
                                     </p:commandButton>
                                 </f:facet>  
-
+                                
                             </p:dataTable>
-                        </p:fieldset>            
+                        
+                        </p:fieldset>
+                        
                         <p:fieldset legend="Reporte Detallado" toggleable="true">
                             <p:outputLabel value="Número de DNI: " for="autoCompleteDni"/>
                             <p:autoComplete id="autoCompleteDni" value="${reportePacienteBean.dni}" 

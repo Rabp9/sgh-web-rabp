@@ -2,6 +2,7 @@
 package org.sghweb.beans;
 
 import com.lowagie.text.*;
+import com.lowagie.text.html.WebColors;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -107,9 +108,28 @@ public class ReportePacienteBean implements Serializable {
         List<VwReportepaciente> vwReportepacientes = vrjc.findVwReportepacienteEntities();  
         pdf.add(Chunk.NEWLINE);
         PdfPTable table = new PdfPTable(6);
-        for (VwReportepaciente vwReportepaciente : vwReportepacientes) {
-            
+        table.setWidths(new int[]{15, 20, 30, 25, 25, 20});
+        String[] campos = new String[]{"DNI", "Número de Registro", "Nombre Completo", "Autogenerado", "Titular", "Tipo Asegurado"};
+
+        for(String campo : campos) {
+            PdfPCell cell = new PdfPCell(new Phrase(campo, FontFactory.getFont(FontFactory.HELVETICA, 10, Font.BOLD, new Color(255, 255, 255))));
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBackgroundColor(new Color(0, 130, 197));
+            table.addCell(cell);
         }
+        
+        for (VwReportepaciente vwReportepaciente : vwReportepacientes) {
+            table.addCell(new Phrase(vwReportepaciente.getDni(), FontFactory.getFont(FontFactory.HELVETICA, 7, Font.NORMAL, new Color(0, 0, 0))));
+            table.addCell(new Phrase(vwReportepaciente.getNumeroRegistro(), FontFactory.getFont(FontFactory.HELVETICA, 7, Font.NORMAL, new Color(0, 0, 0))));
+            table.addCell(new Phrase(vwReportepaciente.getNombreCompleto(), FontFactory.getFont(FontFactory.HELVETICA, 7, Font.NORMAL, new Color(0, 0, 0))));
+            table.addCell(new Phrase(vwReportepaciente.getAutogenerado(), FontFactory.getFont(FontFactory.HELVETICA, 7, Font.NORMAL, new Color(0, 0, 0))));
+            table.addCell(new Phrase(vwReportepaciente.getTitular(), FontFactory.getFont(FontFactory.HELVETICA, 7, Font.NORMAL, new Color(0, 0, 0))));
+            table.addCell(new Phrase(vwReportepaciente.getTipoAsegurado(), FontFactory.getFont(FontFactory.HELVETICA, 7, Font.NORMAL, new Color(0, 0, 0))));
+        }
+        pdf.add(table);
+        pdf.close(); // no need to close PDFwriter?
+        InputStream is = new ByteArrayInputStream(os.toByteArray());
+        setReporte(new DefaultStreamedContent(is, "application/pdf", "Reporte de Pacientes.pdf"));
     }
     
     public void reportarPaciente() throws IOException, BadElementException, DocumentException {
