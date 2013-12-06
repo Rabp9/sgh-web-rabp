@@ -6,7 +6,9 @@ package org.sghweb.jpa;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -14,12 +16,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -55,6 +59,8 @@ public class Referencia implements Serializable {
     private String motivo;
     @Column(name = "estado")
     private Character estado;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "referencia")
+    private List<Detallereferenciadiagnostico> detallereferenciadiagnosticoList;
     @JoinColumn(name = "Paciente_dni", referencedColumnName = "dni", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Paciente paciente;
@@ -114,6 +120,15 @@ public class Referencia implements Serializable {
 
     public void setEstado(Character estado) {
         this.estado = estado;
+    }
+
+    @XmlTransient
+    public List<Detallereferenciadiagnostico> getDetallereferenciadiagnosticoList() {
+        return detallereferenciadiagnosticoList;
+    }
+
+    public void setDetallereferenciadiagnosticoList(List<Detallereferenciadiagnostico> detallereferenciadiagnosticoList) {
+        this.detallereferenciadiagnosticoList = detallereferenciadiagnosticoList;
     }
 
     public Paciente getPaciente() {

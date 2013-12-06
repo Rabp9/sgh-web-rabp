@@ -42,10 +42,10 @@ public class TurnoJpaController implements Serializable {
         if (turno.getTurnoPK() == null) {
             turno.setTurnoPK(new TurnoPK());
         }
-        turno.getTurnoPK().setDetalleServicioMedicoServiciocodigo(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getServiciocodigo());
-        turno.getTurnoPK().setDetalleServicioMedicoMedicodni(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getMedicodni());
         turno.getTurnoPK().setDetalleServicioMedicoidDetalleServicioMedico(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getIdDetalleServicioMedico());
         turno.getTurnoPK().setDetalleServicioMedicoMedicocmp(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getMedicocmp());
+        turno.getTurnoPK().setDetalleServicioMedicoMedicodni(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getMedicodni());
+        turno.getTurnoPK().setDetalleServicioMedicoServiciocodigo(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getServiciocodigo());
         turno.getTurnoPK().setActividadcodigo(turno.getActividad().getCodigo());
         EntityManager em = null;
         try {
@@ -89,10 +89,10 @@ public class TurnoJpaController implements Serializable {
     }
 
     public void edit(Turno turno) throws NonexistentEntityException, RollbackFailureException, Exception {
-        turno.getTurnoPK().setDetalleServicioMedicoServiciocodigo(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getServiciocodigo());
-        turno.getTurnoPK().setDetalleServicioMedicoMedicodni(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getMedicodni());
         turno.getTurnoPK().setDetalleServicioMedicoidDetalleServicioMedico(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getIdDetalleServicioMedico());
         turno.getTurnoPK().setDetalleServicioMedicoMedicocmp(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getMedicocmp());
+        turno.getTurnoPK().setDetalleServicioMedicoMedicodni(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getMedicodni());
+        turno.getTurnoPK().setDetalleServicioMedicoServiciocodigo(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getServiciocodigo());
         turno.getTurnoPK().setActividadcodigo(turno.getActividad().getCodigo());
         EntityManager em = null;
         try {

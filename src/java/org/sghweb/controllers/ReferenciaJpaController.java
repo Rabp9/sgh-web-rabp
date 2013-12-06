@@ -5,18 +5,21 @@
 package org.sghweb.controllers;
 
 import java.io.Serializable;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import org.sghweb.jpa.Paciente;
+import org.sghweb.jpa.Detallereferenciadiagnostico;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
+import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
-import org.sghweb.jpa.Paciente;
 import org.sghweb.jpa.Referencia;
 import org.sghweb.jpa.ReferenciaPK;
 
@@ -41,6 +44,9 @@ public class ReferenciaJpaController implements Serializable {
         if (referencia.getReferenciaPK() == null) {
             referencia.setReferenciaPK(new ReferenciaPK());
         }
+        if (referencia.getDetallereferenciadiagnosticoList() == null) {
+            referencia.setDetallereferenciadiagnosticoList(new ArrayList<Detallereferenciadiagnostico>());
+        }
         referencia.getReferenciaPK().setPacientedni(referencia.getPaciente().getDni());
         EntityManager em = null;
         try {
@@ -51,10 +57,25 @@ public class ReferenciaJpaController implements Serializable {
                 paciente = em.getReference(paciente.getClass(), paciente.getDni());
                 referencia.setPaciente(paciente);
             }
+            List<Detallereferenciadiagnostico> attachedDetallereferenciadiagnosticoList = new ArrayList<Detallereferenciadiagnostico>();
+            for (Detallereferenciadiagnostico detallereferenciadiagnosticoListDetallereferenciadiagnosticoToAttach : referencia.getDetallereferenciadiagnosticoList()) {
+                detallereferenciadiagnosticoListDetallereferenciadiagnosticoToAttach = em.getReference(detallereferenciadiagnosticoListDetallereferenciadiagnosticoToAttach.getClass(), detallereferenciadiagnosticoListDetallereferenciadiagnosticoToAttach.getDetallereferenciadiagnosticoPK());
+                attachedDetallereferenciadiagnosticoList.add(detallereferenciadiagnosticoListDetallereferenciadiagnosticoToAttach);
+            }
+            referencia.setDetallereferenciadiagnosticoList(attachedDetallereferenciadiagnosticoList);
             em.persist(referencia);
             if (paciente != null) {
                 paciente.getReferenciaList().add(referencia);
                 paciente = em.merge(paciente);
+            }
+            for (Detallereferenciadiagnostico detallereferenciadiagnosticoListDetallereferenciadiagnostico : referencia.getDetallereferenciadiagnosticoList()) {
+                Referencia oldReferenciaOfDetallereferenciadiagnosticoListDetallereferenciadiagnostico = detallereferenciadiagnosticoListDetallereferenciadiagnostico.getReferencia();
+                detallereferenciadiagnosticoListDetallereferenciadiagnostico.setReferencia(referencia);
+                detallereferenciadiagnosticoListDetallereferenciadiagnostico = em.merge(detallereferenciadiagnosticoListDetallereferenciadiagnostico);
+                if (oldReferenciaOfDetallereferenciadiagnosticoListDetallereferenciadiagnostico != null) {
+                    oldReferenciaOfDetallereferenciadiagnosticoListDetallereferenciadiagnostico.getDetallereferenciadiagnosticoList().remove(detallereferenciadiagnosticoListDetallereferenciadiagnostico);
+                    oldReferenciaOfDetallereferenciadiagnosticoListDetallereferenciadiagnostico = em.merge(oldReferenciaOfDetallereferenciadiagnosticoListDetallereferenciadiagnostico);
+                }
             }
             utx.commit();
         } catch (Exception ex) {
@@ -74,7 +95,7 @@ public class ReferenciaJpaController implements Serializable {
         }
     }
 
-    public void edit(Referencia referencia) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void edit(Referencia referencia) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         referencia.getReferenciaPK().setPacientedni(referencia.getPaciente().getDni());
         EntityManager em = null;
         try {
@@ -83,10 +104,31 @@ public class ReferenciaJpaController implements Serializable {
             Referencia persistentReferencia = em.find(Referencia.class, referencia.getReferenciaPK());
             Paciente pacienteOld = persistentReferencia.getPaciente();
             Paciente pacienteNew = referencia.getPaciente();
+            List<Detallereferenciadiagnostico> detallereferenciadiagnosticoListOld = persistentReferencia.getDetallereferenciadiagnosticoList();
+            List<Detallereferenciadiagnostico> detallereferenciadiagnosticoListNew = referencia.getDetallereferenciadiagnosticoList();
+            List<String> illegalOrphanMessages = null;
+            for (Detallereferenciadiagnostico detallereferenciadiagnosticoListOldDetallereferenciadiagnostico : detallereferenciadiagnosticoListOld) {
+                if (!detallereferenciadiagnosticoListNew.contains(detallereferenciadiagnosticoListOldDetallereferenciadiagnostico)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Detallereferenciadiagnostico " + detallereferenciadiagnosticoListOldDetallereferenciadiagnostico + " since its referencia field is not nullable.");
+                }
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
+            }
             if (pacienteNew != null) {
                 pacienteNew = em.getReference(pacienteNew.getClass(), pacienteNew.getDni());
                 referencia.setPaciente(pacienteNew);
             }
+            List<Detallereferenciadiagnostico> attachedDetallereferenciadiagnosticoListNew = new ArrayList<Detallereferenciadiagnostico>();
+            for (Detallereferenciadiagnostico detallereferenciadiagnosticoListNewDetallereferenciadiagnosticoToAttach : detallereferenciadiagnosticoListNew) {
+                detallereferenciadiagnosticoListNewDetallereferenciadiagnosticoToAttach = em.getReference(detallereferenciadiagnosticoListNewDetallereferenciadiagnosticoToAttach.getClass(), detallereferenciadiagnosticoListNewDetallereferenciadiagnosticoToAttach.getDetallereferenciadiagnosticoPK());
+                attachedDetallereferenciadiagnosticoListNew.add(detallereferenciadiagnosticoListNewDetallereferenciadiagnosticoToAttach);
+            }
+            detallereferenciadiagnosticoListNew = attachedDetallereferenciadiagnosticoListNew;
+            referencia.setDetallereferenciadiagnosticoList(detallereferenciadiagnosticoListNew);
             referencia = em.merge(referencia);
             if (pacienteOld != null && !pacienteOld.equals(pacienteNew)) {
                 pacienteOld.getReferenciaList().remove(referencia);
@@ -95,6 +137,17 @@ public class ReferenciaJpaController implements Serializable {
             if (pacienteNew != null && !pacienteNew.equals(pacienteOld)) {
                 pacienteNew.getReferenciaList().add(referencia);
                 pacienteNew = em.merge(pacienteNew);
+            }
+            for (Detallereferenciadiagnostico detallereferenciadiagnosticoListNewDetallereferenciadiagnostico : detallereferenciadiagnosticoListNew) {
+                if (!detallereferenciadiagnosticoListOld.contains(detallereferenciadiagnosticoListNewDetallereferenciadiagnostico)) {
+                    Referencia oldReferenciaOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico = detallereferenciadiagnosticoListNewDetallereferenciadiagnostico.getReferencia();
+                    detallereferenciadiagnosticoListNewDetallereferenciadiagnostico.setReferencia(referencia);
+                    detallereferenciadiagnosticoListNewDetallereferenciadiagnostico = em.merge(detallereferenciadiagnosticoListNewDetallereferenciadiagnostico);
+                    if (oldReferenciaOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico != null && !oldReferenciaOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico.equals(referencia)) {
+                        oldReferenciaOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico.getDetallereferenciadiagnosticoList().remove(detallereferenciadiagnosticoListNewDetallereferenciadiagnostico);
+                        oldReferenciaOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico = em.merge(oldReferenciaOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico);
+                    }
+                }
             }
             utx.commit();
         } catch (Exception ex) {
@@ -118,7 +171,7 @@ public class ReferenciaJpaController implements Serializable {
         }
     }
 
-    public void destroy(ReferenciaPK id) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void destroy(ReferenciaPK id) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
@@ -129,6 +182,17 @@ public class ReferenciaJpaController implements Serializable {
                 referencia.getReferenciaPK();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The referencia with id " + id + " no longer exists.", enfe);
+            }
+            List<String> illegalOrphanMessages = null;
+            List<Detallereferenciadiagnostico> detallereferenciadiagnosticoListOrphanCheck = referencia.getDetallereferenciadiagnosticoList();
+            for (Detallereferenciadiagnostico detallereferenciadiagnosticoListOrphanCheckDetallereferenciadiagnostico : detallereferenciadiagnosticoListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Referencia (" + referencia + ") cannot be destroyed since the Detallereferenciadiagnostico " + detallereferenciadiagnosticoListOrphanCheckDetallereferenciadiagnostico + " in its detallereferenciadiagnosticoList field has a non-nullable referencia field.");
+            }
+            if (illegalOrphanMessages != null) {
+                throw new IllegalOrphanException(illegalOrphanMessages);
             }
             Paciente paciente = referencia.getPaciente();
             if (paciente != null) {

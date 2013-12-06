@@ -48,6 +48,8 @@ public class Detallehistoriaclinica implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fecha;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "detallehistoriaclinica")
+    private List<Citt> cittList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "detallehistoriaclinica")
     private List<Detalleorden> detalleordenList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "detallehistoriaclinica")
     private List<Detallediagnostico> detallediagnosticoList;
@@ -89,6 +91,15 @@ public class Detallehistoriaclinica implements Serializable {
 
     public void setFecha(Date fecha) {
         this.fecha = fecha;
+    }
+
+    @XmlTransient
+    public List<Citt> getCittList() {
+        return cittList;
+    }
+
+    public void setCittList(List<Citt> cittList) {
+        this.cittList = cittList;
     }
 
     @XmlTransient

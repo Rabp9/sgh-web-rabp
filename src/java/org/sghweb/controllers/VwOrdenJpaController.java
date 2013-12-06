@@ -16,15 +16,15 @@ import javax.transaction.UserTransaction;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
-import org.sghweb.jpa.VwReportepaciente;
+import org.sghweb.jpa.VwOrden;
 
 /**
  *
  * @author Roberto
  */
-public class VwReportepacienteJpaController implements Serializable {
+public class VwOrdenJpaController implements Serializable {
 
-    public VwReportepacienteJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public VwOrdenJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
         this.emf = emf;
     }
@@ -35,12 +35,12 @@ public class VwReportepacienteJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(VwReportepaciente vwReportepaciente) throws PreexistingEntityException, RollbackFailureException, Exception {
+    public void create(VwOrden vwOrden) throws PreexistingEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
             em = getEntityManager();
-            em.persist(vwReportepaciente);
+            em.persist(vwOrden);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -48,8 +48,8 @@ public class VwReportepacienteJpaController implements Serializable {
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
-            if (findVwReportepaciente(vwReportepaciente.getDni()) != null) {
-                throw new PreexistingEntityException("VwReportepaciente " + vwReportepaciente + " already exists.", ex);
+            if (findVwOrden(vwOrden.getNroOrden()) != null) {
+                throw new PreexistingEntityException("VwOrden " + vwOrden + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -59,12 +59,12 @@ public class VwReportepacienteJpaController implements Serializable {
         }
     }
 
-    public void edit(VwReportepaciente vwReportepaciente) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void edit(VwOrden vwOrden) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
             em = getEntityManager();
-            vwReportepaciente = em.merge(vwReportepaciente);
+            vwOrden = em.merge(vwOrden);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -74,9 +74,9 @@ public class VwReportepacienteJpaController implements Serializable {
             }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                String id = vwReportepaciente.getDni();
-                if (findVwReportepaciente(id) == null) {
-                    throw new NonexistentEntityException("The vwReportepaciente with id " + id + " no longer exists.");
+                String id = vwOrden.getNroOrden();
+                if (findVwOrden(id) == null) {
+                    throw new NonexistentEntityException("The vwOrden with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -92,14 +92,14 @@ public class VwReportepacienteJpaController implements Serializable {
         try {
             utx.begin();
             em = getEntityManager();
-            VwReportepaciente vwReportepaciente;
+            VwOrden vwOrden;
             try {
-                vwReportepaciente = em.getReference(VwReportepaciente.class, id);
-                vwReportepaciente.getDni();
+                vwOrden = em.getReference(VwOrden.class, id);
+                vwOrden.getNroOrden();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The vwReportepaciente with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The vwOrden with id " + id + " no longer exists.", enfe);
             }
-            em.remove(vwReportepaciente);
+            em.remove(vwOrden);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -115,19 +115,19 @@ public class VwReportepacienteJpaController implements Serializable {
         }
     }
 
-    public List<VwReportepaciente> findVwReportepacienteEntities() {
-        return findVwReportepacienteEntities(true, -1, -1);
+    public List<VwOrden> findVwOrdenEntities() {
+        return findVwOrdenEntities(true, -1, -1);
     }
 
-    public List<VwReportepaciente> findVwReportepacienteEntities(int maxResults, int firstResult) {
-        return findVwReportepacienteEntities(false, maxResults, firstResult);
+    public List<VwOrden> findVwOrdenEntities(int maxResults, int firstResult) {
+        return findVwOrdenEntities(false, maxResults, firstResult);
     }
 
-    private List<VwReportepaciente> findVwReportepacienteEntities(boolean all, int maxResults, int firstResult) {
+    private List<VwOrden> findVwOrdenEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(VwReportepaciente.class));
+            cq.select(cq.from(VwOrden.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -139,20 +139,20 @@ public class VwReportepacienteJpaController implements Serializable {
         }
     }
 
-    public VwReportepaciente findVwReportepaciente(String id) {
+    public VwOrden findVwOrden(String id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(VwReportepaciente.class, id);
+            return em.find(VwOrden.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getVwReportepacienteCount() {
+    public int getVwOrdenCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<VwReportepaciente> rt = cq.from(VwReportepaciente.class);
+            Root<VwOrden> rt = cq.from(VwOrden.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();

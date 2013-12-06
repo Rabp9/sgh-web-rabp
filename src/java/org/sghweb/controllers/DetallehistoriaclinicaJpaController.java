@@ -11,7 +11,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.sghweb.jpa.Cita;
 import org.sghweb.jpa.Historiaclinica;
-import org.sghweb.jpa.Detalleorden;
+import org.sghweb.jpa.Citt;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -21,6 +21,7 @@ import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
+import org.sghweb.jpa.Detalleorden;
 import org.sghweb.jpa.Detallediagnostico;
 import org.sghweb.jpa.Detallehistoriaclinica;
 import org.sghweb.jpa.DetallehistoriaclinicaPK;
@@ -46,18 +47,21 @@ public class DetallehistoriaclinicaJpaController implements Serializable {
         if (detallehistoriaclinica.getDetallehistoriaclinicaPK() == null) {
             detallehistoriaclinica.setDetallehistoriaclinicaPK(new DetallehistoriaclinicaPK());
         }
+        if (detallehistoriaclinica.getCittList() == null) {
+            detallehistoriaclinica.setCittList(new ArrayList<Citt>());
+        }
         if (detallehistoriaclinica.getDetalleordenList() == null) {
             detallehistoriaclinica.setDetalleordenList(new ArrayList<Detalleorden>());
         }
         if (detallehistoriaclinica.getDetallediagnosticoList() == null) {
             detallehistoriaclinica.setDetallediagnosticoList(new ArrayList<Detallediagnostico>());
         }
-        detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicaPacientedni(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getPacientedni());
+        detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaMedicocmp(detallehistoriaclinica.getCita().getCitaPK().getMedicocmp());
         detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaMedicodni(detallehistoriaclinica.getCita().getCitaPK().getMedicodni());
         detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicaautogenerado(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getAutogenerado());
-        detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaMedicocmp(detallehistoriaclinica.getCita().getCitaPK().getMedicocmp());
-        detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicanumeroRegistro(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getNumeroRegistro());
         detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaactoMedico(detallehistoriaclinica.getCita().getCitaPK().getActoMedico());
+        detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicaPacientedni(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getPacientedni());
+        detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicanumeroRegistro(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getNumeroRegistro());
         EntityManager em = null;
         try {
             utx.begin();
@@ -72,6 +76,12 @@ public class DetallehistoriaclinicaJpaController implements Serializable {
                 historiaclinica = em.getReference(historiaclinica.getClass(), historiaclinica.getHistoriaclinicaPK());
                 detallehistoriaclinica.setHistoriaclinica(historiaclinica);
             }
+            List<Citt> attachedCittList = new ArrayList<Citt>();
+            for (Citt cittListCittToAttach : detallehistoriaclinica.getCittList()) {
+                cittListCittToAttach = em.getReference(cittListCittToAttach.getClass(), cittListCittToAttach.getCittPK());
+                attachedCittList.add(cittListCittToAttach);
+            }
+            detallehistoriaclinica.setCittList(attachedCittList);
             List<Detalleorden> attachedDetalleordenList = new ArrayList<Detalleorden>();
             for (Detalleorden detalleordenListDetalleordenToAttach : detallehistoriaclinica.getDetalleordenList()) {
                 detalleordenListDetalleordenToAttach = em.getReference(detalleordenListDetalleordenToAttach.getClass(), detalleordenListDetalleordenToAttach.getDetalleordenPK());
@@ -92,6 +102,15 @@ public class DetallehistoriaclinicaJpaController implements Serializable {
             if (historiaclinica != null) {
                 historiaclinica.getDetallehistoriaclinicaList().add(detallehistoriaclinica);
                 historiaclinica = em.merge(historiaclinica);
+            }
+            for (Citt cittListCitt : detallehistoriaclinica.getCittList()) {
+                Detallehistoriaclinica oldDetallehistoriaclinicaOfCittListCitt = cittListCitt.getDetallehistoriaclinica();
+                cittListCitt.setDetallehistoriaclinica(detallehistoriaclinica);
+                cittListCitt = em.merge(cittListCitt);
+                if (oldDetallehistoriaclinicaOfCittListCitt != null) {
+                    oldDetallehistoriaclinicaOfCittListCitt.getCittList().remove(cittListCitt);
+                    oldDetallehistoriaclinicaOfCittListCitt = em.merge(oldDetallehistoriaclinicaOfCittListCitt);
+                }
             }
             for (Detalleorden detalleordenListDetalleorden : detallehistoriaclinica.getDetalleordenList()) {
                 Detallehistoriaclinica oldDetallehistoriaclinicaOfDetalleordenListDetalleorden = detalleordenListDetalleorden.getDetallehistoriaclinica();
@@ -130,12 +149,12 @@ public class DetallehistoriaclinicaJpaController implements Serializable {
     }
 
     public void edit(Detallehistoriaclinica detallehistoriaclinica) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
-        detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicaPacientedni(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getPacientedni());
+        detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaMedicocmp(detallehistoriaclinica.getCita().getCitaPK().getMedicocmp());
         detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaMedicodni(detallehistoriaclinica.getCita().getCitaPK().getMedicodni());
         detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicaautogenerado(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getAutogenerado());
-        detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaMedicocmp(detallehistoriaclinica.getCita().getCitaPK().getMedicocmp());
-        detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicanumeroRegistro(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getNumeroRegistro());
         detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaactoMedico(detallehistoriaclinica.getCita().getCitaPK().getActoMedico());
+        detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicaPacientedni(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getPacientedni());
+        detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicanumeroRegistro(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getNumeroRegistro());
         EntityManager em = null;
         try {
             utx.begin();
@@ -145,11 +164,21 @@ public class DetallehistoriaclinicaJpaController implements Serializable {
             Cita citaNew = detallehistoriaclinica.getCita();
             Historiaclinica historiaclinicaOld = persistentDetallehistoriaclinica.getHistoriaclinica();
             Historiaclinica historiaclinicaNew = detallehistoriaclinica.getHistoriaclinica();
+            List<Citt> cittListOld = persistentDetallehistoriaclinica.getCittList();
+            List<Citt> cittListNew = detallehistoriaclinica.getCittList();
             List<Detalleorden> detalleordenListOld = persistentDetallehistoriaclinica.getDetalleordenList();
             List<Detalleorden> detalleordenListNew = detallehistoriaclinica.getDetalleordenList();
             List<Detallediagnostico> detallediagnosticoListOld = persistentDetallehistoriaclinica.getDetallediagnosticoList();
             List<Detallediagnostico> detallediagnosticoListNew = detallehistoriaclinica.getDetallediagnosticoList();
             List<String> illegalOrphanMessages = null;
+            for (Citt cittListOldCitt : cittListOld) {
+                if (!cittListNew.contains(cittListOldCitt)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Citt " + cittListOldCitt + " since its detallehistoriaclinica field is not nullable.");
+                }
+            }
             for (Detalleorden detalleordenListOldDetalleorden : detalleordenListOld) {
                 if (!detalleordenListNew.contains(detalleordenListOldDetalleorden)) {
                     if (illegalOrphanMessages == null) {
@@ -177,6 +206,13 @@ public class DetallehistoriaclinicaJpaController implements Serializable {
                 historiaclinicaNew = em.getReference(historiaclinicaNew.getClass(), historiaclinicaNew.getHistoriaclinicaPK());
                 detallehistoriaclinica.setHistoriaclinica(historiaclinicaNew);
             }
+            List<Citt> attachedCittListNew = new ArrayList<Citt>();
+            for (Citt cittListNewCittToAttach : cittListNew) {
+                cittListNewCittToAttach = em.getReference(cittListNewCittToAttach.getClass(), cittListNewCittToAttach.getCittPK());
+                attachedCittListNew.add(cittListNewCittToAttach);
+            }
+            cittListNew = attachedCittListNew;
+            detallehistoriaclinica.setCittList(cittListNew);
             List<Detalleorden> attachedDetalleordenListNew = new ArrayList<Detalleorden>();
             for (Detalleorden detalleordenListNewDetalleordenToAttach : detalleordenListNew) {
                 detalleordenListNewDetalleordenToAttach = em.getReference(detalleordenListNewDetalleordenToAttach.getClass(), detalleordenListNewDetalleordenToAttach.getDetalleordenPK());
@@ -207,6 +243,17 @@ public class DetallehistoriaclinicaJpaController implements Serializable {
             if (historiaclinicaNew != null && !historiaclinicaNew.equals(historiaclinicaOld)) {
                 historiaclinicaNew.getDetallehistoriaclinicaList().add(detallehistoriaclinica);
                 historiaclinicaNew = em.merge(historiaclinicaNew);
+            }
+            for (Citt cittListNewCitt : cittListNew) {
+                if (!cittListOld.contains(cittListNewCitt)) {
+                    Detallehistoriaclinica oldDetallehistoriaclinicaOfCittListNewCitt = cittListNewCitt.getDetallehistoriaclinica();
+                    cittListNewCitt.setDetallehistoriaclinica(detallehistoriaclinica);
+                    cittListNewCitt = em.merge(cittListNewCitt);
+                    if (oldDetallehistoriaclinicaOfCittListNewCitt != null && !oldDetallehistoriaclinicaOfCittListNewCitt.equals(detallehistoriaclinica)) {
+                        oldDetallehistoriaclinicaOfCittListNewCitt.getCittList().remove(cittListNewCitt);
+                        oldDetallehistoriaclinicaOfCittListNewCitt = em.merge(oldDetallehistoriaclinicaOfCittListNewCitt);
+                    }
+                }
             }
             for (Detalleorden detalleordenListNewDetalleorden : detalleordenListNew) {
                 if (!detalleordenListOld.contains(detalleordenListNewDetalleorden)) {
@@ -265,6 +312,13 @@ public class DetallehistoriaclinicaJpaController implements Serializable {
                 throw new NonexistentEntityException("The detallehistoriaclinica with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
+            List<Citt> cittListOrphanCheck = detallehistoriaclinica.getCittList();
+            for (Citt cittListOrphanCheckCitt : cittListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Detallehistoriaclinica (" + detallehistoriaclinica + ") cannot be destroyed since the Citt " + cittListOrphanCheckCitt + " in its cittList field has a non-nullable detallehistoriaclinica field.");
+            }
             List<Detalleorden> detalleordenListOrphanCheck = detallehistoriaclinica.getDetalleordenList();
             for (Detalleorden detalleordenListOrphanCheckDetalleorden : detalleordenListOrphanCheck) {
                 if (illegalOrphanMessages == null) {

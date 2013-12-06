@@ -42,7 +42,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Paciente.findByTipoAsegurado", query = "SELECT p FROM Paciente p WHERE p.tipoAsegurado = :tipoAsegurado"),
     @NamedQuery(name = "Paciente.findByEstadoCivil", query = "SELECT p FROM Paciente p WHERE p.estadoCivil = :estadoCivil"),
     @NamedQuery(name = "Paciente.findByTitular", query = "SELECT p FROM Paciente p WHERE p.titular = :titular"),
-    @NamedQuery(name = "Paciente.findByEstado", query = "SELECT p FROM Paciente p WHERE p.estado = :estado")})
+    @NamedQuery(name = "Paciente.findByEstado", query = "SELECT p FROM Paciente p WHERE p.estado = :estado"),
+    @NamedQuery(name = "Paciente.findByUsername", query = "SELECT p FROM Paciente p WHERE p.username = :username"),
+    @NamedQuery(name = "Paciente.findByPassword", query = "SELECT p FROM Paciente p WHERE p.password = :password")})
 public class Paciente implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -82,6 +84,14 @@ public class Paciente implements Serializable {
     private String titular;
     @Column(name = "estado")
     private Character estado;
+    @Size(max = 45)
+    @Column(name = "username")
+    private String username;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "password")
+    private String password;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "paciente")
     private List<Historiaclinica> historiaclinicaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "paciente")
@@ -94,10 +104,11 @@ public class Paciente implements Serializable {
         this.dni = dni;
     }
 
-    public Paciente(String dni, String nombreCompleto, Date fechaNacimiento) {
+    public Paciente(String dni, String nombreCompleto, Date fechaNacimiento, String password) {
         this.dni = dni;
         this.nombreCompleto = nombreCompleto;
         this.fechaNacimiento = fechaNacimiento;
+        this.password = password;
     }
 
     public String getDni() {
@@ -186,6 +197,22 @@ public class Paciente implements Serializable {
 
     public void setEstado(Character estado) {
         this.estado = estado;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @XmlTransient

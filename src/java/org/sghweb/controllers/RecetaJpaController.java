@@ -42,8 +42,8 @@ public class RecetaJpaController implements Serializable {
         if (receta.getRecetaPK() == null) {
             receta.setRecetaPK(new RecetaPK());
         }
-        receta.getRecetaPK().setOrdennroOrden(receta.getOrden().getNroOrden());
         receta.getRecetaPK().setMedicamentocodigo(receta.getMedicamento().getCodigo());
+        receta.getRecetaPK().setOrdennroOrden(receta.getOrden().getNroOrden());
         EntityManager em = null;
         try {
             utx.begin();
@@ -86,8 +86,8 @@ public class RecetaJpaController implements Serializable {
     }
 
     public void edit(Receta receta) throws NonexistentEntityException, RollbackFailureException, Exception {
-        receta.getRecetaPK().setOrdennroOrden(receta.getOrden().getNroOrden());
         receta.getRecetaPK().setMedicamentocodigo(receta.getMedicamento().getCodigo());
+        receta.getRecetaPK().setOrdennroOrden(receta.getOrden().getNroOrden());
         EntityManager em = null;
         try {
             utx.begin();

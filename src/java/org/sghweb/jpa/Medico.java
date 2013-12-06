@@ -33,7 +33,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Medico.findByDni", query = "SELECT m FROM Medico m WHERE m.medicoPK.dni = :dni"),
     @NamedQuery(name = "Medico.findByNombreCompleto", query = "SELECT m FROM Medico m WHERE m.nombreCompleto = :nombreCompleto"),
     @NamedQuery(name = "Medico.findByTelefono", query = "SELECT m FROM Medico m WHERE m.telefono = :telefono"),
-    @NamedQuery(name = "Medico.findByEstado", query = "SELECT m FROM Medico m WHERE m.estado = :estado")})
+    @NamedQuery(name = "Medico.findByEstado", query = "SELECT m FROM Medico m WHERE m.estado = :estado"),
+    @NamedQuery(name = "Medico.findByUsername", query = "SELECT m FROM Medico m WHERE m.username = :username"),
+    @NamedQuery(name = "Medico.findByPassword", query = "SELECT m FROM Medico m WHERE m.password = :password")})
 public class Medico implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -48,6 +50,14 @@ public class Medico implements Serializable {
     private String telefono;
     @Column(name = "estado")
     private Character estado;
+    @Size(max = 45)
+    @Column(name = "username")
+    private String username;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "password")
+    private String password;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "medico")
     private List<Detalleserviciomedico> detalleserviciomedicoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "medico")
@@ -60,9 +70,10 @@ public class Medico implements Serializable {
         this.medicoPK = medicoPK;
     }
 
-    public Medico(MedicoPK medicoPK, String nombreCompleto) {
+    public Medico(MedicoPK medicoPK, String nombreCompleto, String password) {
         this.medicoPK = medicoPK;
         this.nombreCompleto = nombreCompleto;
+        this.password = password;
     }
 
     public Medico(String cmp, String dni) {
@@ -99,6 +110,22 @@ public class Medico implements Serializable {
 
     public void setEstado(Character estado) {
         this.estado = estado;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @XmlTransient

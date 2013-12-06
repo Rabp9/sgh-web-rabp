@@ -47,8 +47,8 @@ public class CitaJpaController implements Serializable {
         if (cita.getDetallehistoriaclinicaList() == null) {
             cita.setDetallehistoriaclinicaList(new ArrayList<Detallehistoriaclinica>());
         }
-        cita.getCitaPK().setMedicocmp(cita.getMedico().getMedicoPK().getCmp());
         cita.getCitaPK().setMedicodni(cita.getMedico().getMedicoPK().getDni());
+        cita.getCitaPK().setMedicocmp(cita.getMedico().getMedicoPK().getCmp());
         EntityManager em = null;
         try {
             utx.begin();
@@ -97,8 +97,8 @@ public class CitaJpaController implements Serializable {
     }
 
     public void edit(Cita cita) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
-        cita.getCitaPK().setMedicocmp(cita.getMedico().getMedicoPK().getCmp());
         cita.getCitaPK().setMedicodni(cita.getMedico().getMedicoPK().getDni());
+        cita.getCitaPK().setMedicocmp(cita.getMedico().getMedicoPK().getCmp());
         EntityManager em = null;
         try {
             utx.begin();

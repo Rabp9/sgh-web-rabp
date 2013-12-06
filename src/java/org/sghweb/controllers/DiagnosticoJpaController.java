@@ -9,21 +9,17 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import org.sghweb.jpa.Detallediagnostico;
+import org.sghweb.jpa.Detallereferenciadiagnostico;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Resource;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceUnit;
 import javax.transaction.UserTransaction;
 import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
+import org.sghweb.jpa.Detallediagnostico;
 import org.sghweb.jpa.Diagnostico;
 
 /**
@@ -36,28 +32,30 @@ public class DiagnosticoJpaController implements Serializable {
         this.utx = utx;
         this.emf = emf;
     }
-    @Resource
     private UserTransaction utx = null;
-    @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
-        if (emf == null) { 
-            emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
-        }
         return emf.createEntityManager();
     }
 
     public void create(Diagnostico diagnostico) throws PreexistingEntityException, RollbackFailureException, Exception {
+        if (diagnostico.getDetallereferenciadiagnosticoList() == null) {
+            diagnostico.setDetallereferenciadiagnosticoList(new ArrayList<Detallereferenciadiagnostico>());
+        }
         if (diagnostico.getDetallediagnosticoList() == null) {
             diagnostico.setDetallediagnosticoList(new ArrayList<Detallediagnostico>());
         }
         EntityManager em = null;
-        Context initCtx = new InitialContext(); 
-        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
+            List<Detallereferenciadiagnostico> attachedDetallereferenciadiagnosticoList = new ArrayList<Detallereferenciadiagnostico>();
+            for (Detallereferenciadiagnostico detallereferenciadiagnosticoListDetallereferenciadiagnosticoToAttach : diagnostico.getDetallereferenciadiagnosticoList()) {
+                detallereferenciadiagnosticoListDetallereferenciadiagnosticoToAttach = em.getReference(detallereferenciadiagnosticoListDetallereferenciadiagnosticoToAttach.getClass(), detallereferenciadiagnosticoListDetallereferenciadiagnosticoToAttach.getDetallereferenciadiagnosticoPK());
+                attachedDetallereferenciadiagnosticoList.add(detallereferenciadiagnosticoListDetallereferenciadiagnosticoToAttach);
+            }
+            diagnostico.setDetallereferenciadiagnosticoList(attachedDetallereferenciadiagnosticoList);
             List<Detallediagnostico> attachedDetallediagnosticoList = new ArrayList<Detallediagnostico>();
             for (Detallediagnostico detallediagnosticoListDetallediagnosticoToAttach : diagnostico.getDetallediagnosticoList()) {
                 detallediagnosticoListDetallediagnosticoToAttach = em.getReference(detallediagnosticoListDetallediagnosticoToAttach.getClass(), detallediagnosticoListDetallediagnosticoToAttach.getDetallediagnosticoPK());
@@ -65,6 +63,15 @@ public class DiagnosticoJpaController implements Serializable {
             }
             diagnostico.setDetallediagnosticoList(attachedDetallediagnosticoList);
             em.persist(diagnostico);
+            for (Detallereferenciadiagnostico detallereferenciadiagnosticoListDetallereferenciadiagnostico : diagnostico.getDetallereferenciadiagnosticoList()) {
+                Diagnostico oldDiagnosticoOfDetallereferenciadiagnosticoListDetallereferenciadiagnostico = detallereferenciadiagnosticoListDetallereferenciadiagnostico.getDiagnostico();
+                detallereferenciadiagnosticoListDetallereferenciadiagnostico.setDiagnostico(diagnostico);
+                detallereferenciadiagnosticoListDetallereferenciadiagnostico = em.merge(detallereferenciadiagnosticoListDetallereferenciadiagnostico);
+                if (oldDiagnosticoOfDetallereferenciadiagnosticoListDetallereferenciadiagnostico != null) {
+                    oldDiagnosticoOfDetallereferenciadiagnosticoListDetallereferenciadiagnostico.getDetallereferenciadiagnosticoList().remove(detallereferenciadiagnosticoListDetallereferenciadiagnostico);
+                    oldDiagnosticoOfDetallereferenciadiagnosticoListDetallereferenciadiagnostico = em.merge(oldDiagnosticoOfDetallereferenciadiagnosticoListDetallereferenciadiagnostico);
+                }
+            }
             for (Detallediagnostico detallediagnosticoListDetallediagnostico : diagnostico.getDetallediagnosticoList()) {
                 Diagnostico oldDiagnosticoOfDetallediagnosticoListDetallediagnostico = detallediagnosticoListDetallediagnostico.getDiagnostico();
                 detallediagnosticoListDetallediagnostico.setDiagnostico(diagnostico);
@@ -79,14 +86,12 @@ public class DiagnosticoJpaController implements Serializable {
             try {
                 utx.rollback();
             } catch (Exception re) {
-                if (findDiagnostico(diagnostico.getCodigo()) != null) {
-                    throw new PreexistingEntityException("Diagnostico " + diagnostico + " already exists.", ex);
-                }
-                if(!findDiagnosticoByDescripcion(diagnostico.getDescripcion()).isEmpty())
-                    throw new PreexistingEntityException("Diagnostico " + diagnostico + " already exists.", ex);
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
-               throw ex;
+            if (findDiagnostico(diagnostico.getCodigo()) != null) {
+                throw new PreexistingEntityException("Diagnostico " + diagnostico + " already exists.", ex);
+            }
+            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -100,9 +105,19 @@ public class DiagnosticoJpaController implements Serializable {
             utx.begin();
             em = getEntityManager();
             Diagnostico persistentDiagnostico = em.find(Diagnostico.class, diagnostico.getCodigo());
+            List<Detallereferenciadiagnostico> detallereferenciadiagnosticoListOld = persistentDiagnostico.getDetallereferenciadiagnosticoList();
+            List<Detallereferenciadiagnostico> detallereferenciadiagnosticoListNew = diagnostico.getDetallereferenciadiagnosticoList();
             List<Detallediagnostico> detallediagnosticoListOld = persistentDiagnostico.getDetallediagnosticoList();
             List<Detallediagnostico> detallediagnosticoListNew = diagnostico.getDetallediagnosticoList();
             List<String> illegalOrphanMessages = null;
+            for (Detallereferenciadiagnostico detallereferenciadiagnosticoListOldDetallereferenciadiagnostico : detallereferenciadiagnosticoListOld) {
+                if (!detallereferenciadiagnosticoListNew.contains(detallereferenciadiagnosticoListOldDetallereferenciadiagnostico)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Detallereferenciadiagnostico " + detallereferenciadiagnosticoListOldDetallereferenciadiagnostico + " since its diagnostico field is not nullable.");
+                }
+            }
             for (Detallediagnostico detallediagnosticoListOldDetallediagnostico : detallediagnosticoListOld) {
                 if (!detallediagnosticoListNew.contains(detallediagnosticoListOldDetallediagnostico)) {
                     if (illegalOrphanMessages == null) {
@@ -114,6 +129,13 @@ public class DiagnosticoJpaController implements Serializable {
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
+            List<Detallereferenciadiagnostico> attachedDetallereferenciadiagnosticoListNew = new ArrayList<Detallereferenciadiagnostico>();
+            for (Detallereferenciadiagnostico detallereferenciadiagnosticoListNewDetallereferenciadiagnosticoToAttach : detallereferenciadiagnosticoListNew) {
+                detallereferenciadiagnosticoListNewDetallereferenciadiagnosticoToAttach = em.getReference(detallereferenciadiagnosticoListNewDetallereferenciadiagnosticoToAttach.getClass(), detallereferenciadiagnosticoListNewDetallereferenciadiagnosticoToAttach.getDetallereferenciadiagnosticoPK());
+                attachedDetallereferenciadiagnosticoListNew.add(detallereferenciadiagnosticoListNewDetallereferenciadiagnosticoToAttach);
+            }
+            detallereferenciadiagnosticoListNew = attachedDetallereferenciadiagnosticoListNew;
+            diagnostico.setDetallereferenciadiagnosticoList(detallereferenciadiagnosticoListNew);
             List<Detallediagnostico> attachedDetallediagnosticoListNew = new ArrayList<Detallediagnostico>();
             for (Detallediagnostico detallediagnosticoListNewDetallediagnosticoToAttach : detallediagnosticoListNew) {
                 detallediagnosticoListNewDetallediagnosticoToAttach = em.getReference(detallediagnosticoListNewDetallediagnosticoToAttach.getClass(), detallediagnosticoListNewDetallediagnosticoToAttach.getDetallediagnosticoPK());
@@ -122,6 +144,17 @@ public class DiagnosticoJpaController implements Serializable {
             detallediagnosticoListNew = attachedDetallediagnosticoListNew;
             diagnostico.setDetallediagnosticoList(detallediagnosticoListNew);
             diagnostico = em.merge(diagnostico);
+            for (Detallereferenciadiagnostico detallereferenciadiagnosticoListNewDetallereferenciadiagnostico : detallereferenciadiagnosticoListNew) {
+                if (!detallereferenciadiagnosticoListOld.contains(detallereferenciadiagnosticoListNewDetallereferenciadiagnostico)) {
+                    Diagnostico oldDiagnosticoOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico = detallereferenciadiagnosticoListNewDetallereferenciadiagnostico.getDiagnostico();
+                    detallereferenciadiagnosticoListNewDetallereferenciadiagnostico.setDiagnostico(diagnostico);
+                    detallereferenciadiagnosticoListNewDetallereferenciadiagnostico = em.merge(detallereferenciadiagnosticoListNewDetallereferenciadiagnostico);
+                    if (oldDiagnosticoOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico != null && !oldDiagnosticoOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico.equals(diagnostico)) {
+                        oldDiagnosticoOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico.getDetallereferenciadiagnosticoList().remove(detallereferenciadiagnosticoListNewDetallereferenciadiagnostico);
+                        oldDiagnosticoOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico = em.merge(oldDiagnosticoOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico);
+                    }
+                }
+            }
             for (Detallediagnostico detallediagnosticoListNewDetallediagnostico : detallediagnosticoListNew) {
                 if (!detallediagnosticoListOld.contains(detallediagnosticoListNewDetallediagnostico)) {
                     Diagnostico oldDiagnosticoOfDetallediagnosticoListNewDetallediagnostico = detallediagnosticoListNewDetallediagnostico.getDiagnostico();
@@ -168,6 +201,13 @@ public class DiagnosticoJpaController implements Serializable {
                 throw new NonexistentEntityException("The diagnostico with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
+            List<Detallereferenciadiagnostico> detallereferenciadiagnosticoListOrphanCheck = diagnostico.getDetallereferenciadiagnosticoList();
+            for (Detallereferenciadiagnostico detallereferenciadiagnosticoListOrphanCheckDetallereferenciadiagnostico : detallereferenciadiagnosticoListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Diagnostico (" + diagnostico + ") cannot be destroyed since the Detallereferenciadiagnostico " + detallereferenciadiagnosticoListOrphanCheckDetallereferenciadiagnostico + " in its detallereferenciadiagnosticoList field has a non-nullable diagnostico field.");
+            }
             List<Detallediagnostico> detallediagnosticoListOrphanCheck = diagnostico.getDetallediagnosticoList();
             for (Detallediagnostico detallediagnosticoListOrphanCheckDetallediagnostico : detallediagnosticoListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
@@ -239,9 +279,5 @@ public class DiagnosticoJpaController implements Serializable {
             em.close();
         }
     }
-        
-    public List<Diagnostico> findDiagnosticoByDescripcion(String descripcion) {
-        EntityManager em = getEntityManager();
-        return em.createNamedQuery("Diagnostico.findByDescripcion").setParameter("descripcion", descripcion).getResultList();
-    }   
+    
 }
