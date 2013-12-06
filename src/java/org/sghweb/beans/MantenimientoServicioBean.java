@@ -12,7 +12,6 @@ import javax.faces.context.FacesContext;
 import org.sghweb.controllers.ServicioJpaController;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
-import org.sghweb.jpa.Actividad;
 import org.sghweb.jpa.Servicio;
 
 /**
@@ -23,10 +22,10 @@ import org.sghweb.jpa.Servicio;
 @ViewScoped
 public class MantenimientoServicioBean implements Serializable {
 
-    private ServicioJpaController sjc;
-    private Servicio servicio;
     private List<Servicio> listaServicios;
     private Servicio selectedServicio; 
+    private Servicio servicio;
+    private ServicioJpaController sjc;
     
     public MantenimientoServicioBean() {
         sjc = new ServicioJpaController(null, null);

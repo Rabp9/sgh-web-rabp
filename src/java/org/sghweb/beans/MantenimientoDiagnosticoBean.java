@@ -38,10 +38,6 @@ public class MantenimientoDiagnosticoBean implements Serializable {
     
     public void crear() {
         try {
-            if(diagnostico.getSexoAfectado().equals("")) {
-                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se requiere seleccionar un sexo afectado", null);
-                FacesContext.getCurrentInstance().addMessage(null, facesMessage);
-            }
             diagnostico.setEstado('1');
             djc.create(diagnostico);
             listaDiagnosticos = djc.findDiagnosticoEntities();

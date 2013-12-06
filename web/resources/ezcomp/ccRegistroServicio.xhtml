@@ -15,25 +15,34 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <p:panelGrid columns="3">
+        <p:panelGrid columns="2">
             <p:outputLabel value="Código" for="txtCodigo${cc.attrs.accion}"/>
             <p:inputText id="txtCodigo${cc.attrs.accion}" value="${cc.attrs.servicio.codigo}" 
-                         maxlength="2" onkeyup="value = value.toUpperCase()" readonly="${cc.attrs.readOnlyCodigo}"
+                         maxlength="3" readonly="${cc.attrs.readOnlyCodigo}"
                          required="true">
-                <p:watermark value="Código de 2 letras" for="txtCodigo${cc.attrs.accion}"/>
+                <p:watermark value="Código de 3 letras" for="txtCodigo${cc.attrs.accion}"/>
             </p:inputText>
 
             <p:outputLabel value="Descripción" for="txtDescripcion${cc.attrs.accion}"/>
             <p:inputText id="txtDescripcion${cc.attrs.accion}" value="${cc.attrs.servicio.descripcion}"
-                         maxlength="60" onkeyup="value=value.toUpperCase()" readonly="${cc.attrs.readOnlyDatos}"
+                         maxlength="60" readonly="${cc.attrs.readOnlyDatos}"
                          required="true">
                 <p:watermark value="Escriba una descripción" for="txtDescripcion${cc.attrs.accion}"/>
             </p:inputText>
             
-            <p:outputLabel value="Tipo" for="somDepartamento${cc.attrs.accion}"/>
+            <p:outputLabel value="Departamento" for="somDepartamento${cc.attrs.accion}"/>
             <p:selectOneMenu id="somDepartamento${cc.attrs.accion}" effect="fade">  
-                <f:selectItem itemLabel="Selecciona un tipo" itemValue="" />  
-                <f:selectItem itemLabel="Hospitalización" itemValue="1"/>  
+                <f:selectItem itemLabel="Selecciona un departamento" itemValue="" />  
+                <f:selectItem itemLabel="D. MEDICINA" itemValue="D. MEDICINA" />
+                <f:selectItem itemLabel="D. CIRUGIA" itemValue="D. CIRUGIA" />
+                <f:selectItem itemLabel="D. MATERNO INFANTIL" itemValue="D. MATERNO INFANTIL" />
+                <f:selectItem itemLabel="D. EMERGENCIA Y UCI" itemValue="D. EMERGENCIA Y UCI" />
+                <f:selectItem itemLabel="D. AYUDA AL DIAGNOSTICO" itemValue="D. AYUDA AL DIAGNOSTICO" />
+                <f:selectItem itemLabel="D. PROGRAMAS ESPECIALES" itemValue="D. PROGRAMAS ESPECIALES" />
+                <f:selectItem itemLabel="D, MEDICO QUIRURGICO" itemValue="D, MEDICO QUIRURGICO" />
+                <f:selectItem itemLabel="OTROS" itemValue="OTROS" />
+                <f:selectItem itemLabel="D. PROGRAMAS PREVENTIVOS PROMOCIONA" itemValue="D. PROGRAMAS PREVENTIVOS PROMOCIONA" />
+                <f:selectItem itemLabel="D. SERVICIOS INTERMEDIOS (FARMACIA)" itemValue="D. SERVICIOS INTERMEDIOS (FARMACIA)" />
             </p:selectOneMenu> 
         </p:panelGrid>
     </cc:implementation>
