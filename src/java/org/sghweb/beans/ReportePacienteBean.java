@@ -2,7 +2,6 @@
 package org.sghweb.beans;
 
 import com.lowagie.text.*;
-import com.lowagie.text.html.WebColors;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;

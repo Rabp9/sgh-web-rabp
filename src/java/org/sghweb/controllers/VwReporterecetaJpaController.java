@@ -5,8 +5,6 @@
 package org.sghweb.controllers;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -21,15 +19,15 @@ import javax.transaction.UserTransaction;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
-import org.sghweb.jpa.VwOrden;
+import org.sghweb.jpa.VwReportereceta;
 
 /**
  *
  * @author Roberto
  */
-public class VwOrdenJpaController implements Serializable {
+public class VwReporterecetaJpaController implements Serializable {
 
-    public VwOrdenJpaController(UserTransaction utx, EntityManagerFactory emf) {
+    public VwReporterecetaJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
         this.emf = emf;
     }
@@ -45,12 +43,12 @@ public class VwOrdenJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(VwOrden vwOrden) throws PreexistingEntityException, RollbackFailureException, Exception {
+    public void create(VwReportereceta vwReportereceta) throws PreexistingEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
             em = getEntityManager();
-            em.persist(vwOrden);
+            em.persist(vwReportereceta);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -58,8 +56,8 @@ public class VwOrdenJpaController implements Serializable {
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
-            if (findVwOrden(vwOrden.getNroOrden()) != null) {
-                throw new PreexistingEntityException("VwOrden " + vwOrden + " already exists.", ex);
+            if (findVwReportereceta(vwReportereceta.getNroReceta()) != null) {
+                throw new PreexistingEntityException("VwReportereceta " + vwReportereceta + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -69,12 +67,12 @@ public class VwOrdenJpaController implements Serializable {
         }
     }
 
-    public void edit(VwOrden vwOrden) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void edit(VwReportereceta vwReportereceta) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             utx.begin();
             em = getEntityManager();
-            vwOrden = em.merge(vwOrden);
+            vwReportereceta = em.merge(vwReportereceta);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -84,9 +82,9 @@ public class VwOrdenJpaController implements Serializable {
             }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                String id = vwOrden.getNroOrden();
-                if (findVwOrden(id) == null) {
-                    throw new NonexistentEntityException("The vwOrden with id " + id + " no longer exists.");
+                String id = vwReportereceta.getNroReceta();
+                if (findVwReportereceta(id) == null) {
+                    throw new NonexistentEntityException("The vwReportereceta with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -102,14 +100,14 @@ public class VwOrdenJpaController implements Serializable {
         try {
             utx.begin();
             em = getEntityManager();
-            VwOrden vwOrden;
+            VwReportereceta vwReportereceta;
             try {
-                vwOrden = em.getReference(VwOrden.class, id);
-                vwOrden.getNroOrden();
+                vwReportereceta = em.getReference(VwReportereceta.class, id);
+                vwReportereceta.getNroReceta();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The vwOrden with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The vwReportereceta with id " + id + " no longer exists.", enfe);
             }
-            em.remove(vwOrden);
+            em.remove(vwReportereceta);
             utx.commit();
         } catch (Exception ex) {
             try {
@@ -125,19 +123,19 @@ public class VwOrdenJpaController implements Serializable {
         }
     }
 
-    public List<VwOrden> findVwOrdenEntities() {
-        return findVwOrdenEntities(true, -1, -1);
+    public List<VwReportereceta> findVwReporterecetaEntities() {
+        return findVwReporterecetaEntities(true, -1, -1);
     }
 
-    public List<VwOrden> findVwOrdenEntities(int maxResults, int firstResult) {
-        return findVwOrdenEntities(false, maxResults, firstResult);
+    public List<VwReportereceta> findVwReporterecetaEntities(int maxResults, int firstResult) {
+        return findVwReporterecetaEntities(false, maxResults, firstResult);
     }
 
-    private List<VwOrden> findVwOrdenEntities(boolean all, int maxResults, int firstResult) {
+    private List<VwReportereceta> findVwReporterecetaEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(VwOrden.class));
+            cq.select(cq.from(VwReportereceta.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -149,20 +147,20 @@ public class VwOrdenJpaController implements Serializable {
         }
     }
 
-    public VwOrden findVwOrden(String id) {
+    public VwReportereceta findVwReportereceta(String id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(VwOrden.class, id);
+            return em.find(VwReportereceta.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getVwOrdenCount() {
+    public int getVwReporterecetaCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<VwOrden> rt = cq.from(VwOrden.class);
+            Root<VwReportereceta> rt = cq.from(VwReportereceta.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
@@ -170,9 +168,9 @@ public class VwOrdenJpaController implements Serializable {
             em.close();
         }
     }
-       
-    public List<VwOrden> findVwOrdenByDniByHora(String dni, Date fechaInicio, Date fechaFin) {
+    
+    public List<VwReportereceta> findVwReporteRecetaByNroOrden(String nroOrden) {
         EntityManager em = getEntityManager();
-        return em.createNamedQuery("VwOrden.findByDniByFechaHora").setParameter("dni", dni).setParameter("fechaInicio", fechaInicio).setParameter("fechaFin", fechaFin).getResultList();
+        return em.createNamedQuery("VwReportereceta.findByNroOrden").setParameter("nroOrden", nroOrden).getResultList();
     }   
 }

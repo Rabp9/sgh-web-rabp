@@ -18,24 +18,22 @@
             </ui:define>
 
             <ui:define name="dialogs">
- 
                 <p:growl id="mensaje"/>
-               
                 <h:form id="frmSeleccionarPaciente">
                     <p:dialog id="dlgSeleccionarPaciente" header="Seleccionar un Paciente" widgetVar="dialogoSeleccionarPacietne" resizable="false"  
                         showEffect="clip" hideEffect="fold" modal="true">  
-                        <p:dataTable id="tblPacientes" var="reportePaciente" value="${reportePacienteBean.listaReportePacientes}"
+                        <p:dataTable id="tblPacientes" var="reportePaciente" value="${reporteRecetaBean.listaReportePacientes}"
                             sortMode="multiple" rowKey="${reportePaciente.dni}" paginator="true" rows="10" 
                             currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                            rowsPerPageTemplate="5,10,20" selection="${reportePacienteBean.selectedReportePaciente}" selectionMode="single"
+                            rowsPerPageTemplate="5,10,20" selection="${reporteRecetaBean.selectedReportePaciente}" selectionMode="single"
                             emptyMessage="Ningún Paciente Registrado" scrollable="true" scrollHeight="190"
                             resizableColumns="true">                               
         
                             <p:ajax event="rowSelect" listener="${reporteRecetaBean.onRowSelect}"
-                                    update="_frmReporteReceta_autoCompleteDni, _frmReporteReceta_txtNumeroRegistro, _frmReporteReceta_txtNombre, _frmReporteReceta_txtAutogenerado, _frmReporteReceta_txtTitular" oncomplete="dialogoSeleccionarPacietne.hide()" />
+                                    update="_frmRegistrarCita_autoCompleteDni, _frmRegistrarCita_txtNumeroRegistro, _frmRegistrarCita_txtNombre, _frmRegistrarCita_txtAutogenerado, _frmRegistrarCita_txtTitular" oncomplete="dialogoSeleccionarPacietne.hide()" />
                         
-                            <f:facet name="header">  
+                              <f:facet name="header">  
                                 Lista de Pacientes
                             </f:facet>
 
@@ -53,7 +51,7 @@
                                 <h:outputText value="${reportePaciente.numeroRegistro}" />  
                             </p:column>
 
-                            <p:column sortBy="${reportePaciente.nombreCompleto}" filterBy="${reportePaciente.nombre}" filterMatchMode="contains">  
+                            <p:column sortBy="${reportePaciente.nombreCompleto}" filterBy="${reportePaciente.nombreCompleto}" filterMatchMode="contains">  
                                 <f:facet name="header">
                                     <h:outputText value="Nombre" />  
                                 </f:facet>
@@ -86,14 +84,15 @@
                 <h:form id="frmRegistrarCita" title="Formulario Registrar Cita">
                     <p:panel header="Paciente">
                         <p:panelGrid columns="3">
+                            
                             <p:outputLabel value="Número de DNI: " for="autoCompleteDni"/>
                             <p:autoComplete id="autoCompleteDni" value="${reporteRecetaBean.vwReportepaciente.dni}" 
                                 completeMethod="${reporteRecetaBean.listaDni}" maxResults="10" size="50" required="true" requiredMessage="No puede estar vacío">
-                                <p:ajax event="keyup" update="frmReporteReceta_txtNumeroRegistro, frmReporteReceta_txtNombre, frmReporteReceta_txtAutogenerado, frmReporteReceta_txtTitular" listener="${reporteRecetaBean.verificar}"/>  
-                                <p:ajax event="itemSelect" update="frmReporteReceta_txtNumeroRegistro, frmReporteReceta_txtNombre, frmReporteReceta_txtAutogenerado, frmReporteReceta_txtTitular" listener="${reporteRecetaBean.verificar}"/>  
+                                <p:ajax event="keyup" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${reporteRecetaBean.verificar}"/>  
+                                <p:ajax event="itemSelect" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${reporteRecetaBean.verificar}"/>  
                             </p:autoComplete>
                             <p:commandButton id="btnBuscar" value="Buscar" icon="ui-icon-search" oncomplete="dialogoSeleccionarPacietne.show()"/>
-
+                               
                             <p:outputLabel value="Número de Registro: " for="txtNumeroRegistro"/>
                             <p:inputText id="txtNumeroRegistro" value="${reporteRecetaBean.vwReportepaciente.numeroRegistro}" readonly="true" size="50"/>
                             <h:panelGroup/>
@@ -115,19 +114,7 @@
                     <p:panel header="Servicio">
                         
                         <p:panelGrid columns="3">
-                            
-                            <p:outputLabel value="Número de DNI: " for="autoCompleteDni"/>
-                            <p:autoComplete id="autoCompleteDni" value="${reporteRecetaBean.vwReportepaciente.dni}" 
-                                completeMethod="${reporteRecetaBean.listaDni}" maxResults="10" size="50" required="true" requiredMessage="No puede estar vacío">
-                                <p:ajax event="keyup" update="frmReporteReceta_txtNumeroRegistro, frmReporteReceta_txtNombre, frmReporteReceta_txtAutogenerado, frmReporteReceta_txtTitular" listener="${reporteRecetaBean.verificar}"/>  
-                                <p:ajax event="itemSelect" update="frmReporteReceta_txtNumeroRegistro, frmReporteReceta_txtNombre, frmReporteReceta_txtAutogenerado, frmReporteReceta_txtTitular" listener="${reporteRecetaBean.verificar}"/>  
-                            </p:autoComplete>
-                            <p:commandButton id="btnBuscar" value="Buscar" icon="ui-icon-search" oncomplete="dialogoSeleccionarPacietne.show()"/>
 
-                            <p:outputLabel value="Número de Registro: " for="txtNumeroRegistro"/>
-                            <p:inputText id="txtNumeroRegistro" value="${reporteRecetaBean.vwReportepaciente.numeroRegistro}" readonly="true" size="50"/>
-                            <h:panelGroup/>
-                            
                         </p:panelGrid>
                         
                     </p:panel>

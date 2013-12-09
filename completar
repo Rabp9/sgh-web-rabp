@@ -1,0 +1,9 @@
+VwOrden
+    @NamedQuery(name = "VwOrden.findByDniByFechaHora", query = "SELECT v FROM VwOrden v WHERE v.dni = :dni AND v.fechaHora BETWEEN :fechaInicio AND :fechaFin")})
+
+
+VwReporterecetaJpaController
+    public List<VwReportereceta> findVwReporteRecetaByNroOrden(String nroOrden) {
+        EntityManager em = getEntityManager();
+        return em.createNamedQuery("VwReportereceta.findByNroOrden").setParameter("nroOrden", nroOrden).getResultList();
+    }   

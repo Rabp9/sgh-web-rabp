@@ -22,11 +22,11 @@
                 <h:form id="frmSeleccionarPaciente">
                     <p:dialog id="dlgSeleccionarPaciente" header="Seleccionar un Paciente" widgetVar="dialogoSeleccionarPacietne" resizable="false"  
                         showEffect="clip" hideEffect="fold" modal="true">  
-                        <p:dataTable id="tblPacientes" var="reportePaciente" value="${reportePacienteBean.listaReportePacientes}"
+                        <p:dataTable id="tblPacientes" var="reportePaciente" value="${reporteRecetaBean.listaReportePacientes}"
                             sortMode="multiple" rowKey="${reportePaciente.dni}" paginator="true" rows="10" 
                             currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                            rowsPerPageTemplate="5,10,20" selection="${reportePacienteBean.selectedReportePaciente}" selectionMode="single"
+                            rowsPerPageTemplate="5,10,20" selection="${reporteRecetaBean.selectedReportePaciente}" selectionMode="single"
                             emptyMessage="Ningún Paciente Registrado" scrollable="true" scrollHeight="190"
                             resizableColumns="true">                               
         
@@ -51,7 +51,7 @@
                                 <h:outputText value="${reportePaciente.numeroRegistro}" />  
                             </p:column>
 
-                            <p:column sortBy="${reportePaciente.nombreCompleto}" filterBy="${reportePaciente.nombre}" filterMatchMode="contains">  
+                            <p:column sortBy="${reportePaciente.nombreCompleto}" filterBy="${reportePaciente.nombreCompleto}" filterMatchMode="contains">  
                                 <f:facet name="header">
                                     <h:outputText value="Nombre" />  
                                 </f:facet>
@@ -89,8 +89,8 @@
                                 <p:outputLabel value="Número de DNI: " for="autoCompleteDni"/>
                                 <p:autoComplete id="autoCompleteDni" value="${reporteRecetaBean.vwReportepaciente.dni}" 
                                     completeMethod="${reporteRecetaBean.listaDni}" maxResults="10" size="50" required="true" requiredMessage="No puede estar vacío">
-                                    <p:ajax event="keyup" update="frmReporteReceta_txtNumeroRegistro, frmReporteReceta_txtNombre, frmReporteReceta_txtAutogenerado, frmReporteReceta_txtTitular" listener="${reporteRecetaBean.verificar}"/>  
-                                    <p:ajax event="itemSelect" update="frmReporteReceta_txtNumeroRegistro, frmReporteReceta_txtNombre, frmReporteReceta_txtAutogenerado, frmReporteReceta_txtTitular" listener="${reporteRecetaBean.verificar}"/>  
+                                    <p:ajax event="keyup" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${reporteRecetaBean.verificar}"/>  
+                                    <p:ajax event="itemSelect" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${reporteRecetaBean.verificar}"/>  
                                 </p:autoComplete>
                                 <p:commandButton id="btnBuscar" value="Buscar" icon="ui-icon-search" oncomplete="dialogoSeleccionarPacietne.show()"/>
                                 
@@ -114,16 +114,76 @@
                         </p:fieldset>
                         <p:panelGrid columns="2" style="float: left">
                             <p:outputLabel value="Fecha Inicio: " for="calendarFechaInicio"/>
-                            <p:calendar id="calendarFechaInicio" required="true" requiredMessage="Seleccione una fecha" value="${reporteRecetaBean.fechaInicio}"/>
+                            <p:calendar id="calendarFechaInicio" required="true" requiredMessage="Seleccione una fecha" value="${reporteRecetaBean.fechaInicio}"
+                                        navigator="true" locale="es" showButtonPanel="true"/>
                         </p:panelGrid>
                         <p:panelGrid columns="2" style="float: right">
                             <p:outputLabel value="Fecha Fin: " for="calendarFechaFin"/>
-                            <p:calendar id="calendarFechaFin" required="true" requiredMessage="Seleccione una fecha" value="${reporteRecetaBean.fechaFin}"/> 
+                            <p:calendar id="calendarFechaFin" required="true" requiredMessage="Seleccione una fecha" value="${reporteRecetaBean.fechaFin}"
+                                        navigator="true" locale="es" showButtonPanel="true"/> 
                         </p:panelGrid>
                     </p:panel>
                     <p:panel>
-                        <p:commandButton value="Mostrar" ajax="false" actionListener="${reporteRecetaBean.mostrarRecetas()}"/>
+                        <p:commandButton value="Mostrar" ajax="false" actionListener="${reporteRecetaBean.mostrarRecetas()}"
+                                         update="tblOrden"/>
                     </p:panel>
+                    <p:dataTable id="tblOrden" var="vwOrden" value="${reporteRecetaBean.listaOrdenes}"
+                        sortMode="multiple" rowKey="${vwOrden.nroOrden}" paginator="true" rows="10" 
+                        currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                        rowsPerPageTemplate="5,10,20" selection="${reporteRecetaBean.selectedVwOrden}" selectionMode="single"
+                        emptyMessage="Ninguna Orden Registrada" scrollable="true" scrollHeight="190"
+                        resizableColumns="true">                 
+
+                        <f:facet name="header">  
+                            Lista de Órdenes
+                        </f:facet>
+
+                        <p:column sortBy="${vwOrden.nroOrden}" filterBy="${vwOrden.nroOrden}" headerText="Nro. Órden" width="160">  
+                            <f:facet name="header">
+                                <h:outputText value="Nro. Órden" />  
+                            </f:facet>
+                            <h:outputText value="${vwOrden.nroOrden}" />  
+                        </p:column>
+
+                        <p:column sortBy="${vwOrden.fechaHora}" filterBy="${vwOrden.fechaHora}" headerText="Fecha y Hora" width="160">  
+                            <f:facet name="header">
+                                <h:outputText value="Fecha y Hora" />  
+                            </f:facet>
+                            <h:outputText value="${vwOrden.fechaHora}">
+                                <f:convertDateTime pattern="dd/mm/yyyy hh:mm:ss"/>
+                            </h:outputText>  
+                        </p:column>
+
+                        <p:column sortBy="${vwOrden.actoMedico}" filterBy="${vwOrden.actoMedico}">  
+                            <f:facet name="header">
+                                <h:outputText value="Acto Médico" />  
+                            </f:facet>
+                            <h:outputText value="${vwOrden.actoMedico}" />  
+                        </p:column>
+
+                        <p:column sortBy="${vwOrden.medico}" filterBy="${vwOrden.medico}" filterMatchMode="contains" width="160">  
+                            <f:facet name="header">
+                                <h:outputText value="Médico" />  
+                            </f:facet>
+                            <h:outputText value="${vwOrden.medico}" />  
+                        </p:column>
+
+                        <p:column sortBy="${vwOrden.servicio}" filterBy="${vwOrden.servicio}" width="160">  
+                            <f:facet name="header">
+                                <h:outputText value="Servicio" />  
+                            </f:facet>
+                            <h:outputText value="${vwOrden.servicio}" />  
+                        </p:column>
+                        
+                        <f:facet name="footer">  
+                            <p:commandButton id="btnReportarReceta" ajax="false" actionListener="${reporteRecetaBean.reportarReceta}" value="Reportar" icon="ui-icon-search">
+                                <p:fileDownload value="${reporteRecetaBean.reporte}" />  
+                            </p:commandButton>
+                        </f:facet>  
+
+                    </p:dataTable>
+
                 </h:form>
             </ui:define>
 
