@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.sghweb.beans;
 
 import java.io.Serializable;
@@ -12,11 +9,9 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import org.sghweb.controllers.ActividadJpaController;
 import org.sghweb.controllers.MedicoJpaController;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
-import org.sghweb.jpa.Actividad;
 import org.sghweb.jpa.Medico;
 
 /**

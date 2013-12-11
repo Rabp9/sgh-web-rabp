@@ -22,15 +22,15 @@
                 <h:form id="frmSeleccionarPaciente">
                     <p:dialog id="dlgSeleccionarPaciente" header="Seleccionar un Paciente" widgetVar="dialogoSeleccionarPacietne" resizable="false"  
                         showEffect="clip" hideEffect="fold" modal="true">  
-                        <p:dataTable id="tblPacientes" var="reportePaciente" value="${reporteRecetaBean.listaReportePacientes}"
+                        <p:dataTable id="tblPacientes" var="reportePaciente" value="${registrarCitaBean.listaReportePacientes}"
                             sortMode="multiple" rowKey="${reportePaciente.dni}" paginator="true" rows="10" 
                             currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                            rowsPerPageTemplate="5,10,20" selection="${reporteRecetaBean.selectedReportePaciente}" selectionMode="single"
+                            rowsPerPageTemplate="5,10,20" selection="${registrarCitaBean.selectedReportePaciente}" selectionMode="single"
                             emptyMessage="Ningún Paciente Registrado" scrollable="true" scrollHeight="190"
                             resizableColumns="true">                               
         
-                            <p:ajax event="rowSelect" listener="${reporteRecetaBean.onRowSelect}"
+                            <p:ajax event="rowSelect" listener="${registrarCitaBean.onRowSelect}"
                                     update="_frmRegistrarCita_autoCompleteDni, _frmRegistrarCita_txtNumeroRegistro, _frmRegistrarCita_txtNombre, _frmRegistrarCita_txtAutogenerado, _frmRegistrarCita_txtTitular" oncomplete="dialogoSeleccionarPacietne.hide()" />
                         
                               <f:facet name="header">  
@@ -86,27 +86,27 @@
                         <p:panelGrid columns="3">
                             
                             <p:outputLabel value="Número de DNI: " for="autoCompleteDni"/>
-                            <p:autoComplete id="autoCompleteDni" value="${reporteRecetaBean.vwReportepaciente.dni}" 
-                                completeMethod="${reporteRecetaBean.listaDni}" maxResults="10" size="50" required="true" requiredMessage="No puede estar vacío">
-                                <p:ajax event="keyup" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${reporteRecetaBean.verificar}"/>  
-                                <p:ajax event="itemSelect" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${reporteRecetaBean.verificar}"/>  
+                            <p:autoComplete id="autoCompleteDni" value="${registrarCitaBean.vwReportepaciente.dni}" 
+                                completeMethod="${registrarCitaBean.listaDni}" maxResults="10" size="50" required="true" requiredMessage="No puede estar vacío">
+                                <p:ajax event="keyup" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${registrarCitaBean.verificar}"/>  
+                                <p:ajax event="itemSelect" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${registrarCitaBean.verificar}"/>  
                             </p:autoComplete>
                             <p:commandButton id="btnBuscar" value="Buscar" icon="ui-icon-search" oncomplete="dialogoSeleccionarPacietne.show()"/>
                                
                             <p:outputLabel value="Número de Registro: " for="txtNumeroRegistro"/>
-                            <p:inputText id="txtNumeroRegistro" value="${reporteRecetaBean.vwReportepaciente.numeroRegistro}" readonly="true" size="50"/>
+                            <p:inputText id="txtNumeroRegistro" value="${registrarCitaBean.vwReportepaciente.numeroRegistro}" readonly="true" size="50"/>
                             <h:panelGroup/>
 
                             <p:outputLabel value="Nombre Completo: " for="txtNombre"/>
-                            <p:inputText id="txtNombre" value="${reporteRecetaBean.vwReportepaciente.nombreCompleto}" readonly="true" size="50"/> 
+                            <p:inputText id="txtNombre" value="${registrarCitaBean.vwReportepaciente.nombreCompleto}" readonly="true" size="50"/> 
                             <h:panelGroup/>
 
                             <p:outputLabel value="Autogenerado: " for="txtAutogenerado"/>
-                            <p:inputText id="txtAutogenerado" value="${reporteRecetaBean.vwReportepaciente.autogenerado}" readonly="true" size="50"/>
+                            <p:inputText id="txtAutogenerado" value="${registrarCitaBean.vwReportepaciente.autogenerado}" readonly="true" size="50"/>
                             <h:panelGroup/>
 
                             <p:outputLabel value="Titular: " for="txtTitular"/>
-                            <p:inputText id="txtTitular" value="${reporteRecetaBean.vwReportepaciente.titular}" readonly="true" size="50"/>
+                            <p:inputText id="txtTitular" value="${registrarCitaBean.vwReportepaciente.titular}" readonly="true" size="50"/>
                             <h:panelGroup/>
                         </p:panelGrid>
                     </p:panel>
@@ -114,7 +114,14 @@
                     <p:panel header="Servicio">
                         
                         <p:panelGrid columns="3">
-
+                            <p:outputLabel value="Código de Servicio: " for="atcCodigoServicio"/>
+                            <p:autoComplete id="atcCodigoServicio" value="${registrarCitaBean.servicio.codigo}" 
+                                completeMethod="${registrarCitaBean.listaCodigoServicio}" maxResults="10" size="50" required="true" requiredMessage="No puede estar vacío">
+                                <p:ajax event="keyup" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${registrarCitaBean.verificar}"/>  
+                                <p:ajax event="itemSelect" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${registrarCitaBean.verificar}"/>  
+                            </p:autoComplete>
+                            <p:commandButton id="btnBuscar" value="Buscar" icon="ui-icon-search" oncomplete="dialogoSeleccionarPacietne.show()"/>
+                        
                         </p:panelGrid>
                         
                     </p:panel>
