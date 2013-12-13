@@ -1,7 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+// src/java/org/sghweb/controllers/ActividadJpaController.java
+
 package org.sghweb.controllers;
 
 import java.io.Serializable;
@@ -13,8 +11,6 @@ import org.sghweb.jpa.Turno;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -28,7 +24,7 @@ import org.sghweb.jpa.Actividad;
 
 /**
  *
- * @author Roberto
+ * @author essalud
  */
 public class ActividadJpaController implements Serializable {
 
@@ -52,9 +48,7 @@ public class ActividadJpaController implements Serializable {
         if (actividad.getTurnoList() == null) {
             actividad.setTurnoList(new ArrayList<Turno>());
         }
-        EntityManager em = null;  
-        Context initCtx = new InitialContext(); 
-        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
+        EntityManager em = null;
         try {
             utx.begin();
             em = getEntityManager();
@@ -239,10 +233,10 @@ public class ActividadJpaController implements Serializable {
             em.close();
         }
     }
-    
+        
     public List<Actividad> findActividadByDescripcion(String descripcion) {
         EntityManager em = getEntityManager();
         return em.createNamedQuery("Actividad.findByDescripcion").setParameter("descripcion", descripcion).getResultList();
-    }   
-       
+    }
+    
 }

@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author Roberto
+ * @author essalud
  */
 @Embeddable
 public class CitaPK implements Serializable {

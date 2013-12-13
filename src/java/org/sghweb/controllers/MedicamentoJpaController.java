@@ -23,7 +23,7 @@ import org.sghweb.jpa.Medicamento;
 
 /**
  *
- * @author Roberto
+ * @author essalud
  */
 public class MedicamentoJpaController implements Serializable {
 
@@ -225,5 +225,9 @@ public class MedicamentoJpaController implements Serializable {
             em.close();
         }
     }
-    
+     
+    public List<Medicamento> findMedicamentoByDescripcion(String descripcion) {
+        EntityManager em = getEntityManager();
+        return em.createNamedQuery("Medicamento.findByDescripcion").setParameter("descripcion", descripcion).getResultList();
+    }   
 }

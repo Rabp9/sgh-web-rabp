@@ -22,7 +22,7 @@ import org.sghweb.jpa.Detallehistoriaclinica;
 
 /**
  *
- * @author Roberto
+ * @author essalud
  */
 public class CittJpaController implements Serializable {
 
@@ -41,13 +41,13 @@ public class CittJpaController implements Serializable {
         if (citt.getCittPK() == null) {
             citt.setCittPK(new CittPK());
         }
-        citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicaautogenerado(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaautogenerado());
         citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicanumeroRegistro(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicanumeroRegistro());
-        citt.getCittPK().setDetalleHistoriaClinicaidDetalleHistoriaClinica(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getIdDetalleHistoriaClinica());
+        citt.getCittPK().setDetalleHistoriaClinicaCitaMedicodni(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicodni());
+        citt.getCittPK().setDetalleHistoriaClinicaCitaactoMedico(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaactoMedico());
         citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicaPacientedni(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaPacientedni());
         citt.getCittPK().setDetalleHistoriaClinicaCitaMedicocmp(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicocmp());
-        citt.getCittPK().setDetalleHistoriaClinicaCitaactoMedico(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaactoMedico());
-        citt.getCittPK().setDetalleHistoriaClinicaCitaMedicodni(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicodni());
+        citt.getCittPK().setDetalleHistoriaClinicaidDetalleHistoriaClinica(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getIdDetalleHistoriaClinica());
+        citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicaautogenerado(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaautogenerado());
         EntityManager em = null;
         try {
             utx.begin();
@@ -81,13 +81,13 @@ public class CittJpaController implements Serializable {
     }
 
     public void edit(Citt citt) throws NonexistentEntityException, RollbackFailureException, Exception {
-        citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicaautogenerado(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaautogenerado());
         citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicanumeroRegistro(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicanumeroRegistro());
-        citt.getCittPK().setDetalleHistoriaClinicaidDetalleHistoriaClinica(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getIdDetalleHistoriaClinica());
+        citt.getCittPK().setDetalleHistoriaClinicaCitaMedicodni(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicodni());
+        citt.getCittPK().setDetalleHistoriaClinicaCitaactoMedico(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaactoMedico());
         citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicaPacientedni(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaPacientedni());
         citt.getCittPK().setDetalleHistoriaClinicaCitaMedicocmp(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicocmp());
-        citt.getCittPK().setDetalleHistoriaClinicaCitaactoMedico(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaactoMedico());
-        citt.getCittPK().setDetalleHistoriaClinicaCitaMedicodni(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicodni());
+        citt.getCittPK().setDetalleHistoriaClinicaidDetalleHistoriaClinica(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getIdDetalleHistoriaClinica());
+        citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicaautogenerado(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaautogenerado());
         EntityManager em = null;
         try {
             utx.begin();

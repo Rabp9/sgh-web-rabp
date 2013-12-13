@@ -23,7 +23,7 @@ import org.sghweb.jpa.Referencia;
 
 /**
  *
- * @author Roberto
+ * @author essalud
  */
 public class DetallereferenciadiagnosticoJpaController implements Serializable {
 

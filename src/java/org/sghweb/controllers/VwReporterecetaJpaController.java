@@ -23,7 +23,7 @@ import org.sghweb.jpa.VwReportereceta;
 
 /**
  *
- * @author Roberto
+ * @author essalud
  */
 public class VwReporterecetaJpaController implements Serializable {
 
@@ -35,6 +35,7 @@ public class VwReporterecetaJpaController implements Serializable {
     private UserTransaction utx = null;
     @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
+
 
     public EntityManager getEntityManager() {
         if (emf == null) { 
@@ -173,4 +174,5 @@ public class VwReporterecetaJpaController implements Serializable {
         EntityManager em = getEntityManager();
         return em.createNamedQuery("VwReportereceta.findByNroOrden").setParameter("nroOrden", nroOrden).getResultList();
     }   
+    
 }

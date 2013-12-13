@@ -1,7 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+// src/java/org/sghweb/controllers/DiagnosticoJpaController.java
+
 package org.sghweb.controllers;
 
 import java.io.Serializable;
@@ -12,8 +10,11 @@ import javax.persistence.criteria.Root;
 import org.sghweb.jpa.Detallereferenciadiagnostico;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 import javax.transaction.UserTransaction;
 import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
@@ -24,7 +25,7 @@ import org.sghweb.jpa.Diagnostico;
 
 /**
  *
- * @author Roberto
+ * @author essalud
  */
 public class DiagnosticoJpaController implements Serializable {
 
@@ -32,10 +33,15 @@ public class DiagnosticoJpaController implements Serializable {
         this.utx = utx;
         this.emf = emf;
     }
+    @Resource
     private UserTransaction utx = null;
+    @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
+        if (emf == null) { 
+            emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
+        }
         return emf.createEntityManager();
     }
 
@@ -86,12 +92,14 @@ public class DiagnosticoJpaController implements Serializable {
             try {
                 utx.rollback();
             } catch (Exception re) {
+                if (findDiagnostico(diagnostico.getCodigo()) != null) {
+                    throw new PreexistingEntityException("Diagnostico " + diagnostico + " already exists.", ex);
+                }
+                if(!findDiagnosticoByDescripcion(diagnostico.getDescripcion()).isEmpty())
+                    throw new PreexistingEntityException("Diagnostico " + diagnostico + " already exists.", ex);
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
-            if (findDiagnostico(diagnostico.getCodigo()) != null) {
-                throw new PreexistingEntityException("Diagnostico " + diagnostico + " already exists.", ex);
-            }
-            throw ex;
+               throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -279,5 +287,10 @@ public class DiagnosticoJpaController implements Serializable {
             em.close();
         }
     }
+        
+    public List<Diagnostico> findDiagnosticoByDescripcion(String descripcion) {
+        EntityManager em = getEntityManager();
+        return em.createNamedQuery("Diagnostico.findByDescripcion").setParameter("descripcion", descripcion).getResultList();
+    }   
     
 }

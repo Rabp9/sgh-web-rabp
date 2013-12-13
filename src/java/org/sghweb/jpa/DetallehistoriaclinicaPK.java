@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author Roberto
+ * @author essalud
  */
 @Embeddable
 public class DetallehistoriaclinicaPK implements Serializable {

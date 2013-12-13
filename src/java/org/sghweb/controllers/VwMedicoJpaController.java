@@ -20,7 +20,7 @@ import org.sghweb.jpa.VwMedico;
 
 /**
  *
- * @author Roberto
+ * @author essalud
  */
 public class VwMedicoJpaController implements Serializable {
 

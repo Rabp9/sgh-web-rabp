@@ -23,7 +23,7 @@ import org.sghweb.jpa.VwReportepaciente;
 
 /**
  *
- * @author Roberto
+ * @author essalud
  */
 public class VwReportepacienteJpaController implements Serializable {
 

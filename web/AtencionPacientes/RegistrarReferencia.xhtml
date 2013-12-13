@@ -3,7 +3,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:ezcomp="http://java.sun.com/jsf/composite/ezcomp">
+      xmlns:ezcomp="http://java.sun.com/jsf/composite/ezcomp"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
 
     <body>
 
@@ -17,15 +19,176 @@
             </ui:define>
 
             <ui:define name="dialogs">
+                <p:growl id="mensaje"/>
+                <h:form id="frmSeleccionarPaciente">
+                    <p:dialog id="dlgSeleccionarPaciente" header="Seleccionar un Paciente" widgetVar="dialogoSeleccionarPacietne" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <p:dataTable id="tblPacientes" var="reportePaciente" value="${registrarReferenciaBean.listaReportePacientes}"
+                            sortMode="multiple" rowKey="${reportePaciente.dni}" paginator="true" rows="10" 
+                            currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                            rowsPerPageTemplate="5,10,20" selection="${registrarReferenciaBean.selectedReportePaciente}" selectionMode="single"
+                            emptyMessage="Ningún Paciente Registrado" scrollable="true" scrollHeight="190"
+                            resizableColumns="true">                               
+        
+                            <p:ajax event="rowSelect" listener="${registrarReferenciaBean.onRowSelectPaciente}"
+                                    update="_frmRegistrarReferencia_autoCompleteDni, _frmRegistrarReferencia_txtNumeroRegistro, _frmRegistrarReferencia_txtNombre, _frmRegistrarReferencia_txtAutogenerado, _frmRegistrarReferencia_txtTitular" oncomplete="dialogoSeleccionarPacietne.hide()" />
+                        
+                              <f:facet name="header">  
+                                Lista de Pacientes
+                            </f:facet>
+
+                            <p:column sortBy="${reportePaciente.dni}" filterBy="${reportePaciente.dni}" headerText="DNI" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="DNI" />  
+                                </f:facet>
+                                <h:outputText value="${reportePaciente.dni}" />  
+                            </p:column>
+
+                            <p:column sortBy="${reportePaciente.numeroRegistro}" filterBy="${reportePaciente.numeroRegistro}" headerText="Número de Registro" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Numero de Registro" />  
+                                </f:facet>
+                                <h:outputText value="${reportePaciente.numeroRegistro}" />  
+                            </p:column>
+
+                            <p:column sortBy="${reportePaciente.nombreCompleto}" filterBy="${reportePaciente.nombreCompleto}" filterMatchMode="contains">  
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre" />  
+                                </f:facet>
+                                <h:outputText value="${reportePaciente.nombreCompleto}" />  
+                            </p:column>
+
+                            <p:column sortBy="${reportePaciente.autogenerado}" filterBy="${reportePaciente.autogenerado}" filterMatchMode="contains" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Autogenerado" />  
+                                </f:facet>
+                                <h:outputText value="${reportePaciente.autogenerado}" />  
+                            </p:column>
+
+                            <p:column sortBy="${reportePaciente.titular}" filterBy="${reportePaciente.titular}" filterMatchMode="contains" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Titular" />  
+                                </f:facet>
+                                <h:outputText value="${reportePaciente.titular}" />  
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmSeleccionarMedico">
+                    <p:dialog id="dlgSeleccionarMedico" header="Seleccionar un Paciente" widgetVar="dialogoSeleccionarPacietne" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <p:dataTable id="tblMedicos" var="medico" value="${registrarReferenciaBean.listaMedicos}"
+                            sortMode="multiple" rowKey="${medico.cmp}" paginator="true" rows="10" 
+                            currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                            rowsPerPageTemplate="5,10,20" selection="${registrarReferenciaBean.selectedMedico}" selectionMode="single"
+                            emptyMessage="Ningún Médico Registrado" scrollable="true" scrollHeight="190"
+                            resizableColumns="true">                               
+        
+                            <p:ajax event="rowSelect" listener="${registrarReferenciaBean.onRowSelectMedico}"
+                                    update="_frmRegistrarReferencia_atcCMP, _frmRegistrarReferencia_txtNombreMedico" oncomplete="dialogoSeleccionarMedico.hide()" />
+                        
+                              <f:facet name="header">  
+                                Lista de Médicos
+                            </f:facet>
+
+                            <p:column sortBy="${medico.cmp}" filterBy="${medico.cmp}" headerText="CMP" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="CMP" />  
+                                </f:facet>
+                                <h:outputText value="${medico.cmp}" />  
+                            </p:column>
+
+                            <p:column sortBy="${medico.dni}" filterBy="${medico.numeroRegistro}" headerText="Número de Registro" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Numero de Registro" />  
+                                </f:facet>
+                                <h:outputText value="${medico.numeroRegistro}" />  
+                            </p:column>
+
+                            <p:column sortBy="${medico.nombreCompleto}" filterBy="${medico.nombreCompleto}" filterMatchMode="contains">  
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre" />  
+                                </f:facet>
+                                <h:outputText value="${medico.nombreCompleto}" />  
+                            </p:column>
+
+                            <p:column sortBy="${medico.servicio}" filterBy="${medico.autogenerado}" filterMatchMode="contains" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Autogenerado" />  
+                                </f:facet>
+                                <h:outputText value="${medico.autogenerado}" />  
+                            </p:column>
+
+                            <p:column sortBy="${medico.titular}" filterBy="${medico.titular}" filterMatchMode="contains" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Titular" />  
+                                </f:facet>
+                                <h:outputText value="${medico.titular}" />  
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:dialog>
+                </h:form>
             </ui:define>
 
             <ui:define name="left">
             </ui:define>
 
             <ui:define name="content">
-                <p:panelGrid columns="2">
-                    <ezcomp:ccPaciente form="" pacienteBean="${registrarReferencia}"/>
-                </p:panelGrid>
+                <h:form id="frmRegistrarReferencia">
+                    <p:panel header="Paciente">
+                        <p:panelGrid columns="3">
+
+                            <p:outputLabel value="Número de DNI: " for="autoCompleteDni"/>
+                            <p:autoComplete id="autoCompleteDni" value="${registrarReferenciaBean.vwReportepaciente.dni}" 
+                                completeMethod="${registrarReferenciaBean.listaDni}" maxResults="10" size="50" required="true" requiredMessage="No puede estar vacío">
+                                <p:ajax event="keyup" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${registrarReferenciaBean.verificarPaciente}"/>  
+                                <p:ajax event="itemSelect" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${registrarReferenciaBean.verificarPaciente}"/>  
+                            </p:autoComplete>
+                            <p:commandButton id="btnBuscarPaciente" value="Buscar" icon="ui-icon-search" oncomplete="dialogoSeleccionarPacietne.show()"/>
+
+                            <p:outputLabel value="Número de Registro: " for="txtNumeroRegistro"/>
+                            <p:inputText id="txtNumeroRegistro" value="${registrarReferenciaBean.vwReportepaciente.numeroRegistro}" readonly="true" size="50"/>
+                            <h:panelGroup/>
+
+                            <p:outputLabel value="Nombre Completo: " for="txtNombre"/>
+                            <p:inputText id="txtNombre" value="${registrarReferenciaBean.vwReportepaciente.nombreCompleto}" readonly="true" size="50"/> 
+                            <h:panelGroup/>
+
+                            <p:outputLabel value="Autogenerado: " for="txtAutogenerado"/>
+                            <p:inputText id="txtAutogenerado" value="${registrarReferenciaBean.vwReportepaciente.autogenerado}" readonly="true" size="50"/>
+                            <h:panelGroup/>
+
+                            <p:outputLabel value="Titular: " for="txtTitular"/>
+                            <p:inputText id="txtTitular" value="${registrarReferenciaBean.vwReportepaciente.titular}" readonly="true" size="50"/>
+                            <h:panelGroup/>
+                            
+                        </p:panelGrid>
+                    </p:panel>
+                    
+                    <p:panel header="Médico">
+                        <p:panelGrid columns="3">
+
+                            <p:outputLabel value="CMP: " for="atcCMP"/>
+                            <p:autoComplete id="atcCMP" value="${registrarReferenciaBean.vwMedico.cmp}" 
+                                completeMethod="${registrarReferenciaBean.listaCMP}" maxResults="10" size="50" required="true" requiredMessage="No puede estar vacío">
+                                <p:ajax event="keyup" update="txtNombreMedico" listener="${registrarReferenciaBean.verificarMedico}"/>  
+                                <p:ajax event="itemSelect" update="txtNombreMedico" listener="${registrarReferenciaBean.verificarMedico}"/>  
+                            </p:autoComplete>
+                            <p:commandButton id="btnBuscarMedico" value="Buscar" icon="ui-icon-search" oncomplete="dialogoSeleccionarPacietne.show()"/>
+
+                            <p:outputLabel value="Nombre Completo: " for="txtNombreMedico"/>
+                            <p:inputText id="txtNombreMedico" value="${registrarReferenciaBean.vwMedico.nombreCompleto}" readonly="true" size="50"/> 
+                            <h:panelGroup/>
+                            
+                        </p:panelGrid>
+                    </p:panel>
+                </h:form>
+                
             </ui:define>
 
         </ui:composition>

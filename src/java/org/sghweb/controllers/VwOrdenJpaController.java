@@ -1,11 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+// src/java/org/sghweb/controllers/VwOrdenJpaController.java
 package org.sghweb.controllers;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
@@ -25,7 +21,7 @@ import org.sghweb.jpa.VwOrden;
 
 /**
  *
- * @author Roberto
+ * @author essalud
  */
 public class VwOrdenJpaController implements Serializable {
 
@@ -170,9 +166,10 @@ public class VwOrdenJpaController implements Serializable {
             em.close();
         }
     }
-       
+        
     public List<VwOrden> findVwOrdenByDniByHora(String dni, Date fechaInicio, Date fechaFin) {
         EntityManager em = getEntityManager();
         return em.createNamedQuery("VwOrden.findByDniByFechaHora").setParameter("dni", dni).setParameter("fechaInicio", fechaInicio).setParameter("fechaFin", fechaFin).getResultList();
     }   
+    
 }

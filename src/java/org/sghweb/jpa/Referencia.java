@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Roberto
+ * @author essalud
  */
 @Entity
 @Table(name = "referencia")
@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Referencia.findByPacientedni", query = "SELECT r FROM Referencia r WHERE r.referenciaPK.pacientedni = :pacientedni"),
     @NamedQuery(name = "Referencia.findByFechaEmision", query = "SELECT r FROM Referencia r WHERE r.fechaEmision = :fechaEmision"),
     @NamedQuery(name = "Referencia.findByFechaRecibida", query = "SELECT r FROM Referencia r WHERE r.fechaRecibida = :fechaRecibida"),
+    @NamedQuery(name = "Referencia.findByFechaTermino", query = "SELECT r FROM Referencia r WHERE r.fechaTermino = :fechaTermino"),
     @NamedQuery(name = "Referencia.findByMotivo", query = "SELECT r FROM Referencia r WHERE r.motivo = :motivo"),
     @NamedQuery(name = "Referencia.findByEstado", query = "SELECT r FROM Referencia r WHERE r.estado = :estado")})
 public class Referencia implements Serializable {
@@ -54,6 +55,9 @@ public class Referencia implements Serializable {
     @Column(name = "fechaRecibida")
     @Temporal(TemporalType.DATE)
     private Date fechaRecibida;
+    @Column(name = "fechaTermino")
+    @Temporal(TemporalType.DATE)
+    private Date fechaTermino;
     @Size(max = 300)
     @Column(name = "motivo")
     private String motivo;
@@ -104,6 +108,14 @@ public class Referencia implements Serializable {
 
     public void setFechaRecibida(Date fechaRecibida) {
         this.fechaRecibida = fechaRecibida;
+    }
+
+    public Date getFechaTermino() {
+        return fechaTermino;
+    }
+
+    public void setFechaTermino(Date fechaTermino) {
+        this.fechaTermino = fechaTermino;
     }
 
     public String getMotivo() {

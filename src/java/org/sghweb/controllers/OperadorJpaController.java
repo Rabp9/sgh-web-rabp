@@ -19,7 +19,7 @@ import org.sghweb.jpa.Operador;
 
 /**
  *
- * @author Roberto
+ * @author essalud
  */
 public class OperadorJpaController implements Serializable {
 
