@@ -25,7 +25,7 @@ import org.sghweb.jpa.MedicoPK;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 public class MedicoJpaController implements Serializable {
 

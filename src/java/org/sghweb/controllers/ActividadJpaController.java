@@ -11,6 +11,8 @@ import org.sghweb.jpa.Turno;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -24,7 +26,7 @@ import org.sghweb.jpa.Actividad;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 public class ActividadJpaController implements Serializable {
 
@@ -48,7 +50,9 @@ public class ActividadJpaController implements Serializable {
         if (actividad.getTurnoList() == null) {
             actividad.setTurnoList(new ArrayList<Turno>());
         }
-        EntityManager em = null;
+        EntityManager em = null; 
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -82,7 +86,7 @@ public class ActividadJpaController implements Serializable {
             }
             throw ex;
         } finally {
-            if (em != null) {
+           if (em != null) {
                 em.close();
             }
         }
@@ -90,6 +94,8 @@ public class ActividadJpaController implements Serializable {
 
     public void edit(Actividad actividad) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -151,6 +157,8 @@ public class ActividadJpaController implements Serializable {
 
     public void destroy(String id) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -233,7 +241,7 @@ public class ActividadJpaController implements Serializable {
             em.close();
         }
     }
-        
+       
     public List<Actividad> findActividadByDescripcion(String descripcion) {
         EntityManager em = getEntityManager();
         return em.createNamedQuery("Actividad.findByDescripcion").setParameter("descripcion", descripcion).getResultList();

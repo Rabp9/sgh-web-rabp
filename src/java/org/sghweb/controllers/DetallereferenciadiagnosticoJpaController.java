@@ -23,7 +23,7 @@ import org.sghweb.jpa.Referencia;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 public class DetallereferenciadiagnosticoJpaController implements Serializable {
 
@@ -42,9 +42,9 @@ public class DetallereferenciadiagnosticoJpaController implements Serializable {
         if (detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK() == null) {
             detallereferenciadiagnostico.setDetallereferenciadiagnosticoPK(new DetallereferenciadiagnosticoPK());
         }
+        detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setReferencianumeroRegistro(detallereferenciadiagnostico.getReferencia().getReferenciaPK().getNumeroRegistro());
         detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setDiagnosticocodigo(detallereferenciadiagnostico.getDiagnostico().getCodigo());
         detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setReferenciaPacientedni(detallereferenciadiagnostico.getReferencia().getReferenciaPK().getPacientedni());
-        detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setReferencianumeroRegistro(detallereferenciadiagnostico.getReferencia().getReferenciaPK().getNumeroRegistro());
         EntityManager em = null;
         try {
             utx.begin();
@@ -87,9 +87,9 @@ public class DetallereferenciadiagnosticoJpaController implements Serializable {
     }
 
     public void edit(Detallereferenciadiagnostico detallereferenciadiagnostico) throws NonexistentEntityException, RollbackFailureException, Exception {
+        detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setReferencianumeroRegistro(detallereferenciadiagnostico.getReferencia().getReferenciaPK().getNumeroRegistro());
         detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setDiagnosticocodigo(detallereferenciadiagnostico.getDiagnostico().getCodigo());
         detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setReferenciaPacientedni(detallereferenciadiagnostico.getReferencia().getReferenciaPK().getPacientedni());
-        detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setReferencianumeroRegistro(detallereferenciadiagnostico.getReferencia().getReferenciaPK().getNumeroRegistro());
         EntityManager em = null;
         try {
             utx.begin();

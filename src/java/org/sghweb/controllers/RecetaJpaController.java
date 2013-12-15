@@ -23,7 +23,7 @@ import org.sghweb.jpa.RecetaPK;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 public class RecetaJpaController implements Serializable {
 

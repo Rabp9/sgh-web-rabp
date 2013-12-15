@@ -11,6 +11,8 @@ import org.sghweb.jpa.Detallereferenciadiagnostico;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -25,7 +27,7 @@ import org.sghweb.jpa.Diagnostico;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 public class DiagnosticoJpaController implements Serializable {
 
@@ -33,6 +35,7 @@ public class DiagnosticoJpaController implements Serializable {
         this.utx = utx;
         this.emf = emf;
     }
+    
     @Resource
     private UserTransaction utx = null;
     @PersistenceUnit(unitName = "sgh-webPU") 
@@ -53,6 +56,8 @@ public class DiagnosticoJpaController implements Serializable {
             diagnostico.setDetallediagnosticoList(new ArrayList<Detallediagnostico>());
         }
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -109,6 +114,8 @@ public class DiagnosticoJpaController implements Serializable {
 
     public void edit(Diagnostico diagnostico) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -198,6 +205,8 @@ public class DiagnosticoJpaController implements Serializable {
 
     public void destroy(String id) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -287,7 +296,7 @@ public class DiagnosticoJpaController implements Serializable {
             em.close();
         }
     }
-        
+      
     public List<Diagnostico> findDiagnosticoByDescripcion(String descripcion) {
         EntityManager em = getEntityManager();
         return em.createNamedQuery("Diagnostico.findByDescripcion").setParameter("descripcion", descripcion).getResultList();

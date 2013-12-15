@@ -1,16 +1,15 @@
-// src/java/org/sghweb/controllers/VwOrdenJpaController.java
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.sghweb.controllers;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceUnit;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
@@ -21,7 +20,7 @@ import org.sghweb.jpa.VwOrden;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 public class VwOrdenJpaController implements Serializable {
 
@@ -29,15 +28,10 @@ public class VwOrdenJpaController implements Serializable {
         this.utx = utx;
         this.emf = emf;
     }
-    @Resource
     private UserTransaction utx = null;
-    @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
-        if (emf == null) { 
-            emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
-        }
         return emf.createEntityManager();
     }
 
@@ -166,10 +160,5 @@ public class VwOrdenJpaController implements Serializable {
             em.close();
         }
     }
-        
-    public List<VwOrden> findVwOrdenByDniByHora(String dni, Date fechaInicio, Date fechaFin) {
-        EntityManager em = getEntityManager();
-        return em.createNamedQuery("VwOrden.findByDniByFechaHora").setParameter("dni", dni).setParameter("fechaInicio", fechaInicio).setParameter("fechaFin", fechaFin).getResultList();
-    }   
     
 }

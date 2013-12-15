@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 @Entity
 @Table(name = "referencia")
@@ -55,6 +55,8 @@ public class Referencia implements Serializable {
     @Column(name = "fechaRecibida")
     @Temporal(TemporalType.DATE)
     private Date fechaRecibida;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "fechaTermino")
     @Temporal(TemporalType.DATE)
     private Date fechaTermino;
@@ -68,6 +70,8 @@ public class Referencia implements Serializable {
     @JoinColumn(name = "Paciente_dni", referencedColumnName = "dni", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Paciente paciente;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "referencia")
+    private List<Detallereferenciaservicio> detallereferenciaservicioList;
 
     public Referencia() {
     }
@@ -76,10 +80,11 @@ public class Referencia implements Serializable {
         this.referenciaPK = referenciaPK;
     }
 
-    public Referencia(ReferenciaPK referenciaPK, Date fechaEmision, Date fechaRecibida) {
+    public Referencia(ReferenciaPK referenciaPK, Date fechaEmision, Date fechaRecibida, Date fechaTermino) {
         this.referenciaPK = referenciaPK;
         this.fechaEmision = fechaEmision;
         this.fechaRecibida = fechaRecibida;
+        this.fechaTermino = fechaTermino;
     }
 
     public Referencia(String numeroRegistro, String pacientedni) {
@@ -149,6 +154,15 @@ public class Referencia implements Serializable {
 
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
+    }
+
+    @XmlTransient
+    public List<Detallereferenciaservicio> getDetallereferenciaservicioList() {
+        return detallereferenciaservicioList;
+    }
+
+    public void setDetallereferenciaservicioList(List<Detallereferenciaservicio> detallereferenciaservicioList) {
+        this.detallereferenciaservicioList = detallereferenciaservicioList;
     }
 
     @Override

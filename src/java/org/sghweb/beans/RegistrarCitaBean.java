@@ -96,14 +96,14 @@ public class RegistrarCitaBean implements Serializable  {
         setServicio((Servicio) event.getObject());
         RequestContext.getCurrentInstance().reset("frmRegistrarCita_atcCodigoServicio");  
         codigoServicio = servicio.getCodigo();
-        listaMedicos = vmjc.findVwMedicoByServicio(servicio.getDescripcion());
+    //    listaMedicos = vmjc.findVwMedicoByServicio(servicio.getDescripcion());
     }
     
     public void verificarServicio() {
         Servicio auxServicio = vsjc.findServicio(codigoServicio);
         if(auxServicio != null) {
             servicio = auxServicio;
-            listaMedicos = vmjc.findVwMedicoByServicio(servicio.getDescripcion());
+     //       listaMedicos = vmjc.findVwMedicoByServicio(servicio.getDescripcion());
         }
     }
     

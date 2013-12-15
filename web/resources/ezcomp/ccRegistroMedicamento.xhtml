@@ -25,13 +25,13 @@
 
             <p:outputLabel value="Descripción" for="txtDescripcion${cc.attrs.accion}"/>
             <p:inputText id="txtDescripcion${cc.attrs.accion}" value="${cc.attrs.medicamento.descripcion}"
-                         maxlength="60" readonly="${cc.attrs.readOnlyCodigo}"
+                         maxlength="60" readonly="${cc.attrs.readOnlyDatos}"
                          required="true">
                 <p:watermark value="Escribe una descripción" for="txtDescripcion${cc.attrs.accion}"/>
             </p:inputText> 
             
             <p:outputLabel value="Presentación" for="somPresentacion${cc.attrs.accion}"/>
-            <p:selectOneMenu id="somPresentacion${cc.attrs.accion}" value="${cc.attrs.medicamento.presentacion}" disabled="${cc.attrs.readOnlyCodigo}">
+            <p:selectOneMenu id="somPresentacion${cc.attrs.accion}" value="${cc.attrs.medicamento.presentacion}" disabled="${cc.attrs.readOnlyDatos}">
                 <f:selectItem itemLabel="Selecciona una opción" itemValue="" />  
                 <f:selectItem itemLabel="TB" itemValue="TB"/>
                 <f:selectItem itemLabel="AM" itemValue="AM"/>
@@ -76,10 +76,12 @@
             </p:spinner>
             
             <p:outputLabel value="Fecha Ingreso" for="clnFechaIngreso${cc.attrs.accion}"/>
-            <p:calendar id="clnFechaIngreso${cc.attrs.accion}" value="${cc.attrs.fechaIngreso}" readonly="${cc.attrs.readOnlyDatos}"
-   
+            <p:calendar id="clnFechaIngreso${cc.attrs.accion}" required="true" requiredMessage="Seleccione una fecha" value="${cc.attrs.medicamento.fechaIngreso}"
+                        disabled="${cc.attrs.readOnlyDatos}" navigator="true" locale="es" showButtonPanel="true"/> 
+
             <p:outputLabel value="Fecha Vencimiento" for="clnFechaVencimiento${cc.attrs.accion}"/>
-            <p:calendar id="clnFechaVencimiento${cc.attrs.accion}" value="${cc.attrs.fechaVencimiento}" readonly="${cc.attrs.readOnlyDatos}"
+            <p:calendar id="clnFechaVencimiento${cc.attrs.accion}" value="${cc.attrs.medicamento.fechaVencimiento}"
+                        disabled="${cc.attrs.readOnlyDatos}" navigator="true" locale="es" showButtonPanel="true"/>
             
         </p:panelGrid>
     </cc:implementation>

@@ -105,7 +105,7 @@ public class ReporteRecetaBean implements Serializable  {
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
             return;
         }
-        listaOrdenes = vojc.findVwOrdenByDniByHora(dni, fechaInicio, fechaFin);
+     //   listaOrdenes = vojc.findVwOrdenByDniByHora(dni, fechaInicio, fechaFin);
     }
     
     public void reportarReceta() throws IOException, BadElementException, DocumentException {
@@ -135,8 +135,8 @@ public class ReporteRecetaBean implements Serializable  {
         pdf.add(titulo);
         
         //Mostrar información de la Receta
-        List<VwReportereceta> vwReporterecetas = getVrrjc().findVwReporteRecetaByNroOrden(selectedVwOrden.getNroOrden());
-        System.out.println(vwReporterecetas);
+    //    List<VwReportereceta> vwReporterecetas = getVrrjc().findVwReporteRecetaByNroOrden(selectedVwOrden.getNroOrden());
+     //   System.out.println(vwReporterecetas);
         pdf.add(Chunk.NEWLINE);
         PdfPTable table = new PdfPTable(2);
         table.getDefaultCell().setBorder(0);
@@ -175,7 +175,7 @@ public class ReporteRecetaBean implements Serializable  {
             table.addCell(cell);
         }
                 
-        for (VwReportereceta vwReportereceta : vwReporterecetas) {
+   /*     for (VwReportereceta vwReportereceta : vwReporterecetas) {
             table.addCell(new Phrase(vwReportereceta.getNroReceta(), FontFactory.getFont(FontFactory.HELVETICA, 7, Font.NORMAL, new Color(0, 0, 0))));
             table.addCell(new Phrase(vwReportereceta.getMedicamento(), FontFactory.getFont(FontFactory.HELVETICA, 7, Font.NORMAL, new Color(0, 0, 0))));
             table.addCell(new Phrase(vwReportereceta.getPresentacion(), FontFactory.getFont(FontFactory.HELVETICA, 7, Font.NORMAL, new Color(0, 0, 0))));
@@ -184,7 +184,7 @@ public class ReporteRecetaBean implements Serializable  {
             table.addCell(new Phrase(String.valueOf(vwReportereceta.getPendiente()), FontFactory.getFont(FontFactory.HELVETICA, 7, Font.NORMAL, new Color(0, 0, 0))));
             table.addCell(new Phrase(vwReportereceta.getIndicacion(), FontFactory.getFont(FontFactory.HELVETICA, 7, Font.NORMAL, new Color(0, 0, 0))));
         }
-        
+     */   
         pdf.add(table);
         
         pdf.close(); // no need to close PDFwriter?

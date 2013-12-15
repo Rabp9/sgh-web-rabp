@@ -20,12 +20,13 @@ import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
+import org.sghweb.jpa.Detallereferenciaservicio;
 import org.sghweb.jpa.Referencia;
 import org.sghweb.jpa.ReferenciaPK;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 public class ReferenciaJpaController implements Serializable {
 
@@ -47,6 +48,9 @@ public class ReferenciaJpaController implements Serializable {
         if (referencia.getDetallereferenciadiagnosticoList() == null) {
             referencia.setDetallereferenciadiagnosticoList(new ArrayList<Detallereferenciadiagnostico>());
         }
+        if (referencia.getDetallereferenciaservicioList() == null) {
+            referencia.setDetallereferenciaservicioList(new ArrayList<Detallereferenciaservicio>());
+        }
         referencia.getReferenciaPK().setPacientedni(referencia.getPaciente().getDni());
         EntityManager em = null;
         try {
@@ -63,6 +67,12 @@ public class ReferenciaJpaController implements Serializable {
                 attachedDetallereferenciadiagnosticoList.add(detallereferenciadiagnosticoListDetallereferenciadiagnosticoToAttach);
             }
             referencia.setDetallereferenciadiagnosticoList(attachedDetallereferenciadiagnosticoList);
+            List<Detallereferenciaservicio> attachedDetallereferenciaservicioList = new ArrayList<Detallereferenciaservicio>();
+            for (Detallereferenciaservicio detallereferenciaservicioListDetallereferenciaservicioToAttach : referencia.getDetallereferenciaservicioList()) {
+                detallereferenciaservicioListDetallereferenciaservicioToAttach = em.getReference(detallereferenciaservicioListDetallereferenciaservicioToAttach.getClass(), detallereferenciaservicioListDetallereferenciaservicioToAttach.getDetallereferenciaservicioPK());
+                attachedDetallereferenciaservicioList.add(detallereferenciaservicioListDetallereferenciaservicioToAttach);
+            }
+            referencia.setDetallereferenciaservicioList(attachedDetallereferenciaservicioList);
             em.persist(referencia);
             if (paciente != null) {
                 paciente.getReferenciaList().add(referencia);
@@ -75,6 +85,15 @@ public class ReferenciaJpaController implements Serializable {
                 if (oldReferenciaOfDetallereferenciadiagnosticoListDetallereferenciadiagnostico != null) {
                     oldReferenciaOfDetallereferenciadiagnosticoListDetallereferenciadiagnostico.getDetallereferenciadiagnosticoList().remove(detallereferenciadiagnosticoListDetallereferenciadiagnostico);
                     oldReferenciaOfDetallereferenciadiagnosticoListDetallereferenciadiagnostico = em.merge(oldReferenciaOfDetallereferenciadiagnosticoListDetallereferenciadiagnostico);
+                }
+            }
+            for (Detallereferenciaservicio detallereferenciaservicioListDetallereferenciaservicio : referencia.getDetallereferenciaservicioList()) {
+                Referencia oldReferenciaOfDetallereferenciaservicioListDetallereferenciaservicio = detallereferenciaservicioListDetallereferenciaservicio.getReferencia();
+                detallereferenciaservicioListDetallereferenciaservicio.setReferencia(referencia);
+                detallereferenciaservicioListDetallereferenciaservicio = em.merge(detallereferenciaservicioListDetallereferenciaservicio);
+                if (oldReferenciaOfDetallereferenciaservicioListDetallereferenciaservicio != null) {
+                    oldReferenciaOfDetallereferenciaservicioListDetallereferenciaservicio.getDetallereferenciaservicioList().remove(detallereferenciaservicioListDetallereferenciaservicio);
+                    oldReferenciaOfDetallereferenciaservicioListDetallereferenciaservicio = em.merge(oldReferenciaOfDetallereferenciaservicioListDetallereferenciaservicio);
                 }
             }
             utx.commit();
@@ -106,6 +125,8 @@ public class ReferenciaJpaController implements Serializable {
             Paciente pacienteNew = referencia.getPaciente();
             List<Detallereferenciadiagnostico> detallereferenciadiagnosticoListOld = persistentReferencia.getDetallereferenciadiagnosticoList();
             List<Detallereferenciadiagnostico> detallereferenciadiagnosticoListNew = referencia.getDetallereferenciadiagnosticoList();
+            List<Detallereferenciaservicio> detallereferenciaservicioListOld = persistentReferencia.getDetallereferenciaservicioList();
+            List<Detallereferenciaservicio> detallereferenciaservicioListNew = referencia.getDetallereferenciaservicioList();
             List<String> illegalOrphanMessages = null;
             for (Detallereferenciadiagnostico detallereferenciadiagnosticoListOldDetallereferenciadiagnostico : detallereferenciadiagnosticoListOld) {
                 if (!detallereferenciadiagnosticoListNew.contains(detallereferenciadiagnosticoListOldDetallereferenciadiagnostico)) {
@@ -113,6 +134,14 @@ public class ReferenciaJpaController implements Serializable {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
                     illegalOrphanMessages.add("You must retain Detallereferenciadiagnostico " + detallereferenciadiagnosticoListOldDetallereferenciadiagnostico + " since its referencia field is not nullable.");
+                }
+            }
+            for (Detallereferenciaservicio detallereferenciaservicioListOldDetallereferenciaservicio : detallereferenciaservicioListOld) {
+                if (!detallereferenciaservicioListNew.contains(detallereferenciaservicioListOldDetallereferenciaservicio)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Detallereferenciaservicio " + detallereferenciaservicioListOldDetallereferenciaservicio + " since its referencia field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -129,6 +158,13 @@ public class ReferenciaJpaController implements Serializable {
             }
             detallereferenciadiagnosticoListNew = attachedDetallereferenciadiagnosticoListNew;
             referencia.setDetallereferenciadiagnosticoList(detallereferenciadiagnosticoListNew);
+            List<Detallereferenciaservicio> attachedDetallereferenciaservicioListNew = new ArrayList<Detallereferenciaservicio>();
+            for (Detallereferenciaservicio detallereferenciaservicioListNewDetallereferenciaservicioToAttach : detallereferenciaservicioListNew) {
+                detallereferenciaservicioListNewDetallereferenciaservicioToAttach = em.getReference(detallereferenciaservicioListNewDetallereferenciaservicioToAttach.getClass(), detallereferenciaservicioListNewDetallereferenciaservicioToAttach.getDetallereferenciaservicioPK());
+                attachedDetallereferenciaservicioListNew.add(detallereferenciaservicioListNewDetallereferenciaservicioToAttach);
+            }
+            detallereferenciaservicioListNew = attachedDetallereferenciaservicioListNew;
+            referencia.setDetallereferenciaservicioList(detallereferenciaservicioListNew);
             referencia = em.merge(referencia);
             if (pacienteOld != null && !pacienteOld.equals(pacienteNew)) {
                 pacienteOld.getReferenciaList().remove(referencia);
@@ -146,6 +182,17 @@ public class ReferenciaJpaController implements Serializable {
                     if (oldReferenciaOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico != null && !oldReferenciaOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico.equals(referencia)) {
                         oldReferenciaOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico.getDetallereferenciadiagnosticoList().remove(detallereferenciadiagnosticoListNewDetallereferenciadiagnostico);
                         oldReferenciaOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico = em.merge(oldReferenciaOfDetallereferenciadiagnosticoListNewDetallereferenciadiagnostico);
+                    }
+                }
+            }
+            for (Detallereferenciaservicio detallereferenciaservicioListNewDetallereferenciaservicio : detallereferenciaservicioListNew) {
+                if (!detallereferenciaservicioListOld.contains(detallereferenciaservicioListNewDetallereferenciaservicio)) {
+                    Referencia oldReferenciaOfDetallereferenciaservicioListNewDetallereferenciaservicio = detallereferenciaservicioListNewDetallereferenciaservicio.getReferencia();
+                    detallereferenciaservicioListNewDetallereferenciaservicio.setReferencia(referencia);
+                    detallereferenciaservicioListNewDetallereferenciaservicio = em.merge(detallereferenciaservicioListNewDetallereferenciaservicio);
+                    if (oldReferenciaOfDetallereferenciaservicioListNewDetallereferenciaservicio != null && !oldReferenciaOfDetallereferenciaservicioListNewDetallereferenciaservicio.equals(referencia)) {
+                        oldReferenciaOfDetallereferenciaservicioListNewDetallereferenciaservicio.getDetallereferenciaservicioList().remove(detallereferenciaservicioListNewDetallereferenciaservicio);
+                        oldReferenciaOfDetallereferenciaservicioListNewDetallereferenciaservicio = em.merge(oldReferenciaOfDetallereferenciaservicioListNewDetallereferenciaservicio);
                     }
                 }
             }
@@ -190,6 +237,13 @@ public class ReferenciaJpaController implements Serializable {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
                 illegalOrphanMessages.add("This Referencia (" + referencia + ") cannot be destroyed since the Detallereferenciadiagnostico " + detallereferenciadiagnosticoListOrphanCheckDetallereferenciadiagnostico + " in its detallereferenciadiagnosticoList field has a non-nullable referencia field.");
+            }
+            List<Detallereferenciaservicio> detallereferenciaservicioListOrphanCheck = referencia.getDetallereferenciaservicioList();
+            for (Detallereferenciaservicio detallereferenciaservicioListOrphanCheckDetallereferenciaservicio : detallereferenciaservicioListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Referencia (" + referencia + ") cannot be destroyed since the Detallereferenciaservicio " + detallereferenciaservicioListOrphanCheckDetallereferenciaservicio + " in its detallereferenciaservicioList field has a non-nullable referencia field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);

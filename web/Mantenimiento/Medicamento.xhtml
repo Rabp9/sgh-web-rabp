@@ -77,6 +77,30 @@
                     </p:dialog>
                 </h:form>
                 
+                <h:form id="frmIngresoMedicamento">
+                    <p:dialog id="dlgIngresoMedicamento" header="Ingreso Medicamento" widgetVar="dialogoIngresoMedicamento" resizable="false"
+                              showEffect="clip" hideEffect="fold" modal="true">
+                            <p:outputLabel value="Cantidad a ingresar" for="spnCantidadIngreso"/>
+                            <p:spinner id="spnCantidadIngreso" value="${mantenimientoMedicamentoBean.cantidad}"
+                                       required="true" min="0">
+                                <p:watermark value="Cantidad" for="spnCantidadIngreso"/>
+                            </p:spinner>
+
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmSalidaMedicamento">
+                    <p:dialog id="dlgSalidaMedicamento" header="Salida Medicamento" widgetVar="dialogoSalidaMedicamento" resizable="false"
+                              showEffect="clip" hideEffect="fold" modal="true">
+                            <p:outputLabel value="Cantidad a salir" for="spnCantidadSalida"/>
+                            <p:spinner id="spnCantidadSalida" value="${mantenimientoMedicamentoBean.cantidad}"
+                                       required="true" min="0">
+                                <p:watermark value="Cantidad" for="spnCantidadSalida"/>
+                            </p:spinner>
+
+                    </p:dialog>
+                </h:form>
+                
             </ui:define>
 
             <ui:define name="left">
@@ -106,7 +130,8 @@
                                 <h:outputText value="${medicamento.descripcion}" />  
                             </p:column>
                                              
-                            <p:column sortBy="${medicamento.presentacion}" filterBy="${medicamento.presentacion}" filterMatchMode="contains" headerText="Presentación">
+                            <p:column sortBy="${medicamento.presentacion}" filterBy="${medicamento.presentacion}" filterMatchMode="exact" headerText="Presentación"
+                                      filterOptions="${mantenimientoMedicamentoBean.presentacionOptions}">
                                 <h:outputText value="${medicamento.presentacion}" />  
                             </p:column>
                             

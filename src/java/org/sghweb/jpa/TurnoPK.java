@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 @Embeddable
 public class TurnoPK implements Serializable {

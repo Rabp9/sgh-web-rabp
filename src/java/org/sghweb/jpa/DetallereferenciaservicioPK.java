@@ -16,10 +16,10 @@ import javax.validation.constraints.Size;
  * @author Roberto
  */
 @Embeddable
-public class DetallereferenciadiagnosticoPK implements Serializable {
+public class DetallereferenciaservicioPK implements Serializable {
     @Basic(optional = false)
-    @Column(name = "idDetalleReferenciaDiagnostico")
-    private int idDetalleReferenciaDiagnostico;
+    @Column(name = "idDetalleReferenciaServicio")
+    private int idDetalleReferenciaServicio;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 7)
@@ -32,26 +32,26 @@ public class DetallereferenciadiagnosticoPK implements Serializable {
     private String referenciaPacientedni;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 5)
-    @Column(name = "Diagnostico_codigo")
-    private String diagnosticocodigo;
+    @Size(min = 1, max = 3)
+    @Column(name = "Servicio_codigo")
+    private String serviciocodigo;
 
-    public DetallereferenciadiagnosticoPK() {
+    public DetallereferenciaservicioPK() {
     }
 
-    public DetallereferenciadiagnosticoPK(int idDetalleReferenciaDiagnostico, String referencianumeroRegistro, String referenciaPacientedni, String diagnosticocodigo) {
-        this.idDetalleReferenciaDiagnostico = idDetalleReferenciaDiagnostico;
+    public DetallereferenciaservicioPK(int idDetalleReferenciaServicio, String referencianumeroRegistro, String referenciaPacientedni, String serviciocodigo) {
+        this.idDetalleReferenciaServicio = idDetalleReferenciaServicio;
         this.referencianumeroRegistro = referencianumeroRegistro;
         this.referenciaPacientedni = referenciaPacientedni;
-        this.diagnosticocodigo = diagnosticocodigo;
+        this.serviciocodigo = serviciocodigo;
     }
 
-    public int getIdDetalleReferenciaDiagnostico() {
-        return idDetalleReferenciaDiagnostico;
+    public int getIdDetalleReferenciaServicio() {
+        return idDetalleReferenciaServicio;
     }
 
-    public void setIdDetalleReferenciaDiagnostico(int idDetalleReferenciaDiagnostico) {
-        this.idDetalleReferenciaDiagnostico = idDetalleReferenciaDiagnostico;
+    public void setIdDetalleReferenciaServicio(int idDetalleReferenciaServicio) {
+        this.idDetalleReferenciaServicio = idDetalleReferenciaServicio;
     }
 
     public String getReferencianumeroRegistro() {
@@ -70,32 +70,32 @@ public class DetallereferenciadiagnosticoPK implements Serializable {
         this.referenciaPacientedni = referenciaPacientedni;
     }
 
-    public String getDiagnosticocodigo() {
-        return diagnosticocodigo;
+    public String getServiciocodigo() {
+        return serviciocodigo;
     }
 
-    public void setDiagnosticocodigo(String diagnosticocodigo) {
-        this.diagnosticocodigo = diagnosticocodigo;
+    public void setServiciocodigo(String serviciocodigo) {
+        this.serviciocodigo = serviciocodigo;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (int) idDetalleReferenciaDiagnostico;
+        hash += (int) idDetalleReferenciaServicio;
         hash += (referencianumeroRegistro != null ? referencianumeroRegistro.hashCode() : 0);
         hash += (referenciaPacientedni != null ? referenciaPacientedni.hashCode() : 0);
-        hash += (diagnosticocodigo != null ? diagnosticocodigo.hashCode() : 0);
+        hash += (serviciocodigo != null ? serviciocodigo.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DetallereferenciadiagnosticoPK)) {
+        if (!(object instanceof DetallereferenciaservicioPK)) {
             return false;
         }
-        DetallereferenciadiagnosticoPK other = (DetallereferenciadiagnosticoPK) object;
-        if (this.idDetalleReferenciaDiagnostico != other.idDetalleReferenciaDiagnostico) {
+        DetallereferenciaservicioPK other = (DetallereferenciaservicioPK) object;
+        if (this.idDetalleReferenciaServicio != other.idDetalleReferenciaServicio) {
             return false;
         }
         if ((this.referencianumeroRegistro == null && other.referencianumeroRegistro != null) || (this.referencianumeroRegistro != null && !this.referencianumeroRegistro.equals(other.referencianumeroRegistro))) {
@@ -104,7 +104,7 @@ public class DetallereferenciadiagnosticoPK implements Serializable {
         if ((this.referenciaPacientedni == null && other.referenciaPacientedni != null) || (this.referenciaPacientedni != null && !this.referenciaPacientedni.equals(other.referenciaPacientedni))) {
             return false;
         }
-        if ((this.diagnosticocodigo == null && other.diagnosticocodigo != null) || (this.diagnosticocodigo != null && !this.diagnosticocodigo.equals(other.diagnosticocodigo))) {
+        if ((this.serviciocodigo == null && other.serviciocodigo != null) || (this.serviciocodigo != null && !this.serviciocodigo.equals(other.serviciocodigo))) {
             return false;
         }
         return true;
@@ -112,7 +112,7 @@ public class DetallereferenciadiagnosticoPK implements Serializable {
 
     @Override
     public String toString() {
-        return "org.sghweb.jpa.DetallereferenciadiagnosticoPK[ idDetalleReferenciaDiagnostico=" + idDetalleReferenciaDiagnostico + ", referencianumeroRegistro=" + referencianumeroRegistro + ", referenciaPacientedni=" + referenciaPacientedni + ", diagnosticocodigo=" + diagnosticocodigo + " ]";
+        return "org.sghweb.jpa.DetallereferenciaservicioPK[ idDetalleReferenciaServicio=" + idDetalleReferenciaServicio + ", referencianumeroRegistro=" + referencianumeroRegistro + ", referenciaPacientedni=" + referenciaPacientedni + ", serviciocodigo=" + serviciocodigo + " ]";
     }
     
 }

@@ -1,5 +1,7 @@
-// src/java/org/sghweb/controllers/ServicioJpaController.java
-
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.sghweb.controllers;
 
 import java.io.Serializable;
@@ -10,21 +12,19 @@ import javax.persistence.criteria.Root;
 import org.sghweb.jpa.Detalleserviciomedico;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceUnit;
 import javax.transaction.UserTransaction;
 import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
+import org.sghweb.jpa.Detallereferenciaservicio;
 import org.sghweb.jpa.Servicio;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 public class ServicioJpaController implements Serializable {
 
@@ -32,20 +32,19 @@ public class ServicioJpaController implements Serializable {
         this.utx = utx;
         this.emf = emf;
     }
-    @Resource
     private UserTransaction utx = null;
-    @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
-        if (emf == null) { 
-            emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
-        }
         return emf.createEntityManager();
     }
+
     public void create(Servicio servicio) throws PreexistingEntityException, RollbackFailureException, Exception {
         if (servicio.getDetalleserviciomedicoList() == null) {
             servicio.setDetalleserviciomedicoList(new ArrayList<Detalleserviciomedico>());
+        }
+        if (servicio.getDetallereferenciaservicioList() == null) {
+            servicio.setDetallereferenciaservicioList(new ArrayList<Detallereferenciaservicio>());
         }
         EntityManager em = null;
         try {
@@ -57,6 +56,12 @@ public class ServicioJpaController implements Serializable {
                 attachedDetalleserviciomedicoList.add(detalleserviciomedicoListDetalleserviciomedicoToAttach);
             }
             servicio.setDetalleserviciomedicoList(attachedDetalleserviciomedicoList);
+            List<Detallereferenciaservicio> attachedDetallereferenciaservicioList = new ArrayList<Detallereferenciaservicio>();
+            for (Detallereferenciaservicio detallereferenciaservicioListDetallereferenciaservicioToAttach : servicio.getDetallereferenciaservicioList()) {
+                detallereferenciaservicioListDetallereferenciaservicioToAttach = em.getReference(detallereferenciaservicioListDetallereferenciaservicioToAttach.getClass(), detallereferenciaservicioListDetallereferenciaservicioToAttach.getDetallereferenciaservicioPK());
+                attachedDetallereferenciaservicioList.add(detallereferenciaservicioListDetallereferenciaservicioToAttach);
+            }
+            servicio.setDetallereferenciaservicioList(attachedDetallereferenciaservicioList);
             em.persist(servicio);
             for (Detalleserviciomedico detalleserviciomedicoListDetalleserviciomedico : servicio.getDetalleserviciomedicoList()) {
                 Servicio oldServicioOfDetalleserviciomedicoListDetalleserviciomedico = detalleserviciomedicoListDetalleserviciomedico.getServicio();
@@ -65,6 +70,15 @@ public class ServicioJpaController implements Serializable {
                 if (oldServicioOfDetalleserviciomedicoListDetalleserviciomedico != null) {
                     oldServicioOfDetalleserviciomedicoListDetalleserviciomedico.getDetalleserviciomedicoList().remove(detalleserviciomedicoListDetalleserviciomedico);
                     oldServicioOfDetalleserviciomedicoListDetalleserviciomedico = em.merge(oldServicioOfDetalleserviciomedicoListDetalleserviciomedico);
+                }
+            }
+            for (Detallereferenciaservicio detallereferenciaservicioListDetallereferenciaservicio : servicio.getDetallereferenciaservicioList()) {
+                Servicio oldServicioOfDetallereferenciaservicioListDetallereferenciaservicio = detallereferenciaservicioListDetallereferenciaservicio.getServicio();
+                detallereferenciaservicioListDetallereferenciaservicio.setServicio(servicio);
+                detallereferenciaservicioListDetallereferenciaservicio = em.merge(detallereferenciaservicioListDetallereferenciaservicio);
+                if (oldServicioOfDetallereferenciaservicioListDetallereferenciaservicio != null) {
+                    oldServicioOfDetallereferenciaservicioListDetallereferenciaservicio.getDetallereferenciaservicioList().remove(detallereferenciaservicioListDetallereferenciaservicio);
+                    oldServicioOfDetallereferenciaservicioListDetallereferenciaservicio = em.merge(oldServicioOfDetallereferenciaservicioListDetallereferenciaservicio);
                 }
             }
             utx.commit();
@@ -93,6 +107,8 @@ public class ServicioJpaController implements Serializable {
             Servicio persistentServicio = em.find(Servicio.class, servicio.getCodigo());
             List<Detalleserviciomedico> detalleserviciomedicoListOld = persistentServicio.getDetalleserviciomedicoList();
             List<Detalleserviciomedico> detalleserviciomedicoListNew = servicio.getDetalleserviciomedicoList();
+            List<Detallereferenciaservicio> detallereferenciaservicioListOld = persistentServicio.getDetallereferenciaservicioList();
+            List<Detallereferenciaservicio> detallereferenciaservicioListNew = servicio.getDetallereferenciaservicioList();
             List<String> illegalOrphanMessages = null;
             for (Detalleserviciomedico detalleserviciomedicoListOldDetalleserviciomedico : detalleserviciomedicoListOld) {
                 if (!detalleserviciomedicoListNew.contains(detalleserviciomedicoListOldDetalleserviciomedico)) {
@@ -100,6 +116,14 @@ public class ServicioJpaController implements Serializable {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
                     illegalOrphanMessages.add("You must retain Detalleserviciomedico " + detalleserviciomedicoListOldDetalleserviciomedico + " since its servicio field is not nullable.");
+                }
+            }
+            for (Detallereferenciaservicio detallereferenciaservicioListOldDetallereferenciaservicio : detallereferenciaservicioListOld) {
+                if (!detallereferenciaservicioListNew.contains(detallereferenciaservicioListOldDetallereferenciaservicio)) {
+                    if (illegalOrphanMessages == null) {
+                        illegalOrphanMessages = new ArrayList<String>();
+                    }
+                    illegalOrphanMessages.add("You must retain Detallereferenciaservicio " + detallereferenciaservicioListOldDetallereferenciaservicio + " since its servicio field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -112,6 +136,13 @@ public class ServicioJpaController implements Serializable {
             }
             detalleserviciomedicoListNew = attachedDetalleserviciomedicoListNew;
             servicio.setDetalleserviciomedicoList(detalleserviciomedicoListNew);
+            List<Detallereferenciaservicio> attachedDetallereferenciaservicioListNew = new ArrayList<Detallereferenciaservicio>();
+            for (Detallereferenciaservicio detallereferenciaservicioListNewDetallereferenciaservicioToAttach : detallereferenciaservicioListNew) {
+                detallereferenciaservicioListNewDetallereferenciaservicioToAttach = em.getReference(detallereferenciaservicioListNewDetallereferenciaservicioToAttach.getClass(), detallereferenciaservicioListNewDetallereferenciaservicioToAttach.getDetallereferenciaservicioPK());
+                attachedDetallereferenciaservicioListNew.add(detallereferenciaservicioListNewDetallereferenciaservicioToAttach);
+            }
+            detallereferenciaservicioListNew = attachedDetallereferenciaservicioListNew;
+            servicio.setDetallereferenciaservicioList(detallereferenciaservicioListNew);
             servicio = em.merge(servicio);
             for (Detalleserviciomedico detalleserviciomedicoListNewDetalleserviciomedico : detalleserviciomedicoListNew) {
                 if (!detalleserviciomedicoListOld.contains(detalleserviciomedicoListNewDetalleserviciomedico)) {
@@ -121,6 +152,17 @@ public class ServicioJpaController implements Serializable {
                     if (oldServicioOfDetalleserviciomedicoListNewDetalleserviciomedico != null && !oldServicioOfDetalleserviciomedicoListNewDetalleserviciomedico.equals(servicio)) {
                         oldServicioOfDetalleserviciomedicoListNewDetalleserviciomedico.getDetalleserviciomedicoList().remove(detalleserviciomedicoListNewDetalleserviciomedico);
                         oldServicioOfDetalleserviciomedicoListNewDetalleserviciomedico = em.merge(oldServicioOfDetalleserviciomedicoListNewDetalleserviciomedico);
+                    }
+                }
+            }
+            for (Detallereferenciaservicio detallereferenciaservicioListNewDetallereferenciaservicio : detallereferenciaservicioListNew) {
+                if (!detallereferenciaservicioListOld.contains(detallereferenciaservicioListNewDetallereferenciaservicio)) {
+                    Servicio oldServicioOfDetallereferenciaservicioListNewDetallereferenciaservicio = detallereferenciaservicioListNewDetallereferenciaservicio.getServicio();
+                    detallereferenciaservicioListNewDetallereferenciaservicio.setServicio(servicio);
+                    detallereferenciaservicioListNewDetallereferenciaservicio = em.merge(detallereferenciaservicioListNewDetallereferenciaservicio);
+                    if (oldServicioOfDetallereferenciaservicioListNewDetallereferenciaservicio != null && !oldServicioOfDetallereferenciaservicioListNewDetallereferenciaservicio.equals(servicio)) {
+                        oldServicioOfDetallereferenciaservicioListNewDetallereferenciaservicio.getDetallereferenciaservicioList().remove(detallereferenciaservicioListNewDetallereferenciaservicio);
+                        oldServicioOfDetallereferenciaservicioListNewDetallereferenciaservicio = em.merge(oldServicioOfDetallereferenciaservicioListNewDetallereferenciaservicio);
                     }
                 }
             }
@@ -165,6 +207,13 @@ public class ServicioJpaController implements Serializable {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
                 illegalOrphanMessages.add("This Servicio (" + servicio + ") cannot be destroyed since the Detalleserviciomedico " + detalleserviciomedicoListOrphanCheckDetalleserviciomedico + " in its detalleserviciomedicoList field has a non-nullable servicio field.");
+            }
+            List<Detallereferenciaservicio> detallereferenciaservicioListOrphanCheck = servicio.getDetallereferenciaservicioList();
+            for (Detallereferenciaservicio detallereferenciaservicioListOrphanCheckDetallereferenciaservicio : detallereferenciaservicioListOrphanCheck) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Servicio (" + servicio + ") cannot be destroyed since the Detallereferenciaservicio " + detallereferenciaservicioListOrphanCheckDetallereferenciaservicio + " in its detallereferenciaservicioList field has a non-nullable servicio field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);

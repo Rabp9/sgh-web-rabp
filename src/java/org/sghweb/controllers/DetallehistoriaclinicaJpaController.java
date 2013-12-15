@@ -28,7 +28,7 @@ import org.sghweb.jpa.DetallehistoriaclinicaPK;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 public class DetallehistoriaclinicaJpaController implements Serializable {
 
@@ -57,10 +57,10 @@ public class DetallehistoriaclinicaJpaController implements Serializable {
             detallehistoriaclinica.setDetallediagnosticoList(new ArrayList<Detallediagnostico>());
         }
         detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicaautogenerado(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getAutogenerado());
-        detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicaPacientedni(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getPacientedni());
         detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaMedicodni(detallehistoriaclinica.getCita().getCitaPK().getMedicodni());
-        detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaactoMedico(detallehistoriaclinica.getCita().getCitaPK().getActoMedico());
         detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaMedicocmp(detallehistoriaclinica.getCita().getCitaPK().getMedicocmp());
+        detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicaPacientedni(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getPacientedni());
+        detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaactoMedico(detallehistoriaclinica.getCita().getCitaPK().getActoMedico());
         detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicanumeroRegistro(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getNumeroRegistro());
         EntityManager em = null;
         try {
@@ -150,10 +150,10 @@ public class DetallehistoriaclinicaJpaController implements Serializable {
 
     public void edit(Detallehistoriaclinica detallehistoriaclinica) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicaautogenerado(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getAutogenerado());
-        detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicaPacientedni(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getPacientedni());
         detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaMedicodni(detallehistoriaclinica.getCita().getCitaPK().getMedicodni());
-        detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaactoMedico(detallehistoriaclinica.getCita().getCitaPK().getActoMedico());
         detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaMedicocmp(detallehistoriaclinica.getCita().getCitaPK().getMedicocmp());
+        detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicaPacientedni(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getPacientedni());
+        detallehistoriaclinica.getDetallehistoriaclinicaPK().setCitaactoMedico(detallehistoriaclinica.getCita().getCitaPK().getActoMedico());
         detallehistoriaclinica.getDetallehistoriaclinicaPK().setHistoriaClinicanumeroRegistro(detallehistoriaclinica.getHistoriaclinica().getHistoriaclinicaPK().getNumeroRegistro());
         EntityManager em = null;
         try {

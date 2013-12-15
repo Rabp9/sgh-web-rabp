@@ -23,7 +23,7 @@ import org.sghweb.jpa.TurnoPK;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 public class TurnoJpaController implements Serializable {
 
@@ -42,11 +42,11 @@ public class TurnoJpaController implements Serializable {
         if (turno.getTurnoPK() == null) {
             turno.setTurnoPK(new TurnoPK());
         }
-        turno.getTurnoPK().setDetalleServicioMedicoMedicodni(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getMedicodni());
-        turno.getTurnoPK().setActividadcodigo(turno.getActividad().getCodigo());
-        turno.getTurnoPK().setDetalleServicioMedicoMedicocmp(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getMedicocmp());
-        turno.getTurnoPK().setDetalleServicioMedicoServiciocodigo(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getServiciocodigo());
         turno.getTurnoPK().setDetalleServicioMedicoidDetalleServicioMedico(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getIdDetalleServicioMedico());
+        turno.getTurnoPK().setDetalleServicioMedicoServiciocodigo(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getServiciocodigo());
+        turno.getTurnoPK().setDetalleServicioMedicoMedicocmp(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getMedicocmp());
+        turno.getTurnoPK().setActividadcodigo(turno.getActividad().getCodigo());
+        turno.getTurnoPK().setDetalleServicioMedicoMedicodni(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getMedicodni());
         EntityManager em = null;
         try {
             utx.begin();
@@ -89,11 +89,11 @@ public class TurnoJpaController implements Serializable {
     }
 
     public void edit(Turno turno) throws NonexistentEntityException, RollbackFailureException, Exception {
-        turno.getTurnoPK().setDetalleServicioMedicoMedicodni(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getMedicodni());
-        turno.getTurnoPK().setActividadcodigo(turno.getActividad().getCodigo());
-        turno.getTurnoPK().setDetalleServicioMedicoMedicocmp(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getMedicocmp());
-        turno.getTurnoPK().setDetalleServicioMedicoServiciocodigo(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getServiciocodigo());
         turno.getTurnoPK().setDetalleServicioMedicoidDetalleServicioMedico(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getIdDetalleServicioMedico());
+        turno.getTurnoPK().setDetalleServicioMedicoServiciocodigo(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getServiciocodigo());
+        turno.getTurnoPK().setDetalleServicioMedicoMedicocmp(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getMedicocmp());
+        turno.getTurnoPK().setActividadcodigo(turno.getActividad().getCodigo());
+        turno.getTurnoPK().setDetalleServicioMedicoMedicodni(turno.getDetalleserviciomedico().getDetalleserviciomedicoPK().getMedicodni());
         EntityManager em = null;
         try {
             utx.begin();

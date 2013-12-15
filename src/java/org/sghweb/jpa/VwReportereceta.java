@@ -18,15 +18,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author essalud
+ * @author Roberto
  */
 @Entity
 @Table(name = "vw_reportereceta")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "VwReportereceta.findAll", query = "SELECT v FROM VwReportereceta v"),
-    @NamedQuery(name = "VwReportereceta.findByNroOrden", query = "SELECT v FROM VwReportereceta v WHERE v.nroOrden = :nroOrden"),
     @NamedQuery(name = "VwReportereceta.findByNroReceta", query = "SELECT v FROM VwReportereceta v WHERE v.nroReceta = :nroReceta"),
+    @NamedQuery(name = "VwReportereceta.findByNroOrden", query = "SELECT v FROM VwReportereceta v WHERE v.nroOrden = :nroOrden"),
     @NamedQuery(name = "VwReportereceta.findByMedicamento", query = "SELECT v FROM VwReportereceta v WHERE v.medicamento = :medicamento"),
     @NamedQuery(name = "VwReportereceta.findByPresentacion", query = "SELECT v FROM VwReportereceta v WHERE v.presentacion = :presentacion"),
     @NamedQuery(name = "VwReportereceta.findBySolicita", query = "SELECT v FROM VwReportereceta v WHERE v.solicita = :solicita"),
@@ -38,14 +38,14 @@ public class VwReportereceta implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 7)
-    @Column(name = "NroOrden")
-    private String nroOrden;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 7)
     @Column(name = "NroReceta")
     @Id
     private String nroReceta;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 7)
+    @Column(name = "NroOrden")
+    private String nroOrden;
     @Size(max = 60)
     @Column(name = "Medicamento")
     private String medicamento;
@@ -67,20 +67,20 @@ public class VwReportereceta implements Serializable {
     public VwReportereceta() {
     }
 
-    public String getNroOrden() {
-        return nroOrden;
-    }
-
-    public void setNroOrden(String nroOrden) {
-        this.nroOrden = nroOrden;
-    }
-
     public String getNroReceta() {
         return nroReceta;
     }
 
     public void setNroReceta(String nroReceta) {
         this.nroReceta = nroReceta;
+    }
+
+    public String getNroOrden() {
+        return nroOrden;
+    }
+
+    public void setNroOrden(String nroOrden) {
+        this.nroOrden = nroOrden;
     }
 
     public String getMedicamento() {
