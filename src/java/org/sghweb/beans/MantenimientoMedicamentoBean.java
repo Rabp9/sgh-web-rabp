@@ -35,6 +35,7 @@ public class MantenimientoMedicamentoBean implements Serializable {
         listaMedicamentos = mjc.findMedicamentoEntities();
         medicamento = new Medicamento();
         presentacionOptions = crearOpciones();
+        cantidad = 0;
     }
       
     public void crear() {
@@ -93,6 +94,48 @@ public class MantenimientoMedicamentoBean implements Serializable {
         }
     }
     
+    public void ingresar() {
+        try {
+            selectedMedicamento.setStock(selectedMedicamento.getStock() + cantidad);
+            mjc.edit(selectedMedicamento);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Ingreso registrado correctamente", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            cantidad = 0;
+        } catch (PreexistingEntityException ex) {
+            Logger.getLogger(MantenimientoActividadBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RollbackFailureException ex) {
+            Logger.getLogger(MantenimientoActividadBean.class.getName()).log(Level.SEVERE, null, ex);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al Eliminar Medicamento", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        } catch (Exception ex) {
+            Logger.getLogger(MantenimientoActividadBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+     
+    public void salir() {
+        try {
+            if(selectedMedicamento.getStock() < cantidad) {
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "No se puede registrar orrectamente", null);
+                FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            }
+            else {
+                selectedMedicamento.setStock(selectedMedicamento.getStock() - cantidad);
+                mjc.edit(selectedMedicamento);
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Salida registrada correctamente", null);
+                FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+                cantidad = 0;
+            }
+        } catch (PreexistingEntityException ex) {
+            Logger.getLogger(MantenimientoActividadBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RollbackFailureException ex) {
+            Logger.getLogger(MantenimientoActividadBean.class.getName()).log(Level.SEVERE, null, ex);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al Eliminar Medicamento", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        } catch (Exception ex) {
+            Logger.getLogger(MantenimientoActividadBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+        
     private SelectItem[] crearOpciones()  {  
         SelectItem[] options = new SelectItem[23];  
   

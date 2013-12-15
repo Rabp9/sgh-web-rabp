@@ -9,10 +9,13 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import org.sghweb.controllers.MedicoJpaController;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
 import org.sghweb.jpa.Medico;
+import org.sghweb.jpa.MedicoPK;
 
 /**
  *
@@ -30,17 +33,25 @@ public class MantenimientoMedicoBean implements Serializable {
     public MantenimientoMedicoBean() {   
         mjc = new MedicoJpaController(null, null);
         listaMedicos = mjc.findMedicoEntities();
+        MedicoPK medicoPK = new MedicoPK();
         medico = new Medico();
+        medico.setMedicoPK(medicoPK);
     }
     
     public void crear() {
         try {
             medico.setEstado('1');
+            medico.setUsername(medico.getMedicoPK().getCmp());
+            medico.setPassword("a");
             mjc.create(medico);
             listaMedicos = mjc.findMedicoEntities();
             medico = new Medico();
             FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Médico Registrado correctamente", null);
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        } catch (ConstraintViolationException ex) {
+            for (ConstraintViolation e : ex.getConstraintViolations()) {
+                System.out.println("error: " + e.getMessage() + " " + e.getMessageTemplate());   
+            }
         } catch (PreexistingEntityException ex) {
             Logger.getLogger(MantenimientoMedicoBean.class.getName()).log(Level.SEVERE, null, ex);
             FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ya existe el Médico", null);

@@ -85,7 +85,11 @@
                                        required="true" min="0">
                                 <p:watermark value="Cantidad" for="spnCantidadIngreso"/>
                             </p:spinner>
-
+                            <f:facet name="footer">
+                                <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoMedicamentoBean.ingresar}" 
+                                    oncomplete="dialogoIngresoMedicamento.hide()" icon="ui-icon-check"/>
+                            </f:facet>
+                            
                     </p:dialog>
                 </h:form>
                 
@@ -97,6 +101,10 @@
                                        required="true" min="0">
                                 <p:watermark value="Cantidad" for="spnCantidadSalida"/>
                             </p:spinner>
+                            <f:facet name="footer">
+                                <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoMedicamentoBean.salir}" 
+                                    oncomplete="dialogoSakidaMedicamento.hide()" icon="ui-icon-check"/>
+                            </f:facet>
 
                     </p:dialog>
                 </h:form>
@@ -154,6 +162,10 @@
                                     oncomplete="dialogoModificarMedicamento.show()"/>
                                 <p:commandButton id="btnEliminar" value="Eliminar" icon="ui-icon-minus" update="_frmEliminarMedicamento"
                                     oncomplete="dialogoEliminarMedicamento.show()"/>
+                                <p:commandButton id="btnIngreso" value="Ingreso" icon="ui-icon-plus" update="_frmIngresoMedicamento"
+                                    oncomplete="dialogoIngresoMedicamento.show()"/>
+                                <p:commandButton id="btnSalida" value="Salida" icon="ui-icon-minus" update="_frmSalidaMedicamento"
+                                    oncomplete="dialogoSalidaMedicamento.show()"/>
                             </f:facet>  
                             
                         </p:dataTable>

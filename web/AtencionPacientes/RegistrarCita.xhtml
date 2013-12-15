@@ -233,13 +233,14 @@
                             
                         </p:panelGrid>
                     </p:panel>
-                    <p:dataTable id="tblMedicos" var="medico" value="${registrarCitaBean.listaMedicos}"
-                            sortMode="multiple" rowKey="${medico.cmp}" paginator="true" rows="10" 
+                    <p:dataTable id="tblCitas" var="vwCita" value="${registrarCitaBean.listaCitas}"
+                                 sortMode="multiple" rowKey="${vwCita.actoMedico}" paginator="true" rows="10" 
                             currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                            rowsPerPageTemplate="5,10,20" selection="${registrarCitaBean.selectedMedico}" selectionMode="single"
+                            rowsPerPageTemplate="5,10,20" selection="${registrarCitaBean.selectedCita}" selectionMode="single"
                             emptyMessage="Ningún Médico Registrado" scrollable="true" scrollHeight="190"
-                            resizableColumns="true">                               
+                            resizableColumns="true">
+                        
                     </p:dataTable>
                 </h:form>
             </ui:define>

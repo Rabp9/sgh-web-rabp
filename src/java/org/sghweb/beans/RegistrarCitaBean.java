@@ -5,14 +5,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.sghweb.controllers.ServicioJpaController;
+import org.sghweb.controllers.VwCitaJpaController;
 import org.sghweb.controllers.VwMedicoJpaController;
 import org.sghweb.controllers.VwReportepacienteJpaController;
 import org.sghweb.jpa.Servicio;
+import org.sghweb.jpa.VwCita;
 import org.sghweb.jpa.VwMedico;
 import org.sghweb.jpa.VwReportepaciente;
 
@@ -42,7 +43,11 @@ public class RegistrarCitaBean implements Serializable  {
     private VwMedico selectedMedico;
     private VwMedico vwMedico;
     private String cmp;
-   
+    // Cita
+    private List<VwCita> listaCitas;
+    private VwCitaJpaController vcjc;
+    private VwCita selectedCita;
+            
     public RegistrarCitaBean() {
         // Paciente
         vrjc = new VwReportepacienteJpaController(null, null);
@@ -56,6 +61,9 @@ public class RegistrarCitaBean implements Serializable  {
         vmjc = new VwMedicoJpaController(null, null);
         listaMedicos = vmjc.findVwMedicoEntities();
         vwMedico = new VwMedico();
+        // Cita
+        vcjc = new VwCitaJpaController(null, null);
+        listaCitas = vcjc.findVwCitaEntities();
     }
     
     public void onRowSelectPaciente(SelectEvent event) {
@@ -248,6 +256,30 @@ public class RegistrarCitaBean implements Serializable  {
 
     public void setCmp(String cmp) {
         this.cmp = cmp;
+    }
+
+    public List<VwCita> getListaCitas() {
+        return listaCitas;
+    }
+
+    public void setListaCitas(List<VwCita> listaCitas) {
+        this.listaCitas = listaCitas;
+    }
+
+    public VwCitaJpaController getVcjc() {
+        return vcjc;
+    }
+
+    public void setVcjc(VwCitaJpaController vcjc) {
+        this.vcjc = vcjc;
+    }
+
+    public VwCita getSelectedCita() {
+        return selectedCita;
+    }
+
+    public void setSelectedCita(VwCita selectedCita) {
+        this.selectedCita = selectedCita;
     }
     
 }

@@ -13,8 +13,13 @@ import org.sghweb.jpa.Paciente;
 import org.sghweb.jpa.Detallereferenciadiagnostico;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 import javax.transaction.UserTransaction;
 import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
@@ -34,10 +39,15 @@ public class ReferenciaJpaController implements Serializable {
         this.utx = utx;
         this.emf = emf;
     }
+    @Resource
     private UserTransaction utx = null;
+    @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
+        if (emf == null) { 
+            emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
+        }
         return emf.createEntityManager();
     }
 
@@ -52,7 +62,9 @@ public class ReferenciaJpaController implements Serializable {
             referencia.setDetallereferenciaservicioList(new ArrayList<Detallereferenciaservicio>());
         }
         referencia.getReferenciaPK().setPacientedni(referencia.getPaciente().getDni());
-        EntityManager em = null;
+        EntityManager em = null;     
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -116,7 +128,9 @@ public class ReferenciaJpaController implements Serializable {
 
     public void edit(Referencia referencia) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         referencia.getReferenciaPK().setPacientedni(referencia.getPaciente().getDni());
-        EntityManager em = null;
+        EntityManager em = null;   
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -220,6 +234,8 @@ public class ReferenciaJpaController implements Serializable {
 
     public void destroy(ReferenciaPK id) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
