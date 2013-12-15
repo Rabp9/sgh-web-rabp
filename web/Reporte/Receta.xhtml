@@ -31,7 +31,7 @@
                             resizableColumns="true">                               
         
                             <p:ajax event="rowSelect" listener="${reporteRecetaBean.onRowSelect}"
-                                    update="_frmReporteReceta_autoCompleteDni, _frmReporteReceta_txtNumeroRegistro, _frmReporteReceta_txtNombre, _frmReporteReceta_txtAutogenerado, _frmReporteReceta_txtTitular" oncomplete="dialogoSeleccionarPacietne.hide()" />
+                                    update="_frmReporteReceta_atcDni, _frmReporteReceta_txtNumeroRegistro, _frmReporteReceta_txtNombre, _frmReporteReceta_txtAutogenerado, _frmReporteReceta_txtTitular" oncomplete="dialogoSeleccionarPacietne.hide()" />
                         
                             <f:facet name="header">  
                                 Lista de Pacientes
@@ -86,12 +86,15 @@
                         <p:fieldset legend="Paciente">
                             <p:panelGrid columns="3">
                                 
-                                <p:outputLabel value="Número de DNI: " for="autoCompleteDni"/>
-                                <p:autoComplete id="autoCompleteDni" value="${reporteRecetaBean.vwReportepaciente.dni}" 
-                                    completeMethod="${reporteRecetaBean.listaDni}" maxResults="10" size="50" required="true" requiredMessage="No puede estar vacío">
+                                <p:outputLabel value="Número de DNI: " for="atcDni"/>
+                                       
+                                <p:autoComplete id="atcDni" value="${reporteRecetaBean.dni}" 
+                                                completeMethod="${reporteRecetaBean.listaDni}" maxResults="10" size="50" 
+                                                maxlength="8">
                                     <p:ajax event="keyup" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${reporteRecetaBean.verificar}"/>  
                                     <p:ajax event="itemSelect" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${reporteRecetaBean.verificar}"/>  
                                 </p:autoComplete>
+                                                       
                                 <p:commandButton id="btnBuscar" value="Buscar" icon="ui-icon-search" oncomplete="dialogoSeleccionarPacietne.show()"/>
                                 
                                 <p:outputLabel value="Número de Registro: " for="txtNumeroRegistro"/>

@@ -31,6 +31,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -61,6 +62,7 @@ public class ReporteRecetaBean implements Serializable  {
     private VwReportepaciente selectedReportePaciente;
     private StreamedContent reporte;
     private VwReporterecetaJpaController vrrjc;
+    private String dni;
     
     public ReporteRecetaBean() {
         vrjc = new VwReportepacienteJpaController(null, null);
@@ -82,7 +84,7 @@ public class ReporteRecetaBean implements Serializable  {
     }
     
     public void verificar() {
-        VwReportepaciente auxVwReportepaciente = vrjc.findVwReportepaciente(vwReportepaciente.getDni());
+        VwReportepaciente auxVwReportepaciente = vrjc.findVwReportepaciente(dni);
         if(auxVwReportepaciente != null)
             vwReportepaciente = auxVwReportepaciente;
     }
@@ -93,6 +95,8 @@ public class ReporteRecetaBean implements Serializable  {
          
     public void onRowSelect(SelectEvent event) {
         vwReportepaciente = (VwReportepaciente) event.getObject();
+        RequestContext.getCurrentInstance().reset("frmReporteReceta_atcDni");  
+        dni = vwReportepaciente.getDni();
     }
     
     public void mostrarRecetas() {
@@ -101,7 +105,7 @@ public class ReporteRecetaBean implements Serializable  {
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
             return;
         }
-        listaOrdenes = vojc.findVwOrdenByDniByHora(vwReportepaciente.getDni(), fechaInicio, fechaFin);
+        listaOrdenes = vojc.findVwOrdenByDniByHora(dni, fechaInicio, fechaFin);
     }
     
     public void reportarReceta() throws IOException, BadElementException, DocumentException {
@@ -131,7 +135,7 @@ public class ReporteRecetaBean implements Serializable  {
         pdf.add(titulo);
         
         //Mostrar información de la Receta
-        List<VwReportereceta> vwReporterecetas = vrrjc.findVwReporteRecetaByNroOrden(selectedVwOrden.getNroOrden());
+        List<VwReportereceta> vwReporterecetas = getVrrjc().findVwReporteRecetaByNroOrden(selectedVwOrden.getNroOrden());
         System.out.println(vwReporterecetas);
         pdf.add(Chunk.NEWLINE);
         PdfPTable table = new PdfPTable(2);
@@ -270,5 +274,13 @@ public class ReporteRecetaBean implements Serializable  {
 
     public void setVrrjc(VwReporterecetaJpaController vrrjc) {
         this.vrrjc = vrrjc;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public void setDni(String dni) {
+        this.dni = dni;
     }
 }

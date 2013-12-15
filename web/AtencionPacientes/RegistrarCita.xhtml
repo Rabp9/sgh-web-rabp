@@ -20,7 +20,7 @@
             <ui:define name="dialogs">
                 <p:growl id="mensaje"/>
                 <h:form id="frmSeleccionarPaciente">
-                    <p:dialog id="dlgSeleccionarPaciente" header="Seleccionar un Paciente" widgetVar="dialogoSeleccionarPacietne" resizable="false"  
+                    <p:dialog id="dlgSeleccionarPaciente" header="Seleccionar un Paciente" widgetVar="dialogoSeleccionarPaciente" resizable="false"  
                         showEffect="clip" hideEffect="fold" modal="true">  
                         <p:dataTable id="tblPacientes" var="reportePaciente" value="${registrarCitaBean.listaReportePacientes}"
                             sortMode="multiple" rowKey="${reportePaciente.dni}" paginator="true" rows="10" 
@@ -30,8 +30,8 @@
                             emptyMessage="Ningún Paciente Registrado" scrollable="true" scrollHeight="190"
                             resizableColumns="true">                               
         
-                            <p:ajax event="rowSelect" listener="${registrarCitaBean.onRowSelect}"
-                                    update="_frmRegistrarCita_autoCompleteDni, _frmRegistrarCita_txtNumeroRegistro, _frmRegistrarCita_txtNombre, _frmRegistrarCita_txtAutogenerado, _frmRegistrarCita_txtTitular" oncomplete="dialogoSeleccionarPacietne.hide()" />
+                            <p:ajax event="rowSelect" listener="${registrarCitaBean.onRowSelectPaciente}"
+                                    update="_frmRegistrarCita_atcDni, _frmRegistrarCita_txtNumeroRegistro, _frmRegistrarCita_txtNombre, _frmRegistrarCita_txtAutogenerado, _frmRegistrarCita_txtTitular" oncomplete="dialogoSeleccionarPaciente.hide()" />
                         
                               <f:facet name="header">  
                                 Lista de Pacientes
@@ -75,6 +75,93 @@
                         </p:dataTable>
                     </p:dialog>
                 </h:form>
+                
+                <h:form id="frmSeleccionarServicio">
+                    <p:dialog id="dlgSeleccionarServicio" header="Seleccionar un Servicio" widgetVar="dialogoSeleccionarServicio" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <p:dataTable id="tblServicios" var="servicio" value="${registrarCitaBean.listaServicios}"
+                            sortMode="multiple" rowKey="${servicio.codigo}" paginator="true" rows="10" 
+                            currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                            rowsPerPageTemplate="5,10,20" selection="${registrarCitaBean.selectedServicio}" selectionMode="single"
+                            emptyMessage="Ningún Servicio Registrado" scrollable="true" scrollHeight="190"
+                            resizableColumns="true">                               
+        
+                            <p:ajax event="rowSelect" listener="${registrarCitaBean.onRowSelectServicio}"
+                                    update="_frmRegistrarCita_atcCodigoServicio, _frmRegistrarCita_txtDescripcionServicio, _frmSeleccionarMedico" oncomplete="dialogoSeleccionarServicio.hide()" />
+                        
+                            <f:facet name="header">  
+                                Lista de Servicios
+                            </f:facet>
+
+                            <p:column sortBy="${servicio.codigo}" filterBy="${servicio.codigo}" headerText="Código" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Código" />  
+                                </f:facet>
+                                <h:outputText value="${servicio.codigo}" />  
+                            </p:column>
+
+                            <p:column sortBy="${servicio.descripcion}" filterBy="${servicio.descripcion}" headerText="Descripción" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Descripción" />  
+                                </f:facet>
+                                <h:outputText value="${servicio.descripcion}" />  
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="frmSeleccionarMedico">
+                    <p:dialog id="dlgSeleccionarMedico" header="Seleccionar un Médico" widgetVar="dialogoSeleccionarMedico" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <p:dataTable id="tblMedicos" var="medico" value="${registrarCitaBean.listaMedicos}"
+                            sortMode="multiple" rowKey="${medico.cmp}" paginator="true" rows="10" 
+                            currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                            rowsPerPageTemplate="5,10,20" selection="${registrarCitaBean.selectedMedico}" selectionMode="single"
+                            emptyMessage="Ningún Médico Registrado" scrollable="true" scrollHeight="190"
+                            resizableColumns="true">                               
+        
+                            <p:ajax event="rowSelect" listener="${registrarCitaBean.onRowSelectMedico}"
+                                    update="_frmRegistrarCita_atcCMP, _frmRegistrarCita_txtNombreMedico" oncomplete="dialogoSeleccionarMedico.hide()" />
+                        
+                            <f:facet name="header">  
+                                Lista de Médicos
+                            </f:facet>
+
+                            <p:column sortBy="${medico.cmp}" filterBy="${medico.cmp}" headerText="CMP" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="CMP" />  
+                                </f:facet>
+                                <h:outputText value="${medico.cmp}" />  
+                            </p:column>
+
+                            <p:column sortBy="${medico.dni}" filterBy="${medico.dni}" headerText="Número de DNI" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Numero de DNI" />  
+                                </f:facet>
+                                <h:outputText value="${medico.dni}" />  
+                            </p:column>
+
+                            <p:column sortBy="${medico.nombreCompleto}" filterBy="${medico.nombreCompleto}" filterMatchMode="contains">  
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre Completo" />  
+                                </f:facet>
+                                <h:outputText value="${medico.nombreCompleto}" />  
+                            </p:column>
+
+                            <p:column sortBy="${medico.servicio}" filterBy="${medico.servicio}" filterMatchMode="contains" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Servicio" />  
+                                </f:facet>
+                                <h:outputText value="${medico.servicio}" />  
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:dialog>
+                </h:form>
+                
             </ui:define>
 
             <ui:define name="left">
@@ -85,13 +172,13 @@
                     <p:panel header="Paciente">
                         <p:panelGrid columns="3">
                             
-                            <p:outputLabel value="Número de DNI: " for="autoCompleteDni"/>
-                            <p:autoComplete id="autoCompleteDni" value="${registrarCitaBean.vwReportepaciente.dni}" 
+                            <p:outputLabel value="Número de DNI: " for="atcDni"/>
+                            <p:autoComplete id="atcDni" value="${registrarCitaBean.dni}" 
                                 completeMethod="${registrarCitaBean.listaDni}" maxResults="10" size="50" required="true" requiredMessage="No puede estar vacío">
-                                <p:ajax event="keyup" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${registrarCitaBean.verificar}"/>  
-                                <p:ajax event="itemSelect" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${registrarCitaBean.verificar}"/>  
+                                <p:ajax event="keyup" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${registrarCitaBean.verificarPaciente}"/>  
+                                <p:ajax event="itemSelect" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${registrarCitaBean.verificarPaciente}"/>  
                             </p:autoComplete>
-                            <p:commandButton id="btnBuscar" value="Buscar" icon="ui-icon-search" oncomplete="dialogoSeleccionarPacietne.show()"/>
+                            <p:commandButton id="btnBuscar" value="Buscar" icon="ui-icon-search" oncomplete="dialogoSeleccionarPaciente.show()"/>
                                
                             <p:outputLabel value="Número de Registro: " for="txtNumeroRegistro"/>
                             <p:inputText id="txtNumeroRegistro" value="${registrarCitaBean.vwReportepaciente.numeroRegistro}" readonly="true" size="50"/>
@@ -112,19 +199,48 @@
                     </p:panel>
                     
                     <p:panel header="Servicio">
-                        
                         <p:panelGrid columns="3">
-                            <p:outputLabel value="Código de Servicio: " for="atcCodigoServicio"/>
-                            <p:autoComplete id="atcCodigoServicio" value="${registrarCitaBean.servicio.codigo}" 
-                                completeMethod="${registrarCitaBean.listaCodigoServicio}" maxResults="10" size="50" required="true" requiredMessage="No puede estar vacío">
-                                <p:ajax event="keyup" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${registrarCitaBean.verificar}"/>  
-                                <p:ajax event="itemSelect" update="txtNumeroRegistro, txtNombre, txtAutogenerado, txtTitular" listener="${registrarCitaBean.verificar}"/>  
+
+                            <p:outputLabel value="Código: " for="atcCodigoServicio"/>
+                            <p:autoComplete id="atcCodigoServicio" value="${registrarCitaBean.codigoServicio}" 
+                                            completeMethod="${registrarCitaBean.listaCodigoServicio}" maxResults="10" size="50" maxlength="3">
+                                <p:ajax event="keyup" update="txtDescripcionServicio, _frmSeleccionarMedico" listener="${registrarCitaBean.verificarServicio()}"/>  
+                                <p:ajax event="itemSelect" update="txtDescripcionServicio, _frmSeleccionarMedico" listener="${registrarCitaBean.verificarServicio()}"/>  
                             </p:autoComplete>
-                            <p:commandButton id="btnBuscar" value="Buscar" icon="ui-icon-search" oncomplete="dialogoSeleccionarPacietne.show()"/>
-                        
+                            <p:commandButton id="btnBuscarServicio" value="Buscar" icon="ui-icon-search" oncomplete="dialogoSeleccionarServicio.show()"/>
+
+                            <p:outputLabel value="Descripción: " for="txtDescripcionServicio"/>
+                            <p:inputText id="txtDescripcionServicio" value="${registrarCitaBean.servicio.descripcion}" readonly="true" size="50"/> 
+                            <h:panelGroup/>
+                            
                         </p:panelGrid>
-                        
                     </p:panel>
+                    
+                    <p:panel header="Filtrar por Médico">
+                        <p:panelGrid columns="3">
+
+                            <p:outputLabel value="CMP: " for="atcCMP"/>
+                            <p:autoComplete id="atcCMP" value="${registrarCitaBean.cmp}" 
+                                            completeMethod="${registrarCitaBean.listaCmp}" maxResults="10" size="50" maxlength="5">
+                                <p:ajax event="keyup" update="txtNombreMedico" listener="${registrarCitaBean.verificarMedico}"/>  
+                                <p:ajax event="itemSelect" update="txtNombreMedico" listener="${registrarCitaBean.verificarMedico}"/>  
+                            </p:autoComplete>
+                            <p:commandButton id="btnBuscarMedico" value="Buscar" icon="ui-icon-search" oncomplete="dialogoSeleccionarMedico.show()"/>
+
+                            <p:outputLabel value="Nombre Completo: " for="txtNombreMedico"/>
+                            <p:inputText id="txtNombreMedico" value="${registrarCitaBean.vwMedico.nombreCompleto}" readonly="true" size="50"/> 
+                            <h:panelGroup/>
+                            
+                        </p:panelGrid>
+                    </p:panel>
+                    <p:dataTable id="tblMedicos" var="medico" value="${registrarCitaBean.listaMedicos}"
+                            sortMode="multiple" rowKey="${medico.cmp}" paginator="true" rows="10" 
+                            currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                            rowsPerPageTemplate="5,10,20" selection="${registrarCitaBean.selectedMedico}" selectionMode="single"
+                            emptyMessage="Ningún Médico Registrado" scrollable="true" scrollHeight="190"
+                            resizableColumns="true">                               
+                    </p:dataTable>
                 </h:form>
             </ui:define>
 
