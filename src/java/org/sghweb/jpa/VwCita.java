@@ -32,7 +32,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "VwCita.findByCmp", query = "SELECT v FROM VwCita v WHERE v.cmp = :cmp"),
     @NamedQuery(name = "VwCita.findByMedicoDni", query = "SELECT v FROM VwCita v WHERE v.medicoDni = :medicoDni"),
     @NamedQuery(name = "VwCita.findByMedico", query = "SELECT v FROM VwCita v WHERE v.medico = :medico"),
-    @NamedQuery(name = "VwCita.findByFechaHora", query = "SELECT v FROM VwCita v WHERE v.fechaHora = :fechaHora")})
+    @NamedQuery(name = "VwCita.findByFechaHora", query = "SELECT v FROM VwCita v WHERE v.fechaHora = :fechaHora"),
+    @NamedQuery(name = "VwCita.findDisponibles", query = "SELECT v FROM VwCita v WHERE v.fechaHora >= :fechaHora"),
+    @NamedQuery(name = "VwCita.findDisponiblesbyCmp", query = "SELECT v FROM VwCita v WHERE v.fechaHora >= :fechaHora AND v.cmp = :cmp")})
 public class VwCita implements Serializable {
     private static final long serialVersionUID = 1L;
     @Basic(optional = false)

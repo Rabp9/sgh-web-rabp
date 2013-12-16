@@ -5,6 +5,7 @@
 package org.sghweb.controllers;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -169,4 +170,15 @@ public class VwCitaJpaController implements Serializable {
         }
     }
     
+    public List<VwCita> findVwCitaDisponibles() {
+        EntityManager em = getEntityManager();
+        return em.createNamedQuery("VwCita.findDisponibles").setParameter("fechaHora", new Date()).getResultList();
+    } 
+     
+    public List<VwCita> findVwCitaDisponibles(String cmp) {
+        if (cmp == null)
+            return findVwCitaDisponibles();
+        EntityManager em = getEntityManager();
+        return em.createNamedQuery("VwCita.findDisponiblesbyCmp").setParameter("fechaHora", new Date()).setParameter("cmp", cmp).getResultList();
+    } 
 }

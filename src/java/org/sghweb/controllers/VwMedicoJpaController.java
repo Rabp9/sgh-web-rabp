@@ -169,4 +169,9 @@ public class VwMedicoJpaController implements Serializable {
         }
     }
     
+    public List<VwMedico> findVwMedicoByServicio(String servicio) {
+        EntityManager em = getEntityManager();
+        return em.createNamedQuery("VwMedico.findByServicio").setParameter("servicio", servicio).getResultList();
+    } 
+    
 }

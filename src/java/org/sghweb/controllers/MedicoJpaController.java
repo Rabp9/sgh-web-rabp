@@ -27,6 +27,7 @@ import org.sghweb.controllers.exceptions.RollbackFailureException;
 import org.sghweb.jpa.Cita;
 import org.sghweb.jpa.Medico;
 import org.sghweb.jpa.MedicoPK;
+import org.sghweb.jpa.VwMedico;
 
 /**
  *
@@ -299,5 +300,5 @@ public class MedicoJpaController implements Serializable {
             em.close();
         }
     }
-    
+       
 }

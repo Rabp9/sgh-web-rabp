@@ -36,7 +36,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "VwOrden.findByPaciente", query = "SELECT v FROM VwOrden v WHERE v.paciente = :paciente"),
     @NamedQuery(name = "VwOrden.findByActoMedico", query = "SELECT v FROM VwOrden v WHERE v.actoMedico = :actoMedico"),
     @NamedQuery(name = "VwOrden.findByMedico", query = "SELECT v FROM VwOrden v WHERE v.medico = :medico"),
-    @NamedQuery(name = "VwOrden.findByServicio", query = "SELECT v FROM VwOrden v WHERE v.servicio = :servicio")})
+    @NamedQuery(name = "VwOrden.findByServicio", query = "SELECT v FROM VwOrden v WHERE v.servicio = :servicio"),
+    @NamedQuery(name = "VwOrden.findByDniByFechaHora", query = "SELECT v FROM VwOrden v WHERE v.dni = :dni AND v.fechaHora BETWEEN :fechaInicio AND :fechaFin")})
 public class VwOrden implements Serializable {
     private static final long serialVersionUID = 1L;
     @Basic(optional = false)

@@ -33,7 +33,7 @@
                             <p:ajax event="rowSelect" listener="${registrarCitaBean.onRowSelectPaciente}"
                                     update="_frmRegistrarCita_atcDni, _frmRegistrarCita_txtNumeroRegistro, _frmRegistrarCita_txtNombre, _frmRegistrarCita_txtAutogenerado, _frmRegistrarCita_txtTitular" oncomplete="dialogoSeleccionarPaciente.hide()" />
                         
-                              <f:facet name="header">  
+                            <f:facet name="header">  
                                 Lista de Pacientes
                             </f:facet>
 
@@ -124,7 +124,7 @@
                             resizableColumns="true">                               
         
                             <p:ajax event="rowSelect" listener="${registrarCitaBean.onRowSelectMedico}"
-                                    update="_frmRegistrarCita_atcCMP, _frmRegistrarCita_txtNombreMedico" oncomplete="dialogoSeleccionarMedico.hide()" />
+                                    update="_frmRegistrarCita_atcCMP, _frmRegistrarCita_txtNombreMedico, _frmRegistrarCita_tblCitas" oncomplete="dialogoSeleccionarMedico.hide()" />
                         
                             <f:facet name="header">  
                                 Lista de Médicos
@@ -222,8 +222,8 @@
                             <p:outputLabel value="CMP: " for="atcCMP"/>
                             <p:autoComplete id="atcCMP" value="${registrarCitaBean.cmp}" 
                                             completeMethod="${registrarCitaBean.listaCmp}" maxResults="10" size="50" maxlength="5">
-                                <p:ajax event="keyup" update="txtNombreMedico" listener="${registrarCitaBean.verificarMedico}"/>  
-                                <p:ajax event="itemSelect" update="txtNombreMedico" listener="${registrarCitaBean.verificarMedico}"/>  
+                                <p:ajax event="keyup" update="txtNombreMedico, tblCitas" listener="${registrarCitaBean.verificarMedico}"/>  
+                                <p:ajax event="itemSelect" update="txtNombreMedico, tblCitas" listener="${registrarCitaBean.verificarMedico}"/>  
                             </p:autoComplete>
                             <p:commandButton id="btnBuscarMedico" value="Buscar" icon="ui-icon-search" oncomplete="dialogoSeleccionarMedico.show()"/>
 
@@ -233,6 +233,7 @@
                             
                         </p:panelGrid>
                     </p:panel>
+                    
                     <p:dataTable id="tblCitas" var="vwCita" value="${registrarCitaBean.listaCitas}"
                                  sortMode="multiple" rowKey="${vwCita.actoMedico}" paginator="true" rows="10" 
                             currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
@@ -241,8 +242,42 @@
                             emptyMessage="Ningún Médico Registrado" scrollable="true" scrollHeight="190"
                             resizableColumns="true">
                         
+                        <f:facet name="header">  
+                            Lista de Citas
+                        </f:facet>
+                        
+                        <p:column sortBy="${vwCita.actoMedico}" filterBy="${vwCita.actoMedico}" headerText="Acto Médico" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Acto Médico" />  
+                                </f:facet>
+                            <h:outputText value="${vwCita.actoMedico}" />  
+                        </p:column>
+                        
+                        <p:column sortBy="${vwCita.medico}" filterBy="${vwCita.medico}" headerText="Médico" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Médico" />  
+                                </f:facet>
+                            <h:outputText value="${vwCita.medico}" />  
+                        </p:column>
+                                            
+                        <p:column sortBy="${vwCita.fechaHora}" filterBy="${vwCita.fechaHora}" headerText="Fecha y Hora" width="160">  
+                            <f:facet name="header">
+                                <h:outputText value="Fecha y Hora" />  
+                            </f:facet>
+                            <h:outputText value="${vwCita.fechaHora}">
+                                <f:convertDateTime pattern="dd/mm/yyyy hh:mm:ss"/>
+                            </h:outputText>  
+                        </p:column>
+                        
                     </p:dataTable>
+                    
+                    <p:commandButton id="btnEnviar" value="Enviar" actionListener="${registrarCitaBean.registrar}" 
+                                      icon="ui-icon-check"/>
+                    
+                    <p:commandButton id="btnReset" value="Borrar" type="reset" icon="ui-icon-arrowreturnthick-1-w" />
+                    
                 </h:form>
+                
             </ui:define>
 
         </ui:composition>

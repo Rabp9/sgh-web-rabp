@@ -63,7 +63,7 @@ public class RegistrarCitaBean implements Serializable  {
         vwMedico = new VwMedico();
         // Cita
         vcjc = new VwCitaJpaController(null, null);
-        listaCitas = vcjc.findVwCitaEntities();
+        listaCitas = vcjc.findVwCitaDisponibles();
     }
     
     public void onRowSelectPaciente(SelectEvent event) {
@@ -104,14 +104,14 @@ public class RegistrarCitaBean implements Serializable  {
         setServicio((Servicio) event.getObject());
         RequestContext.getCurrentInstance().reset("frmRegistrarCita_atcCodigoServicio");  
         codigoServicio = servicio.getCodigo();
-    //    listaMedicos = vmjc.findVwMedicoByServicio(servicio.getDescripcion());
+        listaMedicos = vmjc.findVwMedicoByServicio(servicio.getDescripcion());
     }
     
     public void verificarServicio() {
         Servicio auxServicio = vsjc.findServicio(codigoServicio);
         if(auxServicio != null) {
             servicio = auxServicio;
-     //       listaMedicos = vmjc.findVwMedicoByServicio(servicio.getDescripcion());
+            listaMedicos = vmjc.findVwMedicoByServicio(servicio.getDescripcion());
         }
     }
     
@@ -119,6 +119,7 @@ public class RegistrarCitaBean implements Serializable  {
         setVwMedico((VwMedico) event.getObject());
         RequestContext.getCurrentInstance().reset("frmRegistrarCita_atcCMP");  
         cmp = vwMedico.getCmp();
+        listaCitas = vcjc.findVwCitaDisponibles(cmp);
     }
     
     public List<String> listaCmp(String query) {  
@@ -134,10 +135,16 @@ public class RegistrarCitaBean implements Serializable  {
       
     public void verificarMedico() {
         VwMedico auxVwMedico = vmjc.findVwMedico(cmp);
-        if(auxVwMedico != null)
+        if(auxVwMedico != null) {
             setVwMedico(auxVwMedico);
+            listaCitas = vcjc.findVwCitaDisponibles(cmp);
+        }
     }
      
+    public void registrar() {
+        
+    }
+    
     public List<VwReportepaciente> getListaReportePacientes() {
         return listaReportePacientes;
     }
