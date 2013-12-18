@@ -8,18 +8,27 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
+import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
+import org.sghweb.controllers.DetallereferenciadiagnosticoJpaController;
 import org.sghweb.controllers.DiagnosticoJpaController;
 import org.sghweb.controllers.PacienteJpaController;
+import org.sghweb.controllers.ReferenciaJpaController;
 import org.sghweb.controllers.ServicioJpaController;
 import org.sghweb.controllers.VwMedicoJpaController;
 import org.sghweb.controllers.VwReportepacienteJpaController;
+import org.sghweb.controllers.exceptions.PreexistingEntityException;
+import org.sghweb.controllers.exceptions.RollbackFailureException;
+import org.sghweb.jpa.Detallereferenciadiagnostico;
+import org.sghweb.jpa.DetallereferenciadiagnosticoPK;
 import org.sghweb.jpa.Diagnostico;
 import org.sghweb.jpa.Paciente;
 import org.sghweb.jpa.Referencia;
+import org.sghweb.jpa.ReferenciaPK;
 import org.sghweb.jpa.Servicio;
 import org.sghweb.jpa.VwMedico;
 import org.sghweb.jpa.VwReportepaciente;
@@ -210,14 +219,72 @@ public class RegistrarReferenciaBean implements Serializable  {
             setServicioDestino(auxServicio);
     }
     
-    public void registrar() {
+    public void registrar() throws PreexistingEntityException, RollbackFailureException, Exception {
+        if(dni == null) {
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un Paciente", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        }
+        if(cmp == null) {
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un Médico", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        }
+        if(codigoDiagnostico1 == null) {
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un Diagnóstico", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        }
+        if(codigoDiagnostico2 == null) {
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un Diagnóstico", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        }
+        if(codigoServicioOrigen == null) {
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un Servicio de Origen", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        }
+        if(codigoServicioDestino == null) {
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un Servicio de Destino", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        }      
+        if(numeroRegistro == null) {
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un Servicio de Destino", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        }
+        // Referencia
         Referencia referencia = new Referencia();
+        referencia.setReferenciaPK(new ReferenciaPK(numeroRegistro, dni));
         PacienteJpaController pjc = new PacienteJpaController(null, null);
         Paciente paciente = pjc.findPaciente(dni);
         referencia.setPaciente(paciente);
         referencia.setFechaEmision(fechaEmision);
         referencia.setFechaRecibida(fechaRecibida);
         referencia.setFechaTermino(fechaTermino);
+        referencia.setMotivo(motivo);
+        ReferenciaJpaController rjc = new ReferenciaJpaController(null, null);
+        rjc.create(referencia);
+        
+        // DetalleReferenciaDiagnostico1
+        Detallereferenciadiagnostico drd1 = new Detallereferenciadiagnostico();
+        DetallereferenciadiagnosticoPK drdpk = new DetallereferenciadiagnosticoPK();
+        drdpk.setDiagnosticocodigo(codigoDiagnostico1);
+        drdpk.setReferenciaPacientedni(dni);
+        drdpk.setReferencianumeroRegistro(numeroRegistro);
+        drd1.setDetallereferenciadiagnosticoPK(drdpk);
+        diagnostico1 = vdjc.findDiagnostico(codigoDiagnostico1);
+        drd1.setDiagnostico(diagnostico1);
+        drd1.setReferencia(referencia);
+        DetallereferenciadiagnosticoJpaController drdjc = new DetallereferenciadiagnosticoJpaController(null, null);
+        drdjc.create(drd1);
+        
+        // DetalleReferenciaDiagnostico2
+        Detallereferenciadiagnostico drd2 = new Detallereferenciadiagnostico();
+        drdpk = new DetallereferenciadiagnosticoPK();
+        drdpk.setDiagnosticocodigo(codigoDiagnostico2);
+        drdpk.setReferenciaPacientedni(dni);
+        drdpk.setReferencianumeroRegistro(numeroRegistro);
+        drd2.setDetallereferenciadiagnosticoPK(drdpk);
+        diagnostico2 = vdjc.findDiagnostico(codigoDiagnostico2);
+        drd2.setDiagnostico(diagnostico2);
+        drd2.setReferencia(referencia);
+        drdjc.create(drd2);
     }
     
     public List<VwReportepaciente> getListaReportePacientes() {

@@ -6,10 +6,15 @@ package org.sghweb.controllers;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
@@ -31,13 +36,18 @@ public class DetallereferenciadiagnosticoJpaController implements Serializable {
         this.utx = utx;
         this.emf = emf;
     }
+    @Resource
     private UserTransaction utx = null;
+    @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
+        if (emf == null) { 
+            emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
+        }
         return emf.createEntityManager();
     }
-
+    
     public void create(Detallereferenciadiagnostico detallereferenciadiagnostico) throws PreexistingEntityException, RollbackFailureException, Exception {
         if (detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK() == null) {
             detallereferenciadiagnostico.setDetallereferenciadiagnosticoPK(new DetallereferenciadiagnosticoPK());
@@ -46,10 +56,14 @@ public class DetallereferenciadiagnosticoJpaController implements Serializable {
         detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setDiagnosticocodigo(detallereferenciadiagnostico.getDiagnostico().getCodigo());
         detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setReferenciaPacientedni(detallereferenciadiagnostico.getReferencia().getReferenciaPK().getPacientedni());
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
+            System.out.println("asasasasasasasasasas11111111111111111");
             utx.begin();
             em = getEntityManager();
             Diagnostico diagnostico = detallereferenciadiagnostico.getDiagnostico();
+            System.out.println("diagnostico: " + diagnostico.getCodigo());
             if (diagnostico != null) {
                 diagnostico = em.getReference(diagnostico.getClass(), diagnostico.getCodigo());
                 detallereferenciadiagnostico.setDiagnostico(diagnostico);

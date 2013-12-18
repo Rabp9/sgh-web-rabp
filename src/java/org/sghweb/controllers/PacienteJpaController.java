@@ -12,8 +12,11 @@ import javax.persistence.criteria.Root;
 import org.sghweb.jpa.Historiaclinica;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 import javax.transaction.UserTransaction;
 import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
@@ -32,10 +35,15 @@ public class PacienteJpaController implements Serializable {
         this.utx = utx;
         this.emf = emf;
     }
+    @Resource
     private UserTransaction utx = null;
+    @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
+        if (emf == null) { 
+            emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
+        }
         return emf.createEntityManager();
     }
 
