@@ -4,8 +4,10 @@ package org.sghweb.beans;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.sghweb.controllers.ServicioJpaController;
@@ -142,7 +144,10 @@ public class RegistrarCitaBean implements Serializable  {
     }
      
     public void registrar() {
-        
+        if(dni == null) {
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un paciente", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        }
     }
     
     public List<VwReportepaciente> getListaReportePacientes() {
