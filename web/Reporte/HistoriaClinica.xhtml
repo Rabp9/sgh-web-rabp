@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../templates/template.xhtml">
+
+            <ui:define name="title">
+                Reporte Historia Clínica
+            </ui:define>
+
+            <ui:define name="recursos">
+            </ui:define>
+
+            <ui:define name="dialogs">
+                <p:growl id="mensaje"/>
+            </ui:define>
+
+            <ui:define name="left">
+            </ui:define>
+
+            <ui:define name="content">
+                <h:form id="frmReporteHistoriaClinica" title="Formulario de Reporte de Historias Clínicas">
+                    <p:panel id="pnlReporteHistoriaClinica" header="Reporte de Historias Clínicas">
+                        <p:dataTable id="tblHistoriaClinicas" var="reporteHistoriaClinica" value="${reporteHistoriaClinicaBean.listaReportePacientes}"
+                                     sortMode="multiple" rowKey="${reporteHistoriaClinica.numeroRegistro}" paginator="true" rows="10" 
+                            currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                            rowsPerPageTemplate="5,10,20" selection="${reporteHistoriaClinicaBean.selectedReportePaciente}" selectionMode="single"
+                            emptyMessage="Ninguna HistoriaClinica Registrada" scrollable="true" scrollHeight="190"
+                            resizableColumns="true">
+
+                            <p:ajax event="rowSelect" listener="${reporteHistoriaClinicaBean.onRowSelect}"
+                                update="_frmReporteHistoriaClinica_autoCompleteNumeroRegistro" />
+
+                            <f:facet name="header">  
+                                Lista de HistoriaClinicas
+                            </f:facet>  
+
+                            <p:column sortBy="${reporteHistoriaClinica.dni}" filterBy="${reporteHistoriaClinica.dni}" headerText="DNI" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="DNI" />  
+                                </f:facet>
+                                <h:outputText value="${reporteHistoriaClinica.dni}" />  
+                            </p:column>
+
+                            <p:column sortBy="${reporteHistoriaClinica.numeroRegistro}" filterBy="${reporteHistoriaClinica.numeroRegistro}" headerText="Número de Registro" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Numero de Registro" />  
+                                </f:facet>
+                                <h:outputText value="${reporteHistoriaClinica.numeroRegistro}" />  
+                            </p:column>
+
+                            <p:column sortBy="${reporteHistoriaClinica.nombreCompleto}" filterBy="${reporteHistoriaClinica.nombreCompleto}" filterMatchMode="contains">  
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre Completo" />  
+                                </f:facet>
+                                <h:outputText value="${reporteHistoriaClinica.nombreCompleto}" />  
+                            </p:column>
+
+                            <p:column sortBy="${reporteHistoriaClinica.autogenerado}" filterBy="${reporteHistoriaClinica.autogenerado}" filterMatchMode="contains" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Autogenerado" />  
+                                </f:facet>
+                                <h:outputText value="${reporteHistoriaClinica.autogenerado}" />  
+                            </p:column>
+
+                            <p:column sortBy="${reporteHistoriaClinica.titular}" filterBy="${reporteHistoriaClinica.titular}" filterMatchMode="contains" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Titular" />  
+                                </f:facet>
+                                <h:outputText value="${reporteHistoriaClinica.titular}" />  
+                            </p:column>
+
+                        </p:dataTable>
+
+                        <p:outputLabel value="Número de regitro: " for="autoCompleteNumeroRegistro"/>
+                        <p:autoComplete id="autoCompleteNumeroRegistro" value="${reporteHistoriaClinicaBean.numeroRegistro}" 
+                                        completeMethod="${reporteHistoriaClinicaBean.listaNumeroRegistro}" maxResults="10"/>
+                        <p:commandButton id="btnReportarDetalle" ajax="false" actionListener="${reporteHistoriaClinicaBean.reportarHistoriaClinica}" value="Reportar" icon="ui-icon-search">
+                            <p:fileDownload value="${reporteHistoriaClinicaBean.reporte}" />  
+                        </p:commandButton>
+                        
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -41,29 +41,28 @@ public class DetallereferenciadiagnosticoJpaController implements Serializable {
     @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
+
     public EntityManager getEntityManager() {
         if (emf == null) { 
             emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
         }
         return emf.createEntityManager();
     }
-    
+
     public void create(Detallereferenciadiagnostico detallereferenciadiagnostico) throws PreexistingEntityException, RollbackFailureException, Exception {
         if (detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK() == null) {
             detallereferenciadiagnostico.setDetallereferenciadiagnosticoPK(new DetallereferenciadiagnosticoPK());
         }
-        detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setReferencianumeroRegistro(detallereferenciadiagnostico.getReferencia().getReferenciaPK().getNumeroRegistro());
-        detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setDiagnosticocodigo(detallereferenciadiagnostico.getDiagnostico().getCodigo());
         detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setReferenciaPacientedni(detallereferenciadiagnostico.getReferencia().getReferenciaPK().getPacientedni());
+        detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setDiagnosticocodigo(detallereferenciadiagnostico.getDiagnostico().getCodigo());
+        detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setReferencianumeroRegistro(detallereferenciadiagnostico.getReferencia().getReferenciaPK().getNumeroRegistro());
         EntityManager em = null;
         Context initCtx = new InitialContext(); 
         utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
-            System.out.println("asasasasasasasasasas11111111111111111");
             utx.begin();
             em = getEntityManager();
             Diagnostico diagnostico = detallereferenciadiagnostico.getDiagnostico();
-            System.out.println("diagnostico: " + diagnostico.getCodigo());
             if (diagnostico != null) {
                 diagnostico = em.getReference(diagnostico.getClass(), diagnostico.getCodigo());
                 detallereferenciadiagnostico.setDiagnostico(diagnostico);
@@ -101,10 +100,12 @@ public class DetallereferenciadiagnosticoJpaController implements Serializable {
     }
 
     public void edit(Detallereferenciadiagnostico detallereferenciadiagnostico) throws NonexistentEntityException, RollbackFailureException, Exception {
-        detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setReferencianumeroRegistro(detallereferenciadiagnostico.getReferencia().getReferenciaPK().getNumeroRegistro());
-        detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setDiagnosticocodigo(detallereferenciadiagnostico.getDiagnostico().getCodigo());
         detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setReferenciaPacientedni(detallereferenciadiagnostico.getReferencia().getReferenciaPK().getPacientedni());
+        detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setDiagnosticocodigo(detallereferenciadiagnostico.getDiagnostico().getCodigo());
+        detallereferenciadiagnostico.getDetallereferenciadiagnosticoPK().setReferencianumeroRegistro(detallereferenciadiagnostico.getReferencia().getReferenciaPK().getNumeroRegistro());
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -162,6 +163,8 @@ public class DetallereferenciadiagnosticoJpaController implements Serializable {
 
     public void destroy(DetallereferenciadiagnosticoPK id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();

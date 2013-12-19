@@ -36,13 +36,14 @@ public class VwMedicoJpaController implements Serializable {
     @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
+
     public EntityManager getEntityManager() {
         if (emf == null) { 
             emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
         }
         return emf.createEntityManager();
     }
-    
+
     public void create(VwMedico vwMedico) throws PreexistingEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
@@ -173,5 +174,5 @@ public class VwMedicoJpaController implements Serializable {
         EntityManager em = getEntityManager();
         return em.createNamedQuery("VwMedico.findByServicio").setParameter("servicio", servicio).getResultList();
     } 
-    
+        
 }

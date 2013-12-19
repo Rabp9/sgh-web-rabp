@@ -13,8 +13,13 @@ import org.sghweb.jpa.Medico;
 import org.sghweb.jpa.Detallehistoriaclinica;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 import javax.transaction.UserTransaction;
 import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
@@ -33,10 +38,16 @@ public class CitaJpaController implements Serializable {
         this.utx = utx;
         this.emf = emf;
     }
+    @Resource
     private UserTransaction utx = null;
+    @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
+
     public EntityManager getEntityManager() {
+        if (emf == null) { 
+            emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
+        }
         return emf.createEntityManager();
     }
 
@@ -50,6 +61,8 @@ public class CitaJpaController implements Serializable {
         cita.getCitaPK().setMedicodni(cita.getMedico().getMedicoPK().getDni());
         cita.getCitaPK().setMedicocmp(cita.getMedico().getMedicoPK().getCmp());
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -100,6 +113,8 @@ public class CitaJpaController implements Serializable {
         cita.getCitaPK().setMedicodni(cita.getMedico().getMedicoPK().getDni());
         cita.getCitaPK().setMedicocmp(cita.getMedico().getMedicoPK().getCmp());
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -175,6 +190,8 @@ public class CitaJpaController implements Serializable {
 
     public void destroy(CitaPK id) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();

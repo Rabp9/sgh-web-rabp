@@ -13,6 +13,8 @@ import org.sghweb.jpa.Detalleserviciomedico;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -40,6 +42,7 @@ public class ServicioJpaController implements Serializable {
     @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
+
     public EntityManager getEntityManager() {
         if (emf == null) { 
             emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
@@ -55,6 +58,8 @@ public class ServicioJpaController implements Serializable {
             servicio.setDetallereferenciaservicioList(new ArrayList<Detallereferenciaservicio>());
         }
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -109,6 +114,8 @@ public class ServicioJpaController implements Serializable {
 
     public void edit(Servicio servicio) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -198,6 +205,8 @@ public class ServicioJpaController implements Serializable {
 
     public void destroy(String id) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();

@@ -1,5 +1,7 @@
-// src/java/org/sghweb/controllers/DiagnosticoJpaController.java
-
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.sghweb.controllers;
 
 import java.io.Serializable;
@@ -35,11 +37,11 @@ public class DiagnosticoJpaController implements Serializable {
         this.utx = utx;
         this.emf = emf;
     }
-    
     @Resource
     private UserTransaction utx = null;
     @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
+
 
     public EntityManager getEntityManager() {
         if (emf == null) { 
@@ -296,10 +298,10 @@ public class DiagnosticoJpaController implements Serializable {
             em.close();
         }
     }
-      
+    
     public List<Diagnostico> findDiagnosticoByDescripcion(String descripcion) {
         EntityManager em = getEntityManager();
         return em.createNamedQuery("Diagnostico.findByDescripcion").setParameter("descripcion", descripcion).getResultList();
     }   
-    
+        
 }

@@ -2,7 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
 
     <body>
 
@@ -21,11 +23,82 @@
             </ui:define>
 
             <ui:define name="left">
-                left
             </ui:define>
 
             <ui:define name="content">
-                content
+                <h:form id="frmReporteMedico" title="Formulario de Reporte de Medicos">
+                    <p:panel id="pnlReporteMedico" header="Reporte General">
+                        <p:fieldset legend="Reporte General" toggleable="true">
+                            <p:dataTable id="tblMedicos" var="reporteMedico" value="${reporteMedicoBean.listaReporteMedicos}"
+                                         sortMode="multiple" rowKey="${reporteMedico.cmp}" paginator="true" rows="10" 
+                                currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                rowsPerPageTemplate="5,10,20" selection="${reporteMedicoBean.selectedReporteMedico}" selectionMode="single"
+                                emptyMessage="Ningún Medico Registrado" scrollable="true" scrollHeight="190"
+                                resizableColumns="true">
+                                
+                                <p:ajax event="rowSelect" listener="${reporteMedicoBean.onRowSelect}"
+                                    update="_frmReporteMedico_autoCompleteCmp" />
+                            
+                                <f:facet name="header">  
+                                    Lista de Médicos
+                                </f:facet>  
+
+                                <p:column sortBy="${reporteMedico.cmp}" filterBy="${reporteMedico.cmp}" headerText="CMP" width="160">  
+                                    <f:facet name="header">
+                                        <h:outputText value="CMP" />  
+                                    </f:facet>
+                                    <h:outputText value="${reporteMedico.cmp}" />  
+                                </p:column>
+                                
+                                <p:column sortBy="${reporteMedico.dni}" filterBy="${reporteMedico.dni}" headerText="DNI" width="160">  
+                                    <f:facet name="header">
+                                        <h:outputText value="DNI" />  
+                                    </f:facet>
+                                    <h:outputText value="${reporteMedico.dni}" />  
+                                </p:column>
+                                
+                                <p:column sortBy="${reporteMedico.nombreCompleto}" filterBy="${reporteMedico.nombreCompleto}" filterMatchMode="contains">  
+                                    <f:facet name="header">
+                                        <h:outputText value="Nombre Completo" />  
+                                    </f:facet>
+                                    <h:outputText value="${reporteMedico.nombreCompleto}" />  
+                                </p:column>
+                                
+                                <p:column sortBy="${reporteMedico.telefono}" filterBy="${reporteMedico.telefono}" filterMatchMode="contains" width="160">  
+                                    <f:facet name="header">
+                                        <h:outputText value="Teléfono" />  
+                                    </f:facet>
+                                    <h:outputText value="${reporteMedico.telefono}" />  
+                                </p:column>
+                                                           
+                                <p:column sortBy="${reporteMedico.servicio}" filterBy="${reporteMedico.servicio}" filterMatchMode="contains" width="160">  
+                                    <f:facet name="header">
+                                        <h:outputText value="Servicio" />  
+                                    </f:facet>
+                                    <h:outputText value="${reporteMedico.servicio}" />  
+                                </p:column>
+                                
+                                <f:facet name="footer">  
+                                    <p:commandButton id="btnReportarGeneral" ajax="false" actionListener="${reporteMedicoBean.reportarGeneral}" value="Reportar" icon="ui-icon-search">
+                                        <p:fileDownload value="${reporteMedicoBean.reporte}" />  
+                                    </p:commandButton>
+                                </f:facet>  
+                                
+                            </p:dataTable>
+                        
+                        </p:fieldset>
+                        
+                        <p:fieldset legend="Reporte Detallado" toggleable="true">
+                            <p:outputLabel value="Cmp: " for="autoCompleteCmp"/>
+                            <p:autoComplete id="autoCompleteCmp" value="${reporteMedicoBean.cmp}" 
+                                            completeMethod="${reporteMedicoBean.listaCmp}" maxResults="10"/>
+                            <p:commandButton id="btnReportarDetalle" ajax="false" actionListener="${reporteMedicoBean.reportarMedico}" value="Reportar" icon="ui-icon-search">
+                                <p:fileDownload value="${reporteMedicoBean.reporte}" />  
+                            </p:commandButton>
+                        </p:fieldset>
+                    </p:panel>
+                </h:form>
             </ui:define>
 
         </ui:composition>

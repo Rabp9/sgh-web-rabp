@@ -11,6 +11,7 @@
         <h:outputScript library="js" name="template.default.js" />
         <h:outputScript library="js" name="spanishLocale.js" />
         <ui:insert name="recursos"></ui:insert>
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/img/icono.ico"/>
     </h:head>
     <h:body>
         <ui:insert name="dialogs">Dialogs</ui:insert>
@@ -24,23 +25,30 @@
             <p:layoutUnit id="lyWest" position="west" size="200" header="Usuario" resizable="true" collapsible="true">  
                 <ui:insert name="left">Left</ui:insert>
                 <h:form>
-                    <p:slideMenu backLabel="Átrás" style="width: 96%;">
+                    <p:slideMenu backLabel="Átrás" style="width: 96%; height: 300px;">
                         <p:submenu label="Mantenimiento" icon="ui-icon-refresh">  
-                            <p:menuitem value="Actividades" icon="ui-icon-disk" />  
-                            <p:menuitem value="Update" icon="ui-icon-arrowrefresh-1-w" />  
-                            <f:facet name="footer">asdas</f:facet>
+                            <p:menuitem value="Actividades" icon="ui-icon-disk" action="/Mantenimiento/Actividad" rendered="${loginBean.tipo eq 'operador'}"/>  
+                            <p:menuitem value="Diagnósticos" icon="ui-icon-disk" action="/Mantenimiento/Diagnostico" rendered="${loginBean.tipo eq 'operador'}"/>  
+                            <p:menuitem value="Medicamentos" icon="ui-icon-disk" action="/Mantenimiento/Medicamento" rendered="${loginBean.tipo eq 'operador'}" />  
+                            <p:menuitem value="Médicos" icon="ui-icon-disk" action="/Mantenimiento/Medico" rendered="${loginBean.tipo eq 'operador'}" />  
+                            <p:menuitem value="Pacientes" icon="ui-icon-disk" action="/Mantenimiento/Paciente" rendered="${loginBean.tipo eq 'operador'}"/>  
+                            <p:menuitem value="Servicios" icon="ui-icon-disk" action="/Mantenimiento/Servicio" rendered="${loginBean.tipo eq 'operador'}"/>    
                         </p:submenu>  
-                        <p:submenu label="Reporte" icon="ui-icon-newwin">  
-                            <p:menuitem value="Delete" ajax="false" icon="ui-icon-close"/>  
+                        <p:submenu label="Reporte" icon="ui-icon-search">  
+                            <p:menuitem value="Médico" icon="ui-icon-search" action="/Reporte/Medico" rendered="${loginBean.tipo eq 'operador'}"/>    
+                            <p:menuitem value="Paciente" icon="ui-icon-search" action="/Reporte/Paciente" rendered="${loginBean.tipo eq 'operador' or loginBean.tipo eq 'medico'}"/>  
+                            <p:menuitem value="Receta"  icon="ui-icon-search" action="/Reporte/Receta" rendered="${loginBean.tipo eq 'paciente' or loginBean.tipo eq 'medico'}"/>  
+                            <p:menuitem value="Historia Clínica" icon="ui-icon-search" action="/Reporte/HistoriaClinica" rendered="${loginBean.tipo eq 'medico'}"/> 
+                            <p:menuitem value="Programación de Médicos" icon="ui-icon-search" action="/Reporte/ProgramacionMedicos" rendered="${loginBean.tipo eq 'operador'}"/> 
+                            <p:menuitem value="Cita" icon="ui-icon-search" action="/Reporte/Cita" rendered="${loginBean.tipo eq 'operador'}"/>  
                         </p:submenu>  
-                        <p:separator />  
-                        <p:submenu label="Navigations" icon="ui-icon-extlink">  
-                            <p:submenu label="Prime Links">  
-                                <p:menuitem value="Prime" url="http://www.prime.com.tr" />  
-                                <p:menuitem value="PrimeFaces" url="http://www.primefaces.org" />  
-                            </p:submenu>  
-                            <p:menuitem value="Mobile" />  
+                        <p:submenu label="Atención a Pacientes" icon="ui-icon-newwin">
+                            <p:menuitem value="Registrar Cita" icon="ui-icon-newwin" action="/AtencionPacientes/RegistrarCita"/>  
+                            <p:menuitem value="Atender Cita" icon="ui-icon-newwin" action="/AtencionPacientes/AtenderCita" rendered="${loginBean.tipo eq 'medico'}"/> 
+                            <p:menuitem value="Registrar Horarios" icon="ui-icon-newwin" action="/AtencionPacientes/RegistrarHorarios" rendered="${loginBean.tipo eq 'operador'}"/> 
+                            <p:menuitem value="Registrar Referencia" icon="ui-icon-newwin" action="/AtencionPacientes/RegistrarReferencia" rendered="${loginBean.tipo eq 'operador'}"/>  
                         </p:submenu>  
+                        <p:menuitem value="Cerrar Sesión" icon="ui-icon-newwin" action="/index" />  
                     </p:slideMenu>  
                 </h:form>
                 <p:ajaxStatus>  

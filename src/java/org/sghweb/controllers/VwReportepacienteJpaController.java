@@ -36,6 +36,7 @@ public class VwReportepacienteJpaController implements Serializable {
     @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
+
     public EntityManager getEntityManager() {
         if (emf == null) { 
             emf = Persistence.createEntityManagerFactory("sgh-webPU"); 

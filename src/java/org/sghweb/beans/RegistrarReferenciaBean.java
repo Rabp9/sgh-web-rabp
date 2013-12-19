@@ -15,6 +15,7 @@ import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.sghweb.controllers.DetallereferenciadiagnosticoJpaController;
+import org.sghweb.controllers.DetallereferenciaservicioJpaController;
 import org.sghweb.controllers.DiagnosticoJpaController;
 import org.sghweb.controllers.PacienteJpaController;
 import org.sghweb.controllers.ReferenciaJpaController;
@@ -25,6 +26,8 @@ import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
 import org.sghweb.jpa.Detallereferenciadiagnostico;
 import org.sghweb.jpa.DetallereferenciadiagnosticoPK;
+import org.sghweb.jpa.Detallereferenciaservicio;
+import org.sghweb.jpa.DetallereferenciaservicioPK;
 import org.sghweb.jpa.Diagnostico;
 import org.sghweb.jpa.Paciente;
 import org.sghweb.jpa.Referencia;
@@ -221,32 +224,59 @@ public class RegistrarReferenciaBean implements Serializable  {
     
     public void registrar() throws PreexistingEntityException, RollbackFailureException, Exception {
         if(dni == null) {
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un Paciente", null);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar un Paciente", null);
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            return;
         }
         if(cmp == null) {
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un Médico", null);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar un Médico", null);
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            return;
         }
         if(codigoDiagnostico1 == null) {
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un Diagnóstico", null);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar un Diagnóstico", null);
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            return;
         }
         if(codigoDiagnostico2 == null) {
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un Diagnóstico", null);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar un Diagnóstico", null);
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            return;
         }
         if(codigoServicioOrigen == null) {
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un Servicio de Origen", null);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar un Servicio de Origen", null);
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            return;
         }
         if(codigoServicioDestino == null) {
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un Servicio de Destino", null);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar un Servicio de Destino", null);
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            return;
         }      
         if(numeroRegistro == null) {
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un Servicio de Destino", null);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar un Servicio de Destino", null);
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            return;
+        }
+        if(codigoDiagnostico1.equals(codigoDiagnostico2)) {
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar diagnósticos diferente", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            return;            
+        }
+        if(codigoServicioOrigen.equals(codigoServicioDestino)) {
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar servicios diferente", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            return;            
+        }        
+        if(fechaRecibida.before(fechaEmision)) {
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "La fecha de recibido debe ser después de la fecha de emisión", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            return;            
+        }    
+        if(fechaTermino.before(fechaRecibida)) {
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "La fecha de término debe ser después de la fecha de recibido", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            return;            
         }
         // Referencia
         Referencia referencia = new Referencia();
@@ -285,6 +315,36 @@ public class RegistrarReferenciaBean implements Serializable  {
         drd2.setDiagnostico(diagnostico2);
         drd2.setReferencia(referencia);
         drdjc.create(drd2);
+           
+        // DetalleReferenciaServicioOrigen
+        Detallereferenciaservicio drsOrigen = new Detallereferenciaservicio();
+        DetallereferenciaservicioPK drspk = new DetallereferenciaservicioPK();
+        drspk.setServiciocodigo(codigoServicioOrigen);
+        drspk.setReferenciaPacientedni(dni);
+        drspk.setReferencianumeroRegistro(numeroRegistro);
+        drsOrigen.setDetallereferenciaservicioPK(drspk);
+        servicioOrigen = vsjc.findServicio(codigoServicioOrigen);
+        drsOrigen.setServicio(servicioOrigen);
+        drsOrigen.setReferencia(referencia);
+        drsOrigen.setCondicion("origen");
+        DetallereferenciaservicioJpaController drsjc = new DetallereferenciaservicioJpaController(null, null);
+        drsjc.create(drsOrigen);
+        
+        // DetalleReferenciaServicioDestino
+        Detallereferenciaservicio drsDestino = new Detallereferenciaservicio();
+        drspk = new DetallereferenciaservicioPK();
+        drspk.setServiciocodigo(codigoServicioDestino);
+        drspk.setReferenciaPacientedni(dni);
+        drspk.setReferencianumeroRegistro(numeroRegistro);
+        drsDestino.setDetallereferenciaservicioPK(drspk);
+        servicioDestino = vsjc.findServicio(codigoServicioDestino);
+        drsDestino.setServicio(servicioDestino);
+        drsDestino.setReferencia(referencia);
+        drsDestino.setCondicion("destino");
+        drsjc.create(drsDestino);
+        
+        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "La referencia fue registrada correctamente", null);
+        FacesContext.getCurrentInstance().addMessage(null, facesMessage);
     }
     
     public List<VwReportepaciente> getListaReportePacientes() {

@@ -6,10 +6,15 @@ package org.sghweb.controllers;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
@@ -31,10 +36,16 @@ public class DetallediagnosticoJpaController implements Serializable {
         this.utx = utx;
         this.emf = emf;
     }
+    @Resource
     private UserTransaction utx = null;
+    @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
+
     public EntityManager getEntityManager() {
+        if (emf == null) { 
+            emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
+        }
         return emf.createEntityManager();
     }
 
@@ -42,15 +53,17 @@ public class DetallediagnosticoJpaController implements Serializable {
         if (detallediagnostico.getDetallediagnosticoPK() == null) {
             detallediagnostico.setDetallediagnosticoPK(new DetallediagnosticoPK());
         }
-        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaHistoriaClinicaautogenerado(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaautogenerado());
-        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaCitaMedicodni(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicodni());
-        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaHistoriaClinicanumeroRegistro(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicanumeroRegistro());
         detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaCitaMedicocmp(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicocmp());
         detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaCitaactoMedico(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaactoMedico());
-        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaidDetalleHistoriaClinica(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getIdDetalleHistoriaClinica());
-        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaHistoriaClinicaPacientedni(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaPacientedni());
         detallediagnostico.getDetallediagnosticoPK().setDiagnosticocodigo(detallediagnostico.getDiagnostico().getCodigo());
+        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaHistoriaClinicaautogenerado(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaautogenerado());
+        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaHistoriaClinicanumeroRegistro(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicanumeroRegistro());
+        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaHistoriaClinicaPacientedni(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaPacientedni());
+        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaCitaMedicodni(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicodni());
+        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaidDetalleHistoriaClinica(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getIdDetalleHistoriaClinica());
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -92,15 +105,17 @@ public class DetallediagnosticoJpaController implements Serializable {
     }
 
     public void edit(Detallediagnostico detallediagnostico) throws NonexistentEntityException, RollbackFailureException, Exception {
-        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaHistoriaClinicaautogenerado(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaautogenerado());
-        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaCitaMedicodni(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicodni());
-        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaHistoriaClinicanumeroRegistro(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicanumeroRegistro());
         detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaCitaMedicocmp(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicocmp());
         detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaCitaactoMedico(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaactoMedico());
-        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaidDetalleHistoriaClinica(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getIdDetalleHistoriaClinica());
-        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaHistoriaClinicaPacientedni(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaPacientedni());
         detallediagnostico.getDetallediagnosticoPK().setDiagnosticocodigo(detallediagnostico.getDiagnostico().getCodigo());
+        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaHistoriaClinicaautogenerado(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaautogenerado());
+        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaHistoriaClinicanumeroRegistro(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicanumeroRegistro());
+        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaHistoriaClinicaPacientedni(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaPacientedni());
+        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaCitaMedicodni(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicodni());
+        detallediagnostico.getDetallediagnosticoPK().setDetalleHistoriaClinicaidDetalleHistoriaClinica(detallediagnostico.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getIdDetalleHistoriaClinica());
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -158,6 +173,8 @@ public class DetallediagnosticoJpaController implements Serializable {
 
     public void destroy(DetallediagnosticoPK id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();

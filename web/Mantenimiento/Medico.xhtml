@@ -21,7 +21,7 @@
             <ui:define name="dialogs">
                 <p:growl id="mensaje"/>
                 <h:form id="frmNuevoMedico">
-                    <p:dialog id="dlgNuevoMedico" header="Nueva Medico" widgetVar="dialogoNuevoMedico" resizable="false"  
+                    <p:dialog id="dlgNuevoMedico" header="Nuevo Médico" widgetVar="dialogoNuevoMedico" resizable="false"  
                         showEffect="clip" hideEffect="fold" modal="true">  
                         <ezcomp:ccRegistroMedico
                             accion="Nuevo" medico="${mantenimientoMedicoBean.medico}"
@@ -76,6 +76,16 @@
                         </f:facet>
                     </p:dialog>
                 </h:form>
+                             
+                <h:form id="frmAsignarServicio">
+                    <p:dialog id="dlgAsignarServicio" header="Asignar Servicio" widgetVar="dialogoAsignarServicio" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">
+                        <f:facet name="footer">
+                            <p:commandButton value="Asignar" ajax="false" actionListener="${mantenimientoMedicoBean.asignar()}" 
+                                oncomplete="dialogoAsignarServicio.hide()" icon="ui-icon-check"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
                 
             </ui:define>
 
@@ -90,7 +100,7 @@
                             currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                             rowsPerPageTemplate="5,10,20" selection="${mantenimientoMedicoBean.selectedMedico}" selectionMode="single"
-                            emptyMessage="Ninguna Medico Registrada" scrollable="true" scrollHeight="190"
+                            emptyMessage="Ningun Médico Registrado" scrollable="true" scrollHeight="190"
                             resizableColumns="true">
                                                          
                             <f:facet name="header">  
@@ -122,6 +132,8 @@
                                     oncomplete="dialogoModificarMedico.show()"/>
                                 <p:commandButton id="btnEliminar" value="Eliminar" icon="ui-icon-minus" update="_frmEliminarMedico"
                                     oncomplete="dialogoEliminarMedico.show()"/>
+                                <p:commandButton id="btnAsignarServicio" value="Asignar Servicio" icon="ui-icon-arrowreturnthick-1-e" update="_frmAsignarServicio"
+                                    oncomplete="dialogoAsignarServicio.show()"/>
                             </f:facet>  
                             
                         </p:dataTable>

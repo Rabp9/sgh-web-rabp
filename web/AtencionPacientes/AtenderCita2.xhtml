@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../templates/template.xhtml">
+
+            <ui:define name="title">
+                Atender Cita
+            </ui:define>
+
+            <ui:define name="recursos">
+            </ui:define>
+
+            <ui:define name="dialogs">
+                <p:growl id="mensaje"/>
+            </ui:define>
+
+            <ui:define name="left">
+            </ui:define>
+
+            <ui:define name="content">
+                <h:form id="frmAtenderCita2" title="Formulario Atender Cita">
+                    <p:panel id="pnlAtenderCita2" header="Atender Cita">
+                        <p:panel header="Paciente">
+                            <p:panelGrid columns="2">
+
+                                <p:outputLabel value="Número de DNI: " for="txtDni"/>
+                                <p:inputText id="txtDni" value="${atenderCitaBean.vwReportepaciente.dni}" 
+                                             size="50" readonly="true" requiredMessage="No puede estar vacío"/>
+
+                                <p:outputLabel value="Número de Registro: " for="txtNumeroRegistro"/>
+                                <p:inputText id="txtNumeroRegistro" value="${atenderCitaBean.vwReportepaciente.numeroRegistro}" readonly="true" size="50"/>
+
+                                <p:outputLabel value="Nombre Completo: " for="txtNombre"/>
+                                <p:inputText id="txtNombre" value="${atenderCitaBean.vwReportepaciente.nombreCompleto}" readonly="true" size="50"/> 
+
+                                <p:outputLabel value="Autogenerado: " for="txtAutogenerado"/>
+                                <p:inputText id="txtAutogenerado" value="${atenderCitaBean.vwReportepaciente.autogenerado}" readonly="true" size="50"/>
+
+                                <p:outputLabel value="Titular: " for="txtTitular"/>
+                                <p:inputText id="txtTitular" value="${atenderCitaBean.vwReportepaciente.titular}" readonly="true" size="50"/>
+
+                            </p:panelGrid>
+                        </p:panel>
+
+                        <p:panel header="Servicio">
+                            <p:panelGrid columns="2">
+
+                                <p:outputLabel value="Código: " for="txtCodigoServicio"/>
+                                <p:inputText id="txtCodigoServicio" value="${atenderCitaBean.servicio.codigo}" 
+                                             readonly="true" size="50" maxlength="3"/>
+
+                                <p:outputLabel value="Descripción: " for="txtDescripcionServicio"/>
+                                <p:inputText id="txtDescripcionServicio" value="${atenderCitaBean.servicio.descripcion}" readonly="true" size="50"/> 
+
+                            </p:panelGrid>
+                        </p:panel>
+
+                        <p:panel header="Médico">
+                            <p:panelGrid columns="2">
+
+                                <p:outputLabel value="CMP: " for="txtCMP"/>
+                                <p:inputText id="txtCMP" value="${atenderCitaBean.medico.medicoPK.cmp}" 
+                                             size="50" maxlength="5" readonly="true" />
+
+                                <p:outputLabel value="Nombre Completo: " for="txtNombreMedico"/>
+                                <p:inputText id="txtNombreMedico" value="${atenderCitaBean.medico.nombreCompleto}" readonly="true" size="50"/> 
+
+                            </p:panelGrid>
+                        </p:panel>
+
+                        <p:panel header="Detalle Cita">
+                            <p:panelGrid columns="2">
+
+                                <p:outputLabel value="Acto Médico: " for="txtActoMedico"/>
+                                <p:inputText id="txtActoMedico" value="${atenderCitaBean.selectedCita.actoMedico}" 
+                                             size="50" maxlength="5" readonly="true" />
+
+                                <p:outputLabel value="Fecha y Hora: " for="txtFechaYHora"/>
+                                <p:inputText id="txtFechaYHora" value="${atenderCitaBean.selectedCita.fechaHora}" readonly="true" size="50">
+                                    <f:convertDateTime pattern="dd/mm/yyyy"/>
+                                </p:inputText>
+
+                            </p:panelGrid>
+                        </p:panel>
+
+                        <p:commandButton id="btnReceta" value="Receta" icon="ui-icon-note"/>  
+                        <p:commandButton id="btnDiagnostico" value="Diagnóstico" icon="ui-icon-document"/>   
+                        <p:commandButton id="btnCitt" value="CITT" icon="ui-icon-bookmark"/>   
+                        <p:commandButton id="btnFinalizarCita" value="Finalizar Cita" ajax="false" action="${atenderCitaBean.finalizarCita}" icon="ui-icon-check"/>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

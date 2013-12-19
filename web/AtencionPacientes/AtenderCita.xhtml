@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../templates/template.xhtml">
+
+            <ui:define name="title">
+                Atender Cita
+            </ui:define>
+
+            <ui:define name="recursos">
+            </ui:define>
+
+            <ui:define name="dialogs">
+                <p:growl id="mensaje"/>
+            </ui:define>
+
+            <ui:define name="left">
+            </ui:define>
+
+            <ui:define name="content">  
+                <h:form id="frmAtenderCita" title="Formulario Atender Cita">
+                    <p:panel id="pnlAtenderCita" header="Atender Cita">
+                        <p:panel header="Médico">
+                            <p:panelGrid columns="2">
+
+                                <p:outputLabel value="CMP: " for="txtCMP"/>
+                                <p:inputText id="txtCMP" value="${atenderCitaBean.medico.medicoPK.cmp}" 
+                                             size="50" maxlength="5" readonly="true" />
+
+                                <p:outputLabel value="Nombre Completo: " for="txtNombreMedico"/>
+                                <p:inputText id="txtNombreMedico" value="${atenderCitaBean.medico.nombreCompleto}" readonly="true" size="50"/> 
+
+                            </p:panelGrid>
+                        </p:panel>
+                        
+                        <h:outputLabel value="Fecha: " for="clnFecha"/>
+                        <p:calendar id="clnFecha" required="true" requiredMessage="Seleccione una fecha" value="${atenderCitaBean.fecha}"
+                                    navigator="true" locale="es" showButtonPanel="true">
+                            <p:ajax event="dateSelect" listener="${atenderCitaBean.seleccionarFecha}" update="tblCitas" />  
+                        </p:calendar>
+
+                        <p:dataTable id="tblCitas" var="vwCitaAtender" value="${atenderCitaBean.listaCitas}"
+                                     sortMode="multiple" rowKey="${vwCitaAtender.actoMedico}" paginator="true" rows="10" 
+                                currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                rowsPerPageTemplate="5,10,20" selection="${atenderCitaBean.selectedCita}" selectionMode="single"
+                                emptyMessage="Ninguna Cita Registrada" scrollable="true" scrollHeight="190"
+                                resizableColumns="true">
+                            <p:ajax event="rowSelect" listener="${atenderCitaBean.onRowSelectCita}"/>
+                        
+                            <f:facet name="header">  
+                                Lista de Citas
+                            </f:facet>
+
+                            <p:column sortBy="${vwCitaAtender.actoMedico}" filterBy="${vwCitaAtender.actoMedico}" headerText="Acto Médico" width="160">  
+                                    <f:facet name="header">
+                                        <h:outputText value="Acto Médico" />  
+                                    </f:facet>
+                                <h:outputText value="${vwCitaAtender.actoMedico}" />  
+                            </p:column>
+
+                            <p:column sortBy="${vwCitaAtender.medico}" filterBy="${vwCitaAtender.medico}" headerText="Médico" width="160">  
+                                    <f:facet name="header">
+                                        <h:outputText value="Médico" />  
+                                    </f:facet>
+                                <h:outputText value="${vwCitaAtender.medico}" />  
+                            </p:column>
+
+                            <p:column sortBy="${vwCitaAtender.fechaHora}" filterBy="${vwCitaAtender.fechaHora}" headerText="Fecha y Hora" width="160">  
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha y Hora" />  
+                                </f:facet>
+                                <h:outputText value="${vwCitaAtender.fechaHora}">
+                                    <f:convertDateTime pattern="dd/mm/yyyy hh:mm:ss"/>
+                                </h:outputText>  
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

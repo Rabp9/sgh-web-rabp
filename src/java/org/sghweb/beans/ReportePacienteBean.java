@@ -7,6 +7,7 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import java.awt.Color;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
@@ -156,12 +157,13 @@ public class ReportePacienteBean implements Serializable {
         
         VwReportepaciente vwReportepaciente = vrjc.findVwReportepaciente(dni);
         if(vwReportepaciente == null) {
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "No existe Pacietne con DNI: " + dni, null);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "No existe Paciente con DNI: " + dni, null);
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
             return;
         }
         pdf.add(Chunk.NEWLINE);
         PdfPTable table = new PdfPTable(2);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         
         PdfPCell cell1 = new PdfPCell(new Paragraph("Informacion Personal", FontFactory.getFont(FontFactory.HELVETICA, 11, Font.BOLD, new Color(0, 0, 0))));
         cell1.setColspan(2);
@@ -177,7 +179,7 @@ public class ReportePacienteBean implements Serializable {
         table.addCell(vwReportepaciente.getGenero());
                 
         table.addCell("Fecha de Nacimiento: ");
-        table.addCell(String.valueOf(vwReportepaciente.getFechaNacimiento()));
+        table.addCell(sdf.format(vwReportepaciente.getFechaNacimiento()));
     
         PdfPCell cell2 = new PdfPCell(new Paragraph("Informacion General", FontFactory.getFont(FontFactory.HELVETICA, 11, Font.BOLD, new Color(0, 0, 0))));
         cell2.setColspan(2);
@@ -212,10 +214,10 @@ public class ReportePacienteBean implements Serializable {
         table.addCell(vwReportepaciente.getTitular());
                 
         table.addCell("Fecha afiliación: ");
-        table.addCell(String.valueOf(vwReportepaciente.getFechaInicio()));
+        table.addCell(sdf.format(vwReportepaciente.getFechaInicio()));
         
         table.addCell("Fecha de ultima cita: ");
-        table.addCell(String.valueOf(vwReportepaciente.getFechaUltimaCita()));
+        table.addCell(sdf.format(vwReportepaciente.getFechaUltimaCita()));
         
         table.addCell("Citas del ultimo mes: ");
         table.addCell(String.valueOf(vwReportepaciente.getNumCitasUltimoMes()));

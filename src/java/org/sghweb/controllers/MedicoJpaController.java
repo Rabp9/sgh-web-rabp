@@ -27,7 +27,6 @@ import org.sghweb.controllers.exceptions.RollbackFailureException;
 import org.sghweb.jpa.Cita;
 import org.sghweb.jpa.Medico;
 import org.sghweb.jpa.MedicoPK;
-import org.sghweb.jpa.VwMedico;
 
 /**
  *
@@ -43,6 +42,7 @@ public class MedicoJpaController implements Serializable {
     private UserTransaction utx = null;
     @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
+
 
     public EntityManager getEntityManager() {
         if (emf == null) { 
@@ -300,5 +300,9 @@ public class MedicoJpaController implements Serializable {
             em.close();
         }
     }
-       
+    
+    public List<Medico> findMedicoByUsuarioYClave(String usuario, String clave) {
+        EntityManager em = getEntityManager();
+        return em.createNamedQuery("Medico.findByUsernameYPassword").setParameter("username", usuario).setParameter("password", clave).getResultList();
+    } 
 }

@@ -13,6 +13,8 @@ import org.sghweb.jpa.Historiaclinica;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -22,6 +24,7 @@ import org.sghweb.controllers.exceptions.IllegalOrphanException;
 import org.sghweb.controllers.exceptions.NonexistentEntityException;
 import org.sghweb.controllers.exceptions.PreexistingEntityException;
 import org.sghweb.controllers.exceptions.RollbackFailureException;
+import org.sghweb.jpa.Medico;
 import org.sghweb.jpa.Paciente;
 import org.sghweb.jpa.Referencia;
 
@@ -40,6 +43,7 @@ public class PacienteJpaController implements Serializable {
     @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
+
     public EntityManager getEntityManager() {
         if (emf == null) { 
             emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
@@ -55,6 +59,8 @@ public class PacienteJpaController implements Serializable {
             paciente.setReferenciaList(new ArrayList<Referencia>());
         }
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -109,6 +115,8 @@ public class PacienteJpaController implements Serializable {
 
     public void edit(Paciente paciente) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -198,6 +206,8 @@ public class PacienteJpaController implements Serializable {
 
     public void destroy(String id) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -287,5 +297,9 @@ public class PacienteJpaController implements Serializable {
             em.close();
         }
     }
-    
+        
+    public List<Paciente> findPacienteByUsuarioYClave(String usuario, String clave) {
+        EntityManager em = getEntityManager();
+        return em.createNamedQuery("Paciente.findByUsernameYPassword").setParameter("username", usuario).setParameter("password", clave).getResultList();
+    } 
 }

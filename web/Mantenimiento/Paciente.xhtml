@@ -20,13 +20,10 @@
 
             <ui:define name="dialogs">
                 <p:growl id="mensaje"/>
+                
                 <h:form id="frmNuevoPaciente">
-                    <p:dialog id="dlgNuevoPaciente" header="Nueva Paciente" widgetVar="dialogoNuevoPaciente" resizable="false"  
-                        showEffect="clip" hideEffect="fold" modal="true">  
-                        <ezcomp:ccRegistroPaciente
-                            accion="Nuevo" paciente="${mantenimientoPacienteBean.paciente}"
-                            readOnlyCodigo="false"
-                            readOnlyDatos="false"/>    
+                    <p:dialog id="dlgNuevoPaciente" header="Nuevo Paciente" widgetVar="dialogoNuevoPaciente" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">
                         <f:facet name="footer">
                             <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoPacienteBean.crear()}" 
                                 oncomplete="dialogoNuevoPaciente.hide()" icon="ui-icon-check" update="frmMantenimientoPaciente"/>
@@ -38,10 +35,6 @@
                 <h:form id="frmDetallePaciente">
                     <p:dialog id="dlgDetallePaciente" header="Detalle Paciente" widgetVar="dialogoDetallePaciente" resizable="false"  
                         showEffect="clip" hideEffect="fold" modal="true">  
-                        <ezcomp:ccRegistroPaciente
-                            accion="Detalle" paciente="${mantenimientoPacienteBean.selectedPaciente}"
-                            readOnlyCodigo="true"
-                            readOnlyDatos="true"/> 
                         <f:facet name="footer">
                             <p:commandButton value="Cerrar" oncomplete="dialogoDetallePaciente.hide()" icon="ui-icon-close"/>
                         </f:facet>
@@ -51,10 +44,6 @@
                 <h:form id="frmModificarPaciente">
                     <p:dialog id="dlgModificarPaciente" header="Modificar Paciente" widgetVar="dialogoModificarPaciente" resizable="false"  
                         showEffect="clip" hideEffect="fold" modal="true">  
-                        <ezcomp:ccRegistroPaciente
-                            accion="Modificar" paciente="${mantenimientoPacienteBean.selectedPaciente}"
-                            readOnlyCodigo="true"
-                            readOnlyDatos="false"/>
                         <f:facet name="footer">
                             <p:commandButton value="Enviar" ajax="false" actionListener="${mantenimientoPacienteBean.editar()}" 
                                 oncomplete="dialogoModificarPaciente.hide()" icon="ui-icon-check"/>
@@ -66,10 +55,6 @@
                 <h:form id="frmEliminarPaciente">
                     <p:dialog id="dlgEliminarPaciente" header="Eliminar Paciente" widgetVar="dialogoEliminarPaciente" resizable="false"  
                         showEffect="clip" hideEffect="fold" modal="true">  
-                        <ezcomp:ccRegistroPaciente
-                            accion="Eliminar" paciente="${mantenimientoPacienteBean.selectedPaciente}"
-                            readOnlyCodigo="true"
-                            readOnlyDatos="true"/>
                         <f:facet name="footer">
                             <p:commandButton value="Eliminar" ajax="false" actionListener="${mantenimientoPacienteBean.eliminar()}" 
                                 oncomplete="dialogoEliminarPaciente.hide()" icon="ui-icon-check"/>
@@ -80,11 +65,59 @@
             </ui:define>
 
             <ui:define name="left">
-                left
             </ui:define>
 
             <ui:define name="content">
-                content
+                <h:form id="frmMantenimientoPaciente" title="Formulario de Mantenimiento de Pacientes">
+                    <p:panel id="pnlMantenimientoPaciente" header="Mantenimiento Pacientes">
+                        <p:dataTable id="tblPacientes" var="paciente" value="${mantenimientoPacienteBean.listaPacientes}"
+                                     sortMode="multiple" rowKey="${paciente.dni}" paginator="true" rows="10" 
+                            currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                            rowsPerPageTemplate="5,10,20" selection="${mantenimientoPacienteBean.selectedPaciente}" selectionMode="single"
+                            emptyMessage="Ningun Paciente Registrado" scrollable="true" scrollHeight="190"
+                            resizableColumns="true">
+                                                         
+                            <f:facet name="header">  
+                                Lista de Pacientes
+                            </f:facet>  
+                            
+                            <p:column sortBy="${paciente.dni}" filterBy="${paciente.dni}" headerText="DNI" width="150">  
+                                <h:outputText value="${paciente.dni}" />  
+                            </p:column>
+                            
+                            <p:column sortBy="${paciente.nombreCompleto}" filterBy="${paciente.nombreCompleto}" filterMatchMode="contains" headerText="Nombre Completo">  
+                                <h:outputText value="${paciente.nombreCompleto}" />  
+                            </p:column>
+                                             
+                            <p:column sortBy="${paciente.fechaNacimiento}" filterBy="${paciente.fechaNacimiento}" filterMatchMode="contains" headerText="Fecha de Nacimiento">  
+                                <h:outputText value="${paciente.fechaNacimiento}">
+                                    <f:convertDateTime pattern="dd/mm/yyyy"/>
+                                </h:outputText>  
+                            </p:column>
+                            
+                            <p:column sortBy="${paciente.tipoAsegurado}" filterBy="${paciente.tipoAsegurado}" filterMatchMode="contains" headerText="Tipo de Asegurado">  
+                                <h:outputText value="${paciente.tipoAsegurado}" />  
+                            </p:column>
+                            
+                            <p:column sortBy="${paciente.titular}" filterBy="${paciente.titular}" filterMatchMode="contains" headerText="Autogenerado Titular">  
+                                <h:outputText value="${paciente.titular}" />  
+                            </p:column>
+                            
+                            <f:facet name="footer">  
+                                <p:commandButton id="btnNuevo" value="Nuevo" icon="ui-icon-plus" update="_frmNuevoPaciente"
+                                    oncomplete="dialogoNuevoPaciente.show()"/>
+                                <p:commandButton id="btnDetalle" value="Detalle" icon="ui-icon-zoomin" update="_frmDetallePaciente"
+                                    oncomplete="dialogoDetallePaciente.show()"/>
+                                <p:commandButton id="btnModificar" value="Modificar" icon="ui-icon-pencil" update="_frmModificarPaciente"
+                                    oncomplete="dialogoModificarPaciente.show()"/>
+                                <p:commandButton id="btnEliminar" value="Eliminar" icon="ui-icon-minus" update="_frmEliminarPaciente"
+                                    oncomplete="dialogoEliminarPaciente.show()"/>
+                            </f:facet>  
+                            
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
             </ui:define>
 
         </ui:composition>

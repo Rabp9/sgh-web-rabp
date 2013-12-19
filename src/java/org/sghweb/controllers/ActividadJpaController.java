@@ -1,5 +1,7 @@
-// src/java/org/sghweb/controllers/ActividadJpaController.java
-
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.sghweb.controllers;
 
 import java.io.Serializable;
@@ -39,6 +41,7 @@ public class ActividadJpaController implements Serializable {
     @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
+
     public EntityManager getEntityManager() {
         if (emf == null) { 
             emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
@@ -50,7 +53,7 @@ public class ActividadJpaController implements Serializable {
         if (actividad.getTurnoList() == null) {
             actividad.setTurnoList(new ArrayList<Turno>());
         }
-        EntityManager em = null; 
+        EntityManager em = null;
         Context initCtx = new InitialContext(); 
         utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
@@ -86,7 +89,7 @@ public class ActividadJpaController implements Serializable {
             }
             throw ex;
         } finally {
-           if (em != null) {
+            if (em != null) {
                 em.close();
             }
         }
@@ -241,7 +244,7 @@ public class ActividadJpaController implements Serializable {
             em.close();
         }
     }
-       
+    
     public List<Actividad> findActividadByDescripcion(String descripcion) {
         EntityManager em = getEntityManager();
         return em.createNamedQuery("Actividad.findByDescripcion").setParameter("descripcion", descripcion).getResultList();

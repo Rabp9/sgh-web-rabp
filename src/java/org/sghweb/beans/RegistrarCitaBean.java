@@ -1,23 +1,56 @@
 
 package org.sghweb.beans;
 
+import com.lowagie.text.Chunk;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.HeaderFooter;
+import com.lowagie.text.Image;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+import java.awt.Color;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+import org.sghweb.controllers.CitaJpaController;
+import org.sghweb.controllers.DetallehistoriaclinicaJpaController;
+import org.sghweb.controllers.HistoriaclinicaJpaController;
 import org.sghweb.controllers.ServicioJpaController;
 import org.sghweb.controllers.VwCitaJpaController;
 import org.sghweb.controllers.VwMedicoJpaController;
 import org.sghweb.controllers.VwReportepacienteJpaController;
+import org.sghweb.controllers.exceptions.IllegalOrphanException;
+import org.sghweb.controllers.exceptions.NonexistentEntityException;
+import org.sghweb.controllers.exceptions.RollbackFailureException;
+import org.sghweb.jpa.Cita;
+import org.sghweb.jpa.CitaPK;
+import org.sghweb.jpa.Detallehistoriaclinica;
+import org.sghweb.jpa.DetallehistoriaclinicaPK;
+import org.sghweb.jpa.Historiaclinica;
+import org.sghweb.jpa.HistoriaclinicaPK;
 import org.sghweb.jpa.Servicio;
 import org.sghweb.jpa.VwCita;
 import org.sghweb.jpa.VwMedico;
 import org.sghweb.jpa.VwReportepaciente;
+import org.sghweb.jpa.VwReportereceta;
 
 /**
  *
@@ -49,6 +82,7 @@ public class RegistrarCitaBean implements Serializable  {
     private List<VwCita> listaCitas;
     private VwCitaJpaController vcjc;
     private VwCita selectedCita;
+    private StreamedContent reporteCita;
             
     public RegistrarCitaBean() {
         // Paciente
@@ -66,6 +100,13 @@ public class RegistrarCitaBean implements Serializable  {
         // Cita
         vcjc = new VwCitaJpaController(null, null);
         listaCitas = vcjc.findVwCitaDisponibles();
+        
+        // Logueado como paciente
+        FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+        LoginBean loginBean = (LoginBean) session.getAttribute("loginBean");
+        dni = loginBean.getLoginPaciente().getDni();
+        vwReportepaciente = vrjc.findVwReportepaciente(loginBean.getLoginPaciente().getDni());
     }
     
     public void onRowSelectPaciente(SelectEvent event) {
@@ -143,11 +184,105 @@ public class RegistrarCitaBean implements Serializable  {
         }
     }
      
-    public void registrar() {
+    public void registrar() throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         if(dni == null) {
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Debe seleccionar un paciente", null);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar un paciente", null);
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
         }
+        if(getSelectedCita() == null) {
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar una Cita", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        }
+        // Cita
+        CitaJpaController cjc = new CitaJpaController(null, null);
+        CitaPK cpk = new CitaPK(getSelectedCita().getActoMedico(), getSelectedCita().getCmp(), getSelectedCita().getMedicoDni());
+        Cita cita = cjc.findCita(cpk);
+        cita.setEstado('3');
+        cjc.edit(cita);
+        
+        // Detalle Historia Clínica
+        DetallehistoriaclinicaJpaController djc = new DetallehistoriaclinicaJpaController(null, null);
+        Detallehistoriaclinica d = new Detallehistoriaclinica();
+        DetallehistoriaclinicaPK dpk = new DetallehistoriaclinicaPK();
+        dpk.setCitaMedicocmp(getSelectedCita().getCmp());
+        dpk.setCitaMedicodni(getSelectedCita().getMedicoDni());
+        dpk.setCitaactoMedico(getSelectedCita().getActoMedico());
+        dpk.setHistoriaClinicaPacientedni(vwReportepaciente.getDni());
+        dpk.setHistoriaClinicaautogenerado(vwReportepaciente.getAutogenerado());
+        dpk.setHistoriaClinicanumeroRegistro(vwReportepaciente.getNumeroRegistro());
+        d.setDetallehistoriaclinicaPK(dpk);
+        d.setFecha(cita.getFecha());
+        
+        HistoriaclinicaJpaController hjc = new HistoriaclinicaJpaController(null, null);
+        HistoriaclinicaPK hcpk = new HistoriaclinicaPK();
+        hcpk.setAutogenerado(vwReportepaciente.getAutogenerado());
+        hcpk.setNumeroRegistro(vwReportepaciente.getNumeroRegistro());
+        hcpk.setPacientedni(vwReportepaciente.getDni());
+        Historiaclinica h = hjc.findHistoriaclinica(hcpk);
+        
+        d.setHistoriaclinica(h);
+        d.setCita(cita);
+        
+        djc.create(d);
+        
+        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "La cita fue registrada correctamente", null);
+        FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        
+        Document pdf = new Document();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PdfWriter.getInstance(pdf, os);   
+        ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        pdf.open();
+       
+        // INICIO Escritura de Reporte
+        
+        // Cabecera
+        Paragraph cabecera = new Paragraph();
+        String logo = servletContext.getRealPath("") + File.separator + "resources"+ File.separator + "img" + File.separator + "logo - header.png";
+        cabecera.add(Image.getInstance(logo));
+        pdf.setHeader(new HeaderFooter(cabecera, false));    
+        
+        // Título
+        pdf.add(cabecera);
+        Paragraph titulo = new Paragraph("Cita Registrada", FontFactory.getFont(FontFactory.HELVETICA, 22, Font.BOLD, new Color(0, 0, 0)));
+        titulo.setAlignment(Element.ALIGN_CENTER);
+        pdf.add(titulo);
+        
+        //Mostrar información de la Receta
+        pdf.add(Chunk.NEWLINE);
+        PdfPTable table = new PdfPTable(2);
+        table.getDefaultCell().setBorder(0);
+        
+        table.addCell("Acto Médico:");
+        table.addCell(getSelectedCita().getActoMedico());
+        
+        table.addCell("Médico:");
+        table.addCell(selectedMedico.getNombreCompleto());
+        
+        table.addCell("CMP Médico:");
+        table.addCell(selectedMedico.getCmp());
+        
+        table.addCell("Servicio:");
+        table.addCell(selectedServicio.getDescripcion());
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy hh:mm:ss");
+        table.addCell("Fecha y Hora:");
+        table.addCell(sdf.format(getSelectedCita().getFechaHora()));
+
+        table.addCell("Paciente:");
+        table.addCell(selectedReportePaciente.getNombreCompleto());
+        
+        table.addCell("DNI Paciente:");
+        table.addCell(selectedReportePaciente.getDni());
+        
+        table.addCell("H/C:");
+        table.addCell(selectedReportePaciente.getNumeroRegistro());
+        
+        pdf.add(table);
+        
+        pdf.close(); // no need to close PDFwriter?
+        InputStream is = new ByteArrayInputStream(os.toByteArray());
+        setReporteCita(new DefaultStreamedContent(is, "application/pdf", "Reporte Cita.pdf"));
     }
     
     public List<VwReportepaciente> getListaReportePacientes() {
@@ -292,6 +427,14 @@ public class RegistrarCitaBean implements Serializable  {
 
     public void setSelectedCita(VwCita selectedCita) {
         this.selectedCita = selectedCita;
+    }
+
+    public StreamedContent getReporteCita() {
+        return reporteCita;
+    }
+
+    public void setReporteCita(StreamedContent reporteCita) {
+        this.reporteCita = reporteCita;
     }
     
 }

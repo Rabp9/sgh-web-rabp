@@ -44,6 +44,7 @@ public class ReferenciaJpaController implements Serializable {
     @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
+
     public EntityManager getEntityManager() {
         if (emf == null) { 
             emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
@@ -62,7 +63,7 @@ public class ReferenciaJpaController implements Serializable {
             referencia.setDetallereferenciaservicioList(new ArrayList<Detallereferenciaservicio>());
         }
         referencia.getReferenciaPK().setPacientedni(referencia.getPaciente().getDni());
-        EntityManager em = null;     
+        EntityManager em = null;
         Context initCtx = new InitialContext(); 
         utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
@@ -128,7 +129,7 @@ public class ReferenciaJpaController implements Serializable {
 
     public void edit(Referencia referencia) throws IllegalOrphanException, NonexistentEntityException, RollbackFailureException, Exception {
         referencia.getReferenciaPK().setPacientedni(referencia.getPaciente().getDni());
-        EntityManager em = null;   
+        EntityManager em = null;
         Context initCtx = new InitialContext(); 
         utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {

@@ -35,7 +35,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Medico.findByTelefono", query = "SELECT m FROM Medico m WHERE m.telefono = :telefono"),
     @NamedQuery(name = "Medico.findByEstado", query = "SELECT m FROM Medico m WHERE m.estado = :estado"),
     @NamedQuery(name = "Medico.findByUsername", query = "SELECT m FROM Medico m WHERE m.username = :username"),
-    @NamedQuery(name = "Medico.findByPassword", query = "SELECT m FROM Medico m WHERE m.password = :password")})
+    @NamedQuery(name = "Medico.findByPassword", query = "SELECT m FROM Medico m WHERE m.password = :password"),
+    @NamedQuery(name = "Medico.findByUsernameYPassword", query = "SELECT m FROM Medico m WHERE m.username = :username AND m.password = :password")})
 public class Medico implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -50,7 +51,9 @@ public class Medico implements Serializable {
     private String telefono;
     @Column(name = "estado")
     private Character estado;
-    @Size(max = 45)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
     @Column(name = "username")
     private String username;
     @Basic(optional = false)
@@ -70,9 +73,10 @@ public class Medico implements Serializable {
         this.medicoPK = medicoPK;
     }
 
-    public Medico(MedicoPK medicoPK, String nombreCompleto, String password) {
+    public Medico(MedicoPK medicoPK, String nombreCompleto, String username, String password) {
         this.medicoPK = medicoPK;
         this.nombreCompleto = nombreCompleto;
+        this.username = username;
         this.password = password;
     }
 

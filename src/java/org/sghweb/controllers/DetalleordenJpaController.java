@@ -6,10 +6,15 @@ package org.sghweb.controllers;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
@@ -31,10 +36,16 @@ public class DetalleordenJpaController implements Serializable {
         this.utx = utx;
         this.emf = emf;
     }
+    @Resource
     private UserTransaction utx = null;
+    @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
+
     public EntityManager getEntityManager() {
+        if (emf == null) { 
+            emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
+        }
         return emf.createEntityManager();
     }
 
@@ -42,15 +53,17 @@ public class DetalleordenJpaController implements Serializable {
         if (detalleorden.getDetalleordenPK() == null) {
             detalleorden.setDetalleordenPK(new DetalleordenPK());
         }
-        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaCitaMedicodni(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicodni());
-        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaHistoriaClinicanumeroRegistro(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicanumeroRegistro());
+        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaCitaMedicocmp(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicocmp());
         detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaidDetalleHistoriaClinica(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getIdDetalleHistoriaClinica());
         detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaHistoriaClinicaPacientedni(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaPacientedni());
-        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaCitaMedicocmp(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicocmp());
-        detalleorden.getDetalleordenPK().setOrdennroOrden(detalleorden.getOrden().getNroOrden());
-        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaHistoriaClinicaautogenerado(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaautogenerado());
         detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaCitaactoMedico(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaactoMedico());
+        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaHistoriaClinicaautogenerado(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaautogenerado());
+        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaCitaMedicodni(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicodni());
+        detalleorden.getDetalleordenPK().setOrdennroOrden(detalleorden.getOrden().getNroOrden());
+        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaHistoriaClinicanumeroRegistro(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicanumeroRegistro());
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -92,15 +105,17 @@ public class DetalleordenJpaController implements Serializable {
     }
 
     public void edit(Detalleorden detalleorden) throws NonexistentEntityException, RollbackFailureException, Exception {
-        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaCitaMedicodni(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicodni());
-        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaHistoriaClinicanumeroRegistro(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicanumeroRegistro());
+        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaCitaMedicocmp(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicocmp());
         detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaidDetalleHistoriaClinica(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getIdDetalleHistoriaClinica());
         detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaHistoriaClinicaPacientedni(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaPacientedni());
-        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaCitaMedicocmp(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicocmp());
-        detalleorden.getDetalleordenPK().setOrdennroOrden(detalleorden.getOrden().getNroOrden());
-        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaHistoriaClinicaautogenerado(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaautogenerado());
         detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaCitaactoMedico(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaactoMedico());
+        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaHistoriaClinicaautogenerado(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaautogenerado());
+        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaCitaMedicodni(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicodni());
+        detalleorden.getDetalleordenPK().setOrdennroOrden(detalleorden.getOrden().getNroOrden());
+        detalleorden.getDetalleordenPK().setDetalleHistoriaClinicaHistoriaClinicanumeroRegistro(detalleorden.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicanumeroRegistro());
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -158,6 +173,8 @@ public class DetalleordenJpaController implements Serializable {
 
     public void destroy(DetalleordenPK id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();

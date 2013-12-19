@@ -6,10 +6,15 @@ package org.sghweb.controllers;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
@@ -31,10 +36,16 @@ public class DetallereferenciaservicioJpaController implements Serializable {
         this.utx = utx;
         this.emf = emf;
     }
+    @Resource
     private UserTransaction utx = null;
+    @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
+
     public EntityManager getEntityManager() {
+        if (emf == null) { 
+            emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
+        }
         return emf.createEntityManager();
     }
 
@@ -43,9 +54,11 @@ public class DetallereferenciaservicioJpaController implements Serializable {
             detallereferenciaservicio.setDetallereferenciaservicioPK(new DetallereferenciaservicioPK());
         }
         detallereferenciaservicio.getDetallereferenciaservicioPK().setReferencianumeroRegistro(detallereferenciaservicio.getReferencia().getReferenciaPK().getNumeroRegistro());
-        detallereferenciaservicio.getDetallereferenciaservicioPK().setServiciocodigo(detallereferenciaservicio.getServicio().getCodigo());
         detallereferenciaservicio.getDetallereferenciaservicioPK().setReferenciaPacientedni(detallereferenciaservicio.getReferencia().getReferenciaPK().getPacientedni());
+        detallereferenciaservicio.getDetallereferenciaservicioPK().setServiciocodigo(detallereferenciaservicio.getServicio().getCodigo());
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -88,9 +101,11 @@ public class DetallereferenciaservicioJpaController implements Serializable {
 
     public void edit(Detallereferenciaservicio detallereferenciaservicio) throws NonexistentEntityException, RollbackFailureException, Exception {
         detallereferenciaservicio.getDetallereferenciaservicioPK().setReferencianumeroRegistro(detallereferenciaservicio.getReferencia().getReferenciaPK().getNumeroRegistro());
-        detallereferenciaservicio.getDetallereferenciaservicioPK().setServiciocodigo(detallereferenciaservicio.getServicio().getCodigo());
         detallereferenciaservicio.getDetallereferenciaservicioPK().setReferenciaPacientedni(detallereferenciaservicio.getReferencia().getReferenciaPK().getPacientedni());
+        detallereferenciaservicio.getDetallereferenciaservicioPK().setServiciocodigo(detallereferenciaservicio.getServicio().getCodigo());
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -148,6 +163,8 @@ public class DetallereferenciaservicioJpaController implements Serializable {
 
     public void destroy(DetallereferenciaservicioPK id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();

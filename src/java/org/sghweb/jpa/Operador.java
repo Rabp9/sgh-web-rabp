@@ -31,7 +31,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Operador.findByNombreCompleto", query = "SELECT o FROM Operador o WHERE o.nombreCompleto = :nombreCompleto"),
     @NamedQuery(name = "Operador.findByUsername", query = "SELECT o FROM Operador o WHERE o.username = :username"),
     @NamedQuery(name = "Operador.findByPassword", query = "SELECT o FROM Operador o WHERE o.password = :password"),
-    @NamedQuery(name = "Operador.findByEstado", query = "SELECT o FROM Operador o WHERE o.estado = :estado")})
+    @NamedQuery(name = "Operador.findByEstado", query = "SELECT o FROM Operador o WHERE o.estado = :estado"),
+    @NamedQuery(name = "Operador.findByUsernameYPassword", query = "SELECT o FROM Operador o WHERE o.username = :username AND o.password = :password")})
 public class Operador implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

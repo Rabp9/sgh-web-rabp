@@ -6,10 +6,15 @@ package org.sghweb.controllers;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
@@ -30,25 +35,33 @@ public class CittJpaController implements Serializable {
         this.utx = utx;
         this.emf = emf;
     }
+    @Resource
     private UserTransaction utx = null;
+    @PersistenceUnit(unitName = "sgh-webPU") 
     private EntityManagerFactory emf = null;
 
+
     public EntityManager getEntityManager() {
+        if (emf == null) { 
+            emf = Persistence.createEntityManagerFactory("sgh-webPU"); 
+        }
         return emf.createEntityManager();
     }
-
+    
     public void create(Citt citt) throws PreexistingEntityException, RollbackFailureException, Exception {
         if (citt.getCittPK() == null) {
             citt.setCittPK(new CittPK());
         }
-        citt.getCittPK().setDetalleHistoriaClinicaCitaactoMedico(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaactoMedico());
-        citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicanumeroRegistro(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicanumeroRegistro());
-        citt.getCittPK().setDetalleHistoriaClinicaCitaMedicocmp(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicocmp());
         citt.getCittPK().setDetalleHistoriaClinicaCitaMedicodni(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicodni());
         citt.getCittPK().setDetalleHistoriaClinicaidDetalleHistoriaClinica(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getIdDetalleHistoriaClinica());
         citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicaPacientedni(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaPacientedni());
         citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicaautogenerado(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaautogenerado());
+        citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicanumeroRegistro(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicanumeroRegistro());
+        citt.getCittPK().setDetalleHistoriaClinicaCitaMedicocmp(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicocmp());
+        citt.getCittPK().setDetalleHistoriaClinicaCitaactoMedico(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaactoMedico());
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -81,14 +94,16 @@ public class CittJpaController implements Serializable {
     }
 
     public void edit(Citt citt) throws NonexistentEntityException, RollbackFailureException, Exception {
-        citt.getCittPK().setDetalleHistoriaClinicaCitaactoMedico(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaactoMedico());
-        citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicanumeroRegistro(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicanumeroRegistro());
-        citt.getCittPK().setDetalleHistoriaClinicaCitaMedicocmp(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicocmp());
         citt.getCittPK().setDetalleHistoriaClinicaCitaMedicodni(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicodni());
         citt.getCittPK().setDetalleHistoriaClinicaidDetalleHistoriaClinica(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getIdDetalleHistoriaClinica());
         citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicaPacientedni(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaPacientedni());
         citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicaautogenerado(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicaautogenerado());
+        citt.getCittPK().setDetalleHistoriaClinicaHistoriaClinicanumeroRegistro(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getHistoriaClinicanumeroRegistro());
+        citt.getCittPK().setDetalleHistoriaClinicaCitaMedicocmp(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaMedicocmp());
+        citt.getCittPK().setDetalleHistoriaClinicaCitaactoMedico(citt.getDetallehistoriaclinica().getDetallehistoriaclinicaPK().getCitaactoMedico());
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
@@ -132,6 +147,8 @@ public class CittJpaController implements Serializable {
 
     public void destroy(CittPK id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        Context initCtx = new InitialContext(); 
+        utx = (UserTransaction) initCtx.lookup("java:comp/UserTransaction");
         try {
             utx.begin();
             em = getEntityManager();
