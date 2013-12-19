@@ -331,5 +331,8 @@ public class ReferenciaJpaController implements Serializable {
             em.close();
         }
     }
-    
+    public List<Referencia> findReferenciabyDni(String dni) {
+        EntityManager em = getEntityManager();
+        return em.createNamedQuery("Referencia.findByPacientedni").setParameter("pacientedni", dni).getResultList();
+    }
 }

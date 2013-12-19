@@ -61,6 +61,16 @@
                         </f:facet>
                     </p:dialog>
                 </h:form>
+                            
+                <h:form id="frmAnularReferenciaPaciente"> 
+                    <p:dialog id="dlgAnularReferenciaPaciente" header="Anular Referencia de Paciente" widgetVar="dialogoAnularReferenciaPaciente" resizable="false"  
+                        showEffect="clip" hideEffect="fold" modal="true">  
+                        <f:facet name="footer">
+                            <p:commandButton value="AnularReferencia" ajax="false" actionListener="${mantenimientoPacienteBean.eliminar()}" 
+                                oncomplete="dialogoAnularReferenciaPaciente.hide()" icon="ui-icon-check"/>
+                        </f:facet>
+                    </p:dialog>
+                </h:form>
                 
             </ui:define>
 
@@ -113,6 +123,8 @@
                                     oncomplete="dialogoModificarPaciente.show()"/>
                                 <p:commandButton id="btnEliminar" value="Eliminar" icon="ui-icon-minus" update="_frmEliminarPaciente"
                                     oncomplete="dialogoEliminarPaciente.show()"/>
+                                <p:commandButton id="btnAnularReferencia" value="AnularReferencia" icon="ui-icon-minus" update="_frmAnularReferenciaPaciente"
+                                    oncomplete="dialogoAnularReferenciaPaciente.show()"/>
                             </f:facet>  
                             
                         </p:dataTable>

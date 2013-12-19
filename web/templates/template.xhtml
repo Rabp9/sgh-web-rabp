@@ -22,7 +22,7 @@
                 <h:graphicImage id="graphicImageLogo" library="img" name="banner.png"/>
             </p:layoutUnit>  
             
-            <p:layoutUnit id="lyWest" position="west" size="200" header="Usuario" resizable="true" collapsible="true">  
+            <p:layoutUnit id="lyWest" position="west" size="250" header="Usuario ${loginBean.usuario} (${loginBean.tipo})" resizable="true" collapsible="true">  
                 <ui:insert name="left">Left</ui:insert>
                 <h:form>
                     <p:slideMenu backLabel="Átrás" style="width: 96%; height: 300px;">

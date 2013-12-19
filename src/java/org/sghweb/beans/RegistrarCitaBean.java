@@ -33,6 +33,7 @@ import org.primefaces.model.StreamedContent;
 import org.sghweb.controllers.CitaJpaController;
 import org.sghweb.controllers.DetallehistoriaclinicaJpaController;
 import org.sghweb.controllers.HistoriaclinicaJpaController;
+import org.sghweb.controllers.ReferenciaJpaController;
 import org.sghweb.controllers.ServicioJpaController;
 import org.sghweb.controllers.VwCitaJpaController;
 import org.sghweb.controllers.VwMedicoJpaController;
@@ -46,6 +47,7 @@ import org.sghweb.jpa.Detallehistoriaclinica;
 import org.sghweb.jpa.DetallehistoriaclinicaPK;
 import org.sghweb.jpa.Historiaclinica;
 import org.sghweb.jpa.HistoriaclinicaPK;
+import org.sghweb.jpa.Referencia;
 import org.sghweb.jpa.Servicio;
 import org.sghweb.jpa.VwCita;
 import org.sghweb.jpa.VwMedico;
@@ -188,11 +190,29 @@ public class RegistrarCitaBean implements Serializable  {
         if(dni == null) {
             FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar un paciente", null);
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            return;
         }
         if(getSelectedCita() == null) {
             FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar una Cita", null);
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            return;
         }
+        ReferenciaJpaController rjc = new ReferenciaJpaController(null, null);
+        List<Referencia> referencias = rjc.findReferenciabyDni(dni);
+        
+        if(referencias.isEmpty()) {
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "El paciente tiene una referencia vacía", null);
+            FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+            return;
+        }
+        else {
+            if(referencias.get(0).getEstado() == 2) {
+                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "El paciente tiene una referencia vacía", null);
+                FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+                return;
+            } 
+        }
+        
         // Cita
         CitaJpaController cjc = new CitaJpaController(null, null);
         CitaPK cpk = new CitaPK(getSelectedCita().getActoMedico(), getSelectedCita().getCmp(), getSelectedCita().getMedicoDni());
