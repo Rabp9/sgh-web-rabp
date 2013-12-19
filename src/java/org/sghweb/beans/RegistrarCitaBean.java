@@ -201,16 +201,9 @@ public class RegistrarCitaBean implements Serializable  {
         List<Referencia> referencias = rjc.findReferenciabyDni(dni);
         
         if(referencias.isEmpty()) {
-            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "El paciente tiene una referencia vacía", null);
+            FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "El paciente tiene una referencia vencida", null);
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
             return;
-        }
-        else {
-            if(referencias.get(0).getEstado() == 2) {
-                FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "El paciente tiene una referencia vacía", null);
-                FacesContext.getCurrentInstance().addMessage(null, facesMessage);
-                return;
-            } 
         }
         
         // Cita
